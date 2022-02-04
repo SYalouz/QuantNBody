@@ -19,9 +19,4 @@ Particular transformation already implemented:
 
 - Regular Householder transformation
 - Block-Householder transformation 
-
-To be implemented soon : 
-
-- CASCI for Fermi-Hubbard Hamiltonian
-- CASCI for electronic structure Hamiltonian
  
