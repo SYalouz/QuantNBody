@@ -250,13 +250,7 @@ def My_State(Slater_determinant, NBody_Basis):
 #  MANY-BODY HAMILTONIANS (FERMI HUBBARD AND QUANTUM CHEMISTRY)
 # =============================================================================
 
-def Build_Hamiltonian_Quantum_Chemistry(h_,
-                                        g_,
-                                        NBody_Basis,
-                                        a_dagger_a,
-                                        S_2=None,
-                                        S_2_target=None,
-                                        penalty=100):
+def Build_Hamiltonian_Quantum_Chemistry(h_, g_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
     Create a matrix representation of the electornic strucutre Hamiltonian in any
     extended many-body basis
@@ -318,13 +312,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
     return H_Chemistry
 
 
-def Build_Hamiltonian_Fermi_Hubbard(h_,
-                                    U_,
-                                    NBody_Basis,
-                                    a_dagger_a,
-                                    S_2=None,
-                                    S_2_target=None,
-                                    penalty=100):
+def Build_Hamiltonian_Fermi_Hubbard(h_, U_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
     Create a matrix representation of the Fermi-Hubbard Hamiltonian in any
     extended many-body basis.
@@ -371,10 +359,7 @@ def Build_Hamiltonian_Fermi_Hubbard(h_,
     return H_Fermi_Hubbard
 
 
-def FH_get_active_space_integrals(h_,
-                                  U_,
-                                  frozen_indices=None,
-                                  active_indices=None):
+def FH_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
     """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Restricts a Fermi-Hubard at a spatial orbital level to an active space
@@ -414,10 +399,7 @@ def FH_get_active_space_integrals(h_,
             U_[np.ix_(active_indices, active_indices, active_indices, active_indices)])
 
 
-def QC_get_active_space_integrals(one_body_integrals,
-                                  two_body_integrals,
-                                  occupied_indices=None,
-                                  active_indices=None):
+def QC_get_active_space_integrals(one_body_integrals, two_body_integrals, occupied_indices=None, active_indices=None):
     """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Restricts a Quantum chemistry Hamiltonian at a spatial orbital level 
@@ -826,11 +808,7 @@ def Block_householder_transformation(M, Block_size):
 #  MISCELENAOUS
 # =============================================================================
 
-def Build_MO_1_and_2_RDMs(Psi_A,
-                          active_indices,
-                          N_MO,
-                          E_precomputed,
-                          e_precomputed):
+def Build_MO_1_and_2_RDMs(Psi_A, active_indices, N_MO, E_precomputed, e_precomputed):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a 
