@@ -34,11 +34,11 @@ def Build_NBody_Basis(N_MO, N_elec, S_z_cleaning=False):
         NBody_Basis += [fockstate]
 
         # In case we want to get rid of states with S_z != 0
-    if (S_z_cleaning):
+    if S_z_cleaning:
         NBody_Basis_cleaned = NBody_Basis.copy()
         for i in range(np.shape(NBody_Basis)[0]):
             S_z = Check_Sz(NBody_Basis[i])
-            if (S_z != 0):
+            if S_z != 0:
                 NBody_Basis_cleaned.remove(NBody_Basis[i])
         NBody_Basis = NBody_Basis_cleaned
 
@@ -59,7 +59,7 @@ def Check_Sz(ref_state):
     """
     S_z_slater_determinant = 0
     for elem in range(len(ref_state)):
-        if (elem % 2 == 0):
+        if elem % 2 == 0:
             S_z_slater_determinant += + 1 * ref_state[elem] / 2
         else:
             S_z_slater_determinant += - 1 * ref_state[elem] / 2
@@ -99,36 +99,36 @@ def Build_operator_a_dagger_a(NBody_Basis):
 
                 # Single excitation : spin alpha -- alpha
                 p, q = 2 * MO_p, 2 * MO_q
-                if (p != q and (ref_state[q] == 0 or ref_state[p] == 1)):
+                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
-                elif (ref_state[q] == 1):
+                elif ref_state[q] == 1:
                     kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                     # Single excitation : spin beta -- beta
                 p, q = 2 * MO_p + 1, 2 * MO_q + 1
-                if (p != q and (ref_state[q] == 0 or ref_state[p] == 1)):
+                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
-                elif (ref_state[q] == 1):
+                elif ref_state[q] == 1:
                     kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
-                if (MO_p == MO_q):  # <=== Necessary to build the Spins operator but not really for Hamiltonians
+                if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
 
                     # Single excitation : spin beta -- alpha
                     p, q = 2 * MO_p + 1, 2 * MO_p
-                    if (p != q and (ref_state[q] == 0 or ref_state[p] == 1)):
+                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                         pass
-                    elif (ref_state[q] == 1):
+                    elif ref_state[q] == 1:
                         kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                         # Single excitation : spin alpha -- beta
                     p, q = 2 * MO_p, 2 * MO_p + 1
 
-                    if (p != q and (ref_state[q] == 0 or ref_state[p] == 1)):
+                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                         pass
-                    elif (ref_state[q] == 1):
+                    elif ref_state[q] == 1:
                         kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
@@ -205,13 +205,13 @@ def New_state_after_SQ_fermi_op(type_of_op, index_mode, ref_fockstate):
     """
     new_fockstate = ref_fockstate.copy()
     coeff_phase = 1
-    if (type_of_op == 'a'):
+    if type_of_op == 'a':
         new_fockstate[index_mode] += -1
-        if (index_mode > 0):
+        if index_mode > 0:
             coeff_phase = (-1.) ** np.sum(ref_fockstate[0:index_mode])
-    elif (type_of_op == 'a^'):
+    elif type_of_op == 'a^':
         new_fockstate[index_mode] += 1
-        if (index_mode > 0):
+        if index_mode > 0:
             coeff_phase = (-1.) ** np.sum(ref_fockstate[0:index_mode])
 
     return new_fockstate, coeff_phase
@@ -292,7 +292,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
             for r in range(N_MO):
                 for s in range(N_MO):
                     e_[p, q, r, s] = E_[p, q] @ E_[r, s]
-                    if (q == r):
+                    if q == r:
                         e_[p, q, r, s] += - E_[p, s]
 
                     # Building the N-electron electronic structure hamiltonian
@@ -311,7 +311,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
     # triplet    =>  S=1    and  S_2=2
     # quadruplet =>  S=3/2  and  S_2=15/4
     # quintet    =>  S=2    and  S_2=6
-    if (S_2 is not None and S_2_target is not None):
+    if S_2 is not None and S_2_target is not None:
         S_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
         H_Chemistry += S_2_minus_target @ S_2_minus_target * penalty
 
@@ -364,7 +364,7 @@ def Build_Hamiltonian_Fermi_Hubbard(h_,
     # triplet    =>  S=1    and  S_2=2
     # quadruplet =>  S=3/2  and  S_2=15/4
     # quintet    =>  S=2    and  S_2=6
-    if (S_2 is not None and S_2_target is not None):
+    if S_2 is not None and S_2_target is not None:
         S_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
         H_Fermi_Hubbard += S_2_minus_target @ S_2_minus_target * penalty
 
@@ -440,7 +440,7 @@ def QC_get_active_space_integrals(one_body_integrals,
         """
     # Fix data type for a few edge cases
     occupied_indices = [] if occupied_indices is None else occupied_indices
-    if (len(active_indices) < 1):
+    if len(active_indices) < 1:
         raise ValueError('Some active indices required for reduction.')
 
     # Determine core constant
@@ -619,7 +619,7 @@ def Build_two_RDM_spin_free(WFT, a_dagger_a):
                 for s in range(N_MO):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
                     two_RDM[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
-                    if (q == r):
+                    if q == r:
                         two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
 
     return two_RDM
@@ -655,7 +655,7 @@ def Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a):
                 for s in range(N_MO):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
                     two_RDM[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
-                    if (q == r):
+                    if q == r:
                         two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
 
     return one_rdm, two_RDM
@@ -694,7 +694,7 @@ def Visualize_WFT(WFT, NBody_Basis, cutoff=0.005):
     print('\t -------     -------------')
     for indx in list_sorted_indx[0:8]:
         sign_ = '+'
-        if (abs(Coeffs[indx]) != Coeffs[indx]):
+        if abs(Coeffs[indx]) != Coeffs[indx]:
             sign_ = '-'
         print('\t', sign_, '{:1.5f}'.format(abs(Coeffs[indx])),
               '\t|{}⟩'.format(' '.join([str(elem) for elem in States[indx]]).replace(" ", "")))
@@ -841,7 +841,7 @@ def Build_MO_1_and_2_RDMs(Psi_A,
     TWO_RDM_A = np.zeros((N_MO, N_MO, N_MO, N_MO))
     first_act_index = active_indices[0]
     # Creating RDMs elements only within the frozen space
-    if (first_act_index > 0):
+    if first_act_index > 0:
         for I in range(first_act_index):
             for J in range(first_act_index):
                 ONE_RDM_A[I, J] = 2. * delta(I, J)
@@ -869,7 +869,7 @@ def Build_MO_1_and_2_RDMs(Psi_A,
                     # State A
                     TWO_RDM_A[P, Q, R, S] = (np.conj(Psi_A.T) @ e_precomputed[P_, Q_, R_, S_] @ Psi_A).real
 
-            if (first_act_index > 0):
+            if first_act_index > 0:
                 # 2-RDM elements between the active and frozen spaces
                 for I in range(first_act_index):
                     for J in range(first_act_index):
