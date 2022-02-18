@@ -38,7 +38,8 @@ def Build_NBody_Basis(N_MO, N_elec, S_z_cleaning=False):
         NBody_Basis_cleaned = NBody_Basis.copy()
         for i in range(np.shape(NBody_Basis)[0]):
             S_z = Check_Sz(NBody_Basis[i])
-            if (S_z != 0):  NBody_Basis_cleaned.remove(NBody_Basis[i])
+            if (S_z != 0):
+                NBody_Basis_cleaned.remove(NBody_Basis[i])
         NBody_Basis = NBody_Basis_cleaned
 
     return NBody_Basis
@@ -232,7 +233,6 @@ def My_State(Slater_determinant, NBody_Basis):
 
     Parameters
     ----------
-    ref_fockstate : Slater determinant to be translated
     NBody_Basis   : List of many-body states (occupation number states)
 
     Returns
@@ -264,7 +264,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
     Parameters
     ----------
     h_          :  One-body integrals
-    U_          :  Two-body integrals
+    g_          :  TODO: What is parameter name, maybe Two-body integrals
     NBody_Basis :  List of many-body states (occupation number states)
     a_dagger_a  :  Matrix representation of the a_dagger_a operator
     S_2         :  Matrix representation of the S_2 operator (default is None)
@@ -292,7 +292,8 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
             for r in range(N_MO):
                 for s in range(N_MO):
                     e_[p, q, r, s] = E_[p, q] @ E_[r, s]
-                    if (q == r): e_[p, q, r, s] += - E_[p, s]
+                    if (q == r):
+                        e_[p, q, r, s] += - E_[p, s]
 
                     # Building the N-electron electronic structure hamiltonian
     H_Chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -310,7 +311,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
     # triplet    =>  S=1    and  S_2=2
     # quadruplet =>  S=3/2  and  S_2=15/4
     # quintet    =>  S=2    and  S_2=6
-    if (S_2 != None and S_2_target != None):
+    if (S_2 is not None and S_2_target is not None):
         S_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
         H_Chemistry += S_2_minus_target @ S_2_minus_target * penalty
 
@@ -363,7 +364,7 @@ def Build_Hamiltonian_Fermi_Hubbard(h_,
     # triplet    =>  S=1    and  S_2=2
     # quadruplet =>  S=3/2  and  S_2=15/4
     # quintet    =>  S=2    and  S_2=6
-    if (S_2 != None and S_2_target != None):
+    if (S_2 is not None and S_2_target is not None):
         S_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
         H_Fermi_Hubbard += S_2_minus_target @ S_2_minus_target * penalty
 
@@ -618,7 +619,8 @@ def Build_two_RDM_spin_free(WFT, a_dagger_a):
                 for s in range(N_MO):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
                     two_RDM[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
-                    if (q == r): two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+                    if (q == r):
+                        two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
 
     return two_RDM
 
@@ -653,7 +655,8 @@ def Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a):
                 for s in range(N_MO):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
                     two_RDM[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
-                    if (q == r): two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+                    if (q == r):
+                        two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
 
     return one_rdm, two_RDM
 
@@ -691,7 +694,8 @@ def Visualize_WFT(WFT, NBody_Basis, cutoff=0.005):
     print('\t -------     -------------')
     for indx in list_sorted_indx[0:8]:
         sign_ = '+'
-        if (abs(Coeffs[indx]) != Coeffs[indx]): sign_ = '-'
+        if (abs(Coeffs[indx]) != Coeffs[indx]):
+            sign_ = '-'
         print('\t', sign_, '{:1.5f}'.format(abs(Coeffs[indx])),
               '\t|{}⟩'.format(' '.join([str(elem) for elem in States[indx]]).replace(" ", "")))
 
