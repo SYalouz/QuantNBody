@@ -11,20 +11,20 @@ from tqdm import tqdm
 # =============================================================================
 
 def Build_NBody_Basis(N_MO, N_elec, S_z_cleaning=False):
-    '''
-    Create a many-body basis formed by a list of slater-determinants 
+    """
+    Create a many-body basis formed by a list of slater-determinants
     (i.e. their occupation number)
-    
+
     Parameters
     ----------
     N_MO         :  Number of molecular orbitals
     N_elec       :  Number of electrons
     S_z_cleaning :  Option if we want to get read of the S_z != 0 states (default is False)
-    
+
     Returns
     -------
     NBody_Basis :  List of many-body states (occupation number states) in the basis (occupation number vectors)
-    '''
+    """
     # Building the N-electron many-body basis
     NBody_Basis = []
     for combination in combinations(range(2 * N_MO), N_elec):
@@ -45,17 +45,17 @@ def Build_NBody_Basis(N_MO, N_elec, S_z_cleaning=False):
 
 
 def Check_Sz(ref_state):
-    '''
+    """
     Return the value fo the S_z operator for a unique slater determinant
-    
+
     Parameters
     ----------
     ref_state :  Slater determinant (list of occupation numbers)
-        
+
     Returns
     -------
     S_z_slater_determinant : value of S_z for the given slater determinant
-    '''
+    """
     S_z_slater_determinant = 0
     for elem in range(len(ref_state)):
         if (elem % 2 == 0):
@@ -67,7 +67,7 @@ def Check_Sz(ref_state):
 
 
 def Build_operator_a_dagger_a(NBody_Basis):
-    '''
+    """
     Create a matrix representation of the a_dagger_a operator
     in the many-body basis
 
@@ -79,7 +79,7 @@ def Build_operator_a_dagger_a(NBody_Basis):
     -------
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
-    '''
+    """
     # Dimensions of problem
     dim_H = len(NBody_Basis)
     N_MO = len(NBody_Basis[0]) // 2
@@ -141,8 +141,8 @@ def Build_operator_a_dagger_a(NBody_Basis):
 
 @njit
 def Build_mapping(NBody_Basis):
-    '''
-    Function to create a unique mapping between a kappa vector and an occupation 
+    """
+    Function to create a unique mapping between a kappa vector and an occupation
     number state.
 
     Parameters
@@ -151,8 +151,8 @@ def Build_mapping(NBody_Basis):
 
     Returns
     -------
-    Mapping_kappa : List of unique values associated to each kappa  
-    '''
+    Mapping_kappa : List of unique values associated to each kappa
+    """
     Mapping_kappa = np.zeros(10 ** 9, dtype=np.int32)
     Num_digits = np.shape(NBody_Basis)[1]
     dim_H = np.shape(NBody_Basis)[0]
@@ -168,17 +168,17 @@ def Build_mapping(NBody_Basis):
 
 @njit
 def Make_integer_out_of_bit_vector(ref_state):
-    '''
-    Function to translate a slater determinant into an unique integer 
-    
+    """
+    Function to translate a slater determinant into an unique integer
+
     Parameters
     ----------
-    ref_state : Reference slater determinant to turn out into an integer 
+    ref_state : Reference slater determinant to turn out into an integer
 
     Returns
     -------
     number : unique integer  refering to the slater determinant
-    '''
+    """
     number = 0
     for digit in range(len(ref_state)):
         number += ref_state[digit] * 2 ** (len(ref_state) - digit - 1)
@@ -188,8 +188,8 @@ def Make_integer_out_of_bit_vector(ref_state):
 
 @njit
 def New_state_after_SQ_fermi_op(type_of_op, index_mode, ref_fockstate):
-    '''
-    
+    """
+
     Parameters
     ----------
     type_of_op    :  type of operator to apply (creation of anihilation)
@@ -198,10 +198,10 @@ def New_state_after_SQ_fermi_op(type_of_op, index_mode, ref_fockstate):
 
     Returns
     -------
-    new_fockstate :  Resulting occupation number form of the transformed state 
+    new_fockstate :  Resulting occupation number form of the transformed state
     coeff_phase   :  Phase attached to the resulting state
 
-    '''
+    """
     new_fockstate = ref_fockstate.copy()
     coeff_phase = 1
     if (type_of_op == 'a'):
@@ -226,19 +226,19 @@ def Build_final_state_ad_a(ref_state, p, q, Mapping_kappa_):
 
 
 def My_State(Slater_determinant, NBody_Basis):
-    '''
+    """
     Translate a Slater determinant (occupation numbe list) into a many-body
     state referenced into a given Many-body basis.
-    
+
     Parameters
     ----------
-    ref_fockstate : Slater determinant to be translated  
-    NBody_Basis   : List of many-body states (occupation number states) 
-    
+    ref_fockstate : Slater determinant to be translated
+    NBody_Basis   : List of many-body states (occupation number states)
+
     Returns
     -------
     State :  The slater determinant referenced in the many-body basis
-    '''
+    """
     kappa = NBody_Basis.index(Slater_determinant)
     State = np.zeros(np.shape(NBody_Basis)[0])
     State[kappa] = 1.
@@ -257,8 +257,8 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
                                         S_2=None,
                                         S_2_target=None,
                                         penalty=100):
-    '''
-    Create a matrix representation of the electornic strucutre Hamiltonian in any 
+    """
+    Create a matrix representation of the electornic strucutre Hamiltonian in any
     extended many-body basis
 
     Parameters
@@ -266,7 +266,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
     h_          :  One-body integrals
     U_          :  Two-body integrals
     NBody_Basis :  List of many-body states (occupation number states)
-    a_dagger_a  :  Matrix representation of the a_dagger_a operator 
+    a_dagger_a  :  Matrix representation of the a_dagger_a operator
     S_2         :  Matrix representation of the S_2 operator (default is None)
     S_2_target  :  Value of the S_2 mean value we want to target (default is None)
     penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
@@ -275,7 +275,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_,
     -------
     H_Chemistry :  Matrix representation of the electornic structure Hamiltonian
 
-    '''
+    """
     # Dimension of the problem 
     dim_H = len(NBody_Basis)
     N_MO = np.shape(h_)[0]
@@ -324,16 +324,16 @@ def Build_Hamiltonian_Fermi_Hubbard(h_,
                                     S_2=None,
                                     S_2_target=None,
                                     penalty=100):
-    '''
-    Create a matrix representation of the Fermi-Hubbard Hamiltonian in any 
+    """
+    Create a matrix representation of the Fermi-Hubbard Hamiltonian in any
     extended many-body basis.
-    
+
     Parameters
     ----------
     h_          :  One-body integrals
     U_          :  Two-body integrals
     NBody_Basis :  List of many-body states (occupation number states)
-    a_dagger_a  :  Matrix representation of the a_dagger_a operator 
+    a_dagger_a  :  Matrix representation of the a_dagger_a operator
     S_2         :  Matrix representation of the S_2 operator (default is None)
     S_2_target  :  Value of the S_2 mean value we want to target (default is None)
     penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
@@ -342,7 +342,7 @@ def Build_Hamiltonian_Fermi_Hubbard(h_,
     -------
     H_Fermi_Hubbard :  Matrix representation of the Fermi-Hubbard Hamiltonian
 
-    '''
+    """
     # # Dimension of the problem 
     dim_H = len(NBody_Basis)
     N_MO = np.shape(h_)[0]
@@ -468,10 +468,10 @@ def QC_get_active_space_integrals(one_body_integrals,
 # =============================================================================
 
 def Build_S2_SZ_Splus_operator(a_dagger_a):
-    '''
-    Create a matrix representation of the spin operators S_2, S_z and S_plus 
-    in the many-body basis. 
-        
+    """
+    Create a matrix representation of the spin operators S_2, S_z and S_plus
+    in the many-body basis.
+
     Parameters
     ----------
     a_dagger_a : matrix representation of the a_dagger_a operator in the many-body basis.
@@ -479,8 +479,8 @@ def Build_S2_SZ_Splus_operator(a_dagger_a):
     Returns
     -------
     S_2, S_plus, S_z :  matrix representation of the S_2, S_plus and S_z operators
-                        in the many-body basis. 
-    '''
+                        in the many-body basis.
+    """
     N_MO = np.shape(a_dagger_a)[0] // 2
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     S_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -499,7 +499,7 @@ def Build_S2_SZ_Splus_operator(a_dagger_a):
 # =============================================================================
 
 def Build_One_RDM_alpha(WFT, a_dagger_a):
-    '''
+    """
     Create a spin-alpha 1 RDM out of a given wavefunction
 
     Parameters
@@ -511,7 +511,7 @@ def Build_One_RDM_alpha(WFT, a_dagger_a):
     -------
     One_RDM_alpha : spin-alpha 1-RDM
 
-    '''
+    """
     N_MO = np.shape(a_dagger_a)[0] // 2
     one_rdm_alpha = np.zeros((N_MO, N_MO))
     for p in range(N_MO):
@@ -521,7 +521,7 @@ def Build_One_RDM_alpha(WFT, a_dagger_a):
 
 
 def Build_One_RDM_beta(WFT, a_dagger_a):
-    '''
+    """
     Create a spin-beta 1 RDM out of a given wavefunction
 
     Parameters
@@ -533,7 +533,7 @@ def Build_One_RDM_beta(WFT, a_dagger_a):
     -------
     One_RDM_alpha : Spin-beta 1-RDM
 
-    '''
+    """
     N_MO = np.shape(a_dagger_a)[0] // 2
     one_rdm_beta = np.zeros((N_MO, N_MO))
     for p in range(N_MO):
@@ -543,19 +543,19 @@ def Build_One_RDM_beta(WFT, a_dagger_a):
 
 
 def Build_One_RDM_spin_free(WFT, a_dagger_a):
-    '''
+    """
     Create a spin-free 1 RDM out of a given wavefunction
-    
+
     Parameters
     ----------
     WFT        :  Wavefunction for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
-    
+
     Returns
     -------
     One_RDM_alpha : Spin-free 1-RDM
-    
-    '''
+
+    """
     N_MO = np.shape(a_dagger_a)[0] // 2
     one_rdm = np.zeros((N_MO, N_MO))
     for p in range(N_MO):
@@ -566,19 +566,19 @@ def Build_One_RDM_spin_free(WFT, a_dagger_a):
 
 
 def Build_two_RDM_FH(WFT, a_dagger_a):
-    '''
+    """
     Create a spin-free 1 RDM out of a given wavefunction
-    
+
     Parameters
     ----------
     WFT        :  Wavefunction for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
-    
+
     Returns
     -------
     One_RDM_alpha : Spin-free 1-RDM
-    
-    '''
+
+    """
     N_MO = np.shape(a_dagger_a)[0] // 2
     two_RDM_FH = np.zeros((N_MO, N_MO, N_MO, N_MO))
     for p in range(N_MO):
@@ -591,19 +591,19 @@ def Build_two_RDM_FH(WFT, a_dagger_a):
 
 
 def Build_two_RDM_spin_free(WFT, a_dagger_a):
-    '''
+    """
     Create a spin-free 2 RDM out of a given wavefunction
-    
+
     Parameters
     ----------
     WFT        :  Wavefunction for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
-    
+
     Returns
     -------
     One_RDM_alpha : Spin-free 1-RDM
-    
-    '''
+
+    """
     N_MO = np.shape(a_dagger_a)[0] // 2
     two_RDM = np.zeros((N_MO, N_MO, N_MO, N_MO))
     E_ = np.empty((2 * N_MO, 2 * N_MO), dtype=object)
@@ -624,19 +624,19 @@ def Build_two_RDM_spin_free(WFT, a_dagger_a):
 
 
 def Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a):
-    '''
+    """
     Create a spin-free 2 RDM out of a given wavefunction
-    
+
     Parameters
     ----------
     WFT        :  Wavefunction for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
-    
+
     Returns
     -------
     One_RDM_alpha : Spin-free 1-RDM
-    
-    '''
+
+    """
     N_MO = np.shape(a_dagger_a)[0] // 2
     one_rdm = np.zeros((N_MO, N_MO))
     two_RDM = np.zeros((N_MO, N_MO, N_MO, N_MO))
@@ -663,18 +663,18 @@ def Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a):
 # =============================================================================
 
 def Visualize_WFT(WFT, NBody_Basis, cutoff=0.005):
-    '''
-    Print the decomposition of a given input wavefunction in a many-body basis. 
+    """
+    Print the decomposition of a given input wavefunction in a many-body basis.
     ----------
     WFT            : Reference wavefunction
-    NBody_Basis    : List of many-body states (occupation number states) 
+    NBody_Basis    : List of many-body states (occupation number states)
     cutoff         : Cuoff for the amplitudes retained (default is 0.005)
 
     Returns
     -------
     Printing in the terminal the wavefunction
 
-    '''
+    """
     list_indx = np.where(abs(WFT) > cutoff)[0]
 
     States = []
@@ -704,26 +704,26 @@ def Visualize_WFT(WFT, NBody_Basis, cutoff=0.005):
 
 
 def Transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
-    '''
+    """
     Transform electronic integrals from an initial basis "B1" to a new basis "B2".
     The transformation is realized thanks to a passage matrix noted "C" linking
     both basis like
-    
+
             | B2_l > = \sum_{p} | B1_p >  C_{pl}
-    
+
     with | B2_l > and | B1_p > are vectors of the basis B1 and B2 respectively
-    
+
     Parameters
     ----------
     h_B1 : 1-electron integral given in basis B1
     g_B1 : 2-electron integral given in basis B1
-    C    : Passage matrix  
+    C    : Passage matrix
 
     Returns
     -------
     h_B2 : 1-electron integral given in basis B2
     g_B2 : 2-electron integral given in basis B2
-    '''
+    """
     h_B2 = np.einsum('pi,qj,pq->ij', C, C, h_B1)
     g_B2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_B1)
 
@@ -731,19 +731,19 @@ def Transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
 
 
 def Householder_transformation(M):
-    '''
-    Householder transformation transforming a squarred matrix " M " into a 
+    """
+    Householder transformation transforming a squarred matrix " M " into a
     block-diagonal matrix " M_BD " such that
-    
+
                            M_BD = P M P
-                        
-    where " P " represents the Householrder transfomration built from the 
+
+    where " P " represents the Householrder transfomration built from the
     vector "v" such that
-    
+
                          P = Id - 2 * v.v^T
-    
+
     NB : This returns a 2x2 block on left top corner
-    
+
     Parameters
     ----------
     M :  Squarred matrix to be transformed
@@ -753,7 +753,7 @@ def Householder_transformation(M):
     P :  Transformation matrix
     v :  Householder vector
 
-    '''
+    """
     N = np.shape(M)[0]
     # Build the Housholder vector "H_vector" 
     alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, N)) ** 0.5
@@ -877,14 +877,14 @@ def Build_MO_1_and_2_RDMs(Psi_A,
 
 
 def Generate_H_chain_geometry(N_atoms, dist_HH):
-    '''
+    """
     A function to build a Hydrogen chain geometry (on the x-axis)
-    
+
                    H - H - H - H
-                   
+
     N_atoms :: Total number of Hydrogen atoms
     dist_HH :: the interatomic distance
-    '''
+    """
     H_chain_geometry = 'H 0. 0. 0.'  # Define the position of the first atom
     for n in range(1, N_atoms):
         H_chain_geometry += '\nH {} 0. 0.'.format(n * dist_HH)
@@ -893,16 +893,16 @@ def Generate_H_chain_geometry(N_atoms, dist_HH):
 
 
 def Generate_H_ring_geometry(N_atoms, radius):
-    '''
+    """
     A function to build a Hydrogen ring geometry (in the x-y plane)
-                         H - H 
+                         H - H
                         /     \
                        H       H
                         \     /
                          H - H
     N_atoms  :: Total number of Hydrogen atoms
-    radius   :: Radius of the ring 
-    '''
+    radius   :: Radius of the ring
+    """
     theta_HH = 2 * m.pi / N_atoms  # Angle separating two consecutive H atoms (homogene distribution)
     theta_ini = 0.0
     H_ring_geometry = '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(theta_ini), radius * m.sin(
