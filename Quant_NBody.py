@@ -67,7 +67,7 @@ def Check_Sz(ref_state):
     return S_z_slater_determinant
 
 
-def Build_operator_a_dagger_a(NBody_Basis):
+def build_operator_a_dagger_a(NBody_Basis):
     """
     Create a matrix representation of the a_dagger_a operator
     in the many-body basis
