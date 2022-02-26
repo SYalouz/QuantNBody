@@ -807,7 +807,7 @@ def block_householder_transformation(M, block_size):
 
 
 # =============================================================================
-#  MISCELENAOUS
+#  MISCELLANEOUS
 # =============================================================================
 
 def build_mo_1rdm_and_2rdm(Psi_A, active_indices, n_mo, E_precomputed, e_precomputed):
@@ -822,40 +822,40 @@ def build_mo_1rdm_and_2rdm(Psi_A, active_indices, n_mo, E_precomputed, e_precomp
     first_act_index = active_indices[0]
     # Creating RDMs elements only within the frozen space
     if first_act_index > 0:
-        for I in range(first_act_index):
-            for J in range(first_act_index):
-                one_rdm_a[I, J] = 2. * delta(I, J)
-                for K in range(first_act_index):
-                    for L in range(first_act_index):
+        for i in range(first_act_index):
+            for j in range(first_act_index):
+                one_rdm_a[i, j] = 2. * delta(i, j)
+                for k in range(first_act_index):
+                    for m in range(first_act_index):
                         # State A
-                        two_rdm_a[I, J, K, L] = 4. * delta(I, J) * delta(K, L) - 2. * delta(I, L) * delta(J, K)
+                        two_rdm_a[i, j, k, m] = 4. * delta(i, j) * delta(k, m) - 2. * delta(i, m) * delta(j, k)
 
                         # Creating RDMs elements in the the active/frozen spaces
-    for P in active_indices:
-        for Q in active_indices:
+    for p in active_indices:
+        for q in active_indices:
             # Shifting the indices
-            P_ = P - first_act_index
-            Q_ = Q - first_act_index
+            p_ = p - first_act_index
+            q_ = q - first_act_index
             # 1-RDM elements only within the active space
             # State A
-            one_rdm_a[P, Q] = (np.conj(Psi_A.T) @ E_precomputed[P_, Q_] @ Psi_A).real
+            one_rdm_a[p, q] = (np.conj(Psi_A.T) @ E_precomputed[p_, q_] @ Psi_A).real
 
             # 2-RDM elements only within the active space
-            for R in active_indices:
-                for S in active_indices:
+            for r in active_indices:
+                for s in active_indices:
                     # Shifting the indices
-                    R_ = R - first_act_index
-                    S_ = S - first_act_index
+                    r_ = r - first_act_index
+                    s_ = s - first_act_index
                     # State A
-                    two_rdm_a[P, Q, R, S] = (np.conj(Psi_A.T) @ e_precomputed[P_, Q_, R_, S_] @ Psi_A).real
+                    two_rdm_a[p, q, r, s] = (np.conj(Psi_A.T) @ e_precomputed[p_, q_, r_, s_] @ Psi_A).real
 
             if first_act_index > 0:
                 # 2-RDM elements between the active and frozen spaces
-                for I in range(first_act_index):
-                    for J in range(first_act_index):
+                for i in range(first_act_index):
+                    for j in range(first_act_index):
                         # State A
-                        two_rdm_a[I, J, P, Q] = two_rdm_a[P, Q, I, J] = 2. * delta(I, J) * one_rdm_a[P, Q]
-                        two_rdm_a[P, I, J, Q] = two_rdm_a[J, Q, P, I] = - delta(I, J) * one_rdm_a[P, Q]
+                        two_rdm_a[i, j, p, q] = two_rdm_a[p, q, i, j] = 2. * delta(i, j) * one_rdm_a[p, q]
+                        two_rdm_a[p, i, j, q] = two_rdm_a[j, q, p, i] = - delta(i, j) * one_rdm_a[p, q]
 
     return one_rdm_a, two_rdm_a
 

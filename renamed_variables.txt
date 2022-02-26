@@ -71,4 +71,13 @@ g_B2                    g_b2
 
 N_MO                    n_mo
 
+# build_mo_1rdm_and_2rdm
+I                       i
+J                       j
+K                       k
+L                       m (l is hard to differ from 1, i)
+P                       p
+Q                       q
+
+
 
