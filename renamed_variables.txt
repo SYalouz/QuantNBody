@@ -49,3 +49,24 @@ Coeffs                  coeffs
 Mapping_kappa           mapping_kappa
 
 Num_digits              num_digits
+State                   state
+H_Chemistry             H_chemistry
+S_2_minus_target        s_2_minus_target
+
+angle_H                 angle_h
+theta_HH                theta_HH
+H_ring_geometry         h_ring_geometry
+H_chain_geometry        h_chain_geometry
+
+two_RDM                 two_rdm
+Core_energy             core_energy
+
+
+# Block Householder
+N                       n
+h_B1                    h_b1
+h_B2                    h_b2
+g_B1                    g_b1
+g_B2                    g_b2
+
+

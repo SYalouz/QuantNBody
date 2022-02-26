@@ -238,13 +238,13 @@ def my_state(slater_determinant, nbody_basis):
 
     Returns
     -------
-    State :  The slater determinant referenced in the many-body basis
+    state :  The slater determinant referenced in the many-body basis
     """
     kappa = nbody_basis.index(slater_determinant)
-    State = np.zeros(np.shape(nbody_basis)[0])
-    State[kappa] = 1.
+    state = np.zeros(np.shape(nbody_basis)[0])
+    state[kappa] = 1.
 
-    return State
+    return state
 
 
 # =============================================================================
@@ -268,7 +268,7 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
 
     Returns
     -------
-    H_Chemistry :  Matrix representation of the electronic structure Hamiltonian
+    H_chemistry :  Matrix representation of the electronic structure Hamiltonian
 
     """
     # Dimension of the problem 
@@ -291,13 +291,13 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
                         e_[p, q, r, s] += - E_[p, s]
 
                     # Building the N-electron electronic structure hamiltonian
-    H_Chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
+    H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(N_MO):
         for q in range(N_MO):
-            H_Chemistry += E_[p, q] * h_[p, q]
+            H_chemistry += E_[p, q] * h_[p, q]
             for r in range(N_MO):
                 for s in range(N_MO):
-                    H_Chemistry += e_[p, q, r, s] * g_[p, q, r, s] / 2.
+                    H_chemistry += e_[p, q, r, s] * g_[p, q, r, s] / 2.
 
                     # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
     # with S = the number of unpaired electrons x 1/2
@@ -307,10 +307,10 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     # quadruplet =>  S=3/2  and  S_2=15/4
     # quintet    =>  S=2    and  S_2=6
     if S_2 is not None and S_2_target is not None:
-        S_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
-        H_Chemistry += S_2_minus_target @ S_2_minus_target * penalty
+        s_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
+        H_chemistry += s_2_minus_target @ s_2_minus_target * penalty
 
-    return H_Chemistry
+    return H_chemistry
 
 
 def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
@@ -382,11 +382,11 @@ def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=No
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
     # Determine core Energy from frozen MOs
-    Core_energy = 0
+    core_energy = 0
     for i in frozen_indices:
-        Core_energy += 2 * h_[i, i]
+        core_energy += 2 * h_[i, i]
         for j in frozen_indices:
-            Core_energy += U_[i, i, j, j]
+            core_energy += U_[i, i, j, j]
 
             # Modified one-electron integrals
     h_act = h_.copy()
@@ -395,7 +395,7 @@ def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=No
             for i in frozen_indices:
                 h_act[t, u] += U_[i, i, t, u]
 
-    return (Core_energy,
+    return (core_energy,
             h_act[np.ix_(active_indices, active_indices)],
             U_[np.ix_(active_indices, active_indices, active_indices, active_indices)])
 
@@ -624,7 +624,7 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     """
     N_MO = np.shape(a_dagger_a)[0] // 2
     one_rdm = np.zeros((N_MO, N_MO))
-    two_RDM = np.zeros((N_MO, N_MO, N_MO, N_MO))
+    two_rdm = np.zeros((N_MO, N_MO, N_MO, N_MO))
     E_ = np.empty((2 * N_MO, 2 * N_MO), dtype=object)
     for p in range(N_MO):
         for q in range(N_MO):
@@ -637,11 +637,11 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
             for r in range(N_MO):
                 for s in range(N_MO):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
-                    two_RDM[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
+                    two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
                     if q == r:
-                        two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+                        two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
 
-    return one_rdm, two_RDM
+    return one_rdm, two_rdm
 
 
 # =============================================================================
@@ -690,7 +690,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005):
 # =============================================================================
 
 
-def transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
+def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
     """
     Transform electronic integrals from an initial basis "B1" to a new basis "B2".
     The transformation is realized thanks to a passage matrix noted "C" linking
@@ -702,19 +702,19 @@ def transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
 
     Parameters
     ----------
-    h_B1 : 1-electron integral given in basis B1
-    g_B1 : 2-electron integral given in basis B1
+    h_b1 : 1-electron integral given in basis B1
+    g_b1 : 2-electron integral given in basis B1
     C    : Passage matrix
 
     Returns
     -------
-    h_B2 : 1-electron integral given in basis B2
-    g_B2 : 2-electron integral given in basis B2
+    h_b2 : 1-electron integral given in basis B2
+    g_b2 : 2-electron integral given in basis B2
     """
-    h_B2 = np.einsum('pi,qj,pq->ij', C, C, h_B1)
-    g_B2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_B1)
+    h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1)
+    g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1)
 
-    return h_B2, g_B2
+    return h_b2, g_b2
 
 
 def householder_transformation(M):
@@ -741,19 +741,19 @@ def householder_transformation(M):
     v :  Householder vector
 
     """
-    N = np.shape(M)[0]
+    n = np.shape(M)[0]
     # Build the Householder vector "H_vector" 
-    alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, N)) ** 0.5
+    alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, n)) ** 0.5
     r = (0.5 * (alpha ** 2. - alpha * M[1, 0])) ** 0.5
 
     # print("HH param transformation",M,r,alpha)
-    vector = np.zeros((N, 1))
+    vector = np.zeros((n, 1))
     vector[1] = (M[1, 0] - alpha) / (2.0 * r)
-    for j in range(2, N):
+    for j in range(2, n):
         vector[j] = M[j, 0] / (2.0 * r)
 
     # Building the transformation matrix "P" 
-    P = np.eye(N) - 2 * vector @ vector.T
+    P = np.eye(n) - 2 * vector @ vector.T
 
     return P, vector
 
@@ -777,14 +777,14 @@ def block_householder_transformation(M, block_size):
     v :  Householder vector
     """
     block_size = block_size // 2
-    N = np.shape(M)[0]
+    n = np.shape(M)[0]
 
     """ WILL BE WITH THE INVERSE SIGN OF X """
     A1 = M[:block_size, block_size:2 * block_size]
     A1_inv = np.linalg.inv(A1)
     A2 = M[:block_size, 2 * block_size:]
-    A2A1_inv_tr = np.zeros((block_size, N - 2 * block_size))
-    for i in range(N - 2 * block_size):
+    A2A1_inv_tr = np.zeros((block_size, n - 2 * block_size))
+    for i in range(n - 2 * block_size):
         for j in range(block_size):
             for k in range(block_size):
                 A2A1_inv_tr[j, i] = A2A1_inv_tr[j, i] + A2[k, i] * A1_inv[j, k]
@@ -801,7 +801,7 @@ def block_householder_transformation(M, block_size):
 
     V_trV = V_tr @ V_tr.T
     V_trV_inv = np.linalg.inv(V_trV)
-    BH = np.eye(N) - 2. * V_tr.T @ V_trV_inv @ V_tr
+    BH = np.eye(n) - 2. * V_tr.T @ V_trV_inv @ V_tr
 
     return BH
 
@@ -869,11 +869,11 @@ def generate_h_chain_geometry(N_atoms, dist_HH):
     N_atoms :: Total number of Hydrogen atoms
     dist_HH :: the interatomic distance
     """
-    H_chain_geometry = 'H 0. 0. 0.'  # Define the position of the first atom
+    h_chain_geometry = 'H 0. 0. 0.'  # Define the position of the first atom
     for n in range(1, N_atoms):
-        H_chain_geometry += '\nH {} 0. 0.'.format(n * dist_HH)
+        h_chain_geometry += '\nH {} 0. 0.'.format(n * dist_HH)
 
-    return H_chain_geometry
+    return h_chain_geometry
 
 
 def generate_h_ring_geometry(N_atoms, radius):
@@ -887,15 +887,15 @@ def generate_h_ring_geometry(N_atoms, radius):
     N_atoms  :: Total number of Hydrogen atoms
     radius   :: Radius of the ring
     """
-    theta_HH = 2 * m.pi / N_atoms  # Angle separating two consecutive H atoms (homogeneous distribution)
+    theta_hh = 2 * m.pi / N_atoms  # Angle separating two consecutive H atoms (homogeneous distribution)
     theta_ini = 0.0
-    H_ring_geometry = '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(theta_ini), radius * m.sin(
+    h_ring_geometry = '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(theta_ini), radius * m.sin(
         theta_ini))  # 'H {:.16f} 0. 0.'.format( radius )  # Define the position of the first atom
     for n in range(1, N_atoms):
-        angle_H = theta_ini + theta_HH * n
-        H_ring_geometry += '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(angle_H), radius * m.sin(angle_H))
+        angle_h = theta_ini + theta_hh * n
+        h_ring_geometry += '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(angle_h), radius * m.sin(angle_h))
 
-    return H_ring_geometry
+    return h_ring_geometry
 
 
 def delta(index_1, index_2):
