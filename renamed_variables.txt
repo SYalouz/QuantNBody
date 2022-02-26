@@ -75,7 +75,7 @@ N_MO                    n_mo
 I                       i
 J                       j
 K                       k
-L                       m (l is hard to differ from 1, i)
+L                       l
 P                       p
 Q                       q
 

@@ -826,9 +826,9 @@ def build_mo_1rdm_and_2rdm(Psi_A, active_indices, n_mo, E_precomputed, e_precomp
             for j in range(first_act_index):
                 one_rdm_a[i, j] = 2. * delta(i, j)
                 for k in range(first_act_index):
-                    for m in range(first_act_index):
+                    for l in range(first_act_index):
                         # State A
-                        two_rdm_a[i, j, k, m] = 4. * delta(i, j) * delta(k, m) - 2. * delta(i, m) * delta(j, k)
+                        two_rdm_a[i, j, k, l] = 4. * delta(i, j) * delta(k, l) - 2. * delta(i, l) * delta(j, k)
 
                         # Creating RDMs elements in the the active/frozen spaces
     for p in active_indices:
