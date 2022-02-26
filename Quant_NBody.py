@@ -573,7 +573,7 @@ def build_2rdm_fh(WFT, a_dagger_a):
     return two_RDM_FH
 
 
-def Build_two_RDM_spin_free(WFT, a_dagger_a):
+def build_2rdm_spin_free(WFT, a_dagger_a):
     """
     Create a spin-free 2 RDM out of a given wavefunction
 

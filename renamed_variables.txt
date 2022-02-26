@@ -15,6 +15,7 @@ Build_One_RDM_alpha                     build_1rdm_alpha
 Build_One_RDM_beta                      build_1rdm_beta
 Build_One_RDM_spin_free                 build_1rdm_spin_free
 Build_two_RDM_FH                        build_2rdm_fh
+Build_two_RDM_spin_free                 build_2rdm_spin_free
 Build_One_and_Two_RDM_spin_free         build_1rdm_and_2rdm_spin_free
 Visualize_WFT                           visualize_wft
 Transform_1_2_body_tensors_in_new_basis transform_1_2_body_tensors_in_new_basis
