@@ -10,7 +10,7 @@ from tqdm import tqdm
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
 
-def Build_NBody_Basis(N_MO, N_elec, S_z_cleaning=False):
+def build_nbody_basis(N_MO, N_elec, S_z_cleaning=False):
     """
     Create a many-body basis formed by a list of slater-determinants
     (i.e. their occupation number)
@@ -37,7 +37,7 @@ def Build_NBody_Basis(N_MO, N_elec, S_z_cleaning=False):
     if S_z_cleaning:
         NBody_Basis_cleaned = NBody_Basis.copy()
         for i in range(np.shape(NBody_Basis)[0]):
-            S_z = Check_Sz(NBody_Basis[i])
+            S_z = check_sz(NBody_Basis[i])
             if S_z != 0:
                 NBody_Basis_cleaned.remove(NBody_Basis[i])
         NBody_Basis = NBody_Basis_cleaned
@@ -45,7 +45,7 @@ def Build_NBody_Basis(N_MO, N_elec, S_z_cleaning=False):
     return NBody_Basis
 
 
-def Check_Sz(ref_state):
+def check_sz(ref_state):
     """
     Return the value fo the S_z operator for a unique slater determinant
 
@@ -84,7 +84,7 @@ def build_operator_a_dagger_a(NBody_Basis):
     # Dimensions of problem
     dim_H = len(NBody_Basis)
     N_MO = len(NBody_Basis[0]) // 2
-    Mapping_kappa_ = Build_mapping(np.array(NBody_Basis))
+    Mapping_kappa_ = build_mapping(np.array(NBody_Basis))
 
     a_dagger_a = np.zeros((2 * N_MO, 2 * N_MO), dtype=object)
     for p in range(2 * N_MO):
@@ -102,7 +102,7 @@ def build_operator_a_dagger_a(NBody_Basis):
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
                 elif ref_state[q] == 1:
-                    kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                     # Single excitation : spin beta -- beta
@@ -110,7 +110,7 @@ def build_operator_a_dagger_a(NBody_Basis):
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
                 elif ref_state[q] == 1:
-                    kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                 if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
@@ -120,7 +120,7 @@ def build_operator_a_dagger_a(NBody_Basis):
                     if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                         pass
                     elif ref_state[q] == 1:
-                        kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                         # Single excitation : spin alpha -- beta
@@ -129,7 +129,7 @@ def build_operator_a_dagger_a(NBody_Basis):
                     if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                         pass
                     elif ref_state[q] == 1:
-                        kappa_, p1, p2 = Build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
     print()
@@ -141,7 +141,7 @@ def build_operator_a_dagger_a(NBody_Basis):
 
 
 @njit
-def Build_mapping(NBody_Basis):
+def build_mapping(NBody_Basis):
     """
     Function to create a unique mapping between a kappa vector and an occupation
     number state.
@@ -168,7 +168,7 @@ def Build_mapping(NBody_Basis):
 
 
 @njit
-def Make_integer_out_of_bit_vector(ref_state):
+def make_integer_out_of_bit_vector(ref_state):
     """
     Function to translate a slater determinant into an unique integer
 
@@ -188,7 +188,7 @@ def Make_integer_out_of_bit_vector(ref_state):
 
 
 @njit
-def New_state_after_SQ_fermi_op(type_of_op, index_mode, ref_fockstate):
+def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fockstate):
     """
 
     Parameters
@@ -218,15 +218,15 @@ def New_state_after_SQ_fermi_op(type_of_op, index_mode, ref_fockstate):
 
 
 @njit
-def Build_final_state_ad_a(ref_state, p, q, Mapping_kappa_):
-    state_one, p1 = New_state_after_SQ_fermi_op('a', q, ref_state)
-    state_two, p2 = New_state_after_SQ_fermi_op('a^', p, state_one)
-    kappa_ = Mapping_kappa_[Make_integer_out_of_bit_vector(state_two)]
+def build_final_state_ad_a(ref_state, p, q, Mapping_kappa_):
+    state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
+    state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
+    kappa_ = Mapping_kappa_[make_integer_out_of_bit_vector(state_two)]
 
     return kappa_, p1, p2
 
 
-def My_State(Slater_determinant, NBody_Basis):
+def my_state(Slater_determinant, NBody_Basis):
     """
     Translate a Slater determinant (occupation numbe list) into a many-body
     state referenced into a given Many-body basis.
@@ -250,7 +250,7 @@ def My_State(Slater_determinant, NBody_Basis):
 #  MANY-BODY HAMILTONIANS (FERMI HUBBARD AND QUANTUM CHEMISTRY)
 # =============================================================================
 
-def Build_Hamiltonian_Quantum_Chemistry(h_, g_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
+def build_hamiltonian_quantum_chemistry(h_, g_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
     Create a matrix representation of the electornic strucutre Hamiltonian in any
     extended many-body basis
@@ -312,7 +312,7 @@ def Build_Hamiltonian_Quantum_Chemistry(h_, g_, NBody_Basis, a_dagger_a, S_2=Non
     return H_Chemistry
 
 
-def Build_Hamiltonian_Fermi_Hubbard(h_, U_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
+def build_hamiltonian_fermi_hubbard(h_, U_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
     Create a matrix representation of the Fermi-Hubbard Hamiltonian in any
     extended many-body basis.
@@ -359,7 +359,7 @@ def Build_Hamiltonian_Fermi_Hubbard(h_, U_, NBody_Basis, a_dagger_a, S_2=None, S
     return H_Fermi_Hubbard
 
 
-def FH_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
+def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
     """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Restricts a Fermi-Hubard at a spatial orbital level to an active space
@@ -399,7 +399,7 @@ def FH_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=No
             U_[np.ix_(active_indices, active_indices, active_indices, active_indices)])
 
 
-def QC_get_active_space_integrals(one_body_integrals, two_body_integrals, occupied_indices=None, active_indices=None):
+def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupied_indices=None, active_indices=None):
     """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Restricts a Quantum chemistry Hamiltonian at a spatial orbital level 
@@ -450,7 +450,7 @@ def QC_get_active_space_integrals(one_body_integrals, two_body_integrals, occupi
 #  DIFFERENT TYPES OF SPIN OPERATORS
 # =============================================================================
 
-def Build_S2_SZ_Splus_operator(a_dagger_a):
+def build_s2_sz_splus_operator(a_dagger_a):
     """
     Create a matrix representation of the spin operators S_2, S_z and S_plus
     in the many-body basis.
@@ -481,7 +481,7 @@ def Build_S2_SZ_Splus_operator(a_dagger_a):
 #  DIFFERENT TYPES OF REDUCED DENSITY-MATRICES
 # =============================================================================
 
-def Build_One_RDM_alpha(WFT, a_dagger_a):
+def build_1rdm_alpha(WFT, a_dagger_a):
     """
     Create a spin-alpha 1 RDM out of a given wavefunction
 
@@ -503,7 +503,7 @@ def Build_One_RDM_alpha(WFT, a_dagger_a):
     return one_rdm_alpha
 
 
-def Build_One_RDM_beta(WFT, a_dagger_a):
+def build_1rdm_beta(WFT, a_dagger_a):
     """
     Create a spin-beta 1 RDM out of a given wavefunction
 
@@ -525,7 +525,7 @@ def Build_One_RDM_beta(WFT, a_dagger_a):
     return one_rdm_beta
 
 
-def Build_One_RDM_spin_free(WFT, a_dagger_a):
+def build_1rdm_spin_free(WFT, a_dagger_a):
     """
     Create a spin-free 1 RDM out of a given wavefunction
 
@@ -548,7 +548,7 @@ def Build_One_RDM_spin_free(WFT, a_dagger_a):
     return one_rdm
 
 
-def Build_two_RDM_FH(WFT, a_dagger_a):
+def build_2rdm_fh(WFT, a_dagger_a):
     """
     Create a spin-free 1 RDM out of a given wavefunction
 
@@ -607,7 +607,7 @@ def Build_two_RDM_spin_free(WFT, a_dagger_a):
     return two_RDM
 
 
-def Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a):
+def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     """
     Create a spin-free 2 RDM out of a given wavefunction
 
@@ -647,7 +647,7 @@ def Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a):
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVEFUNCTIONS
 # =============================================================================
 
-def Visualize_WFT(WFT, NBody_Basis, cutoff=0.005):
+def visualize_wft(WFT, NBody_Basis, cutoff=0.005):
     """
     Print the decomposition of a given input wavefunction in a many-body basis.
     ----------
@@ -689,7 +689,7 @@ def Visualize_WFT(WFT, NBody_Basis, cutoff=0.005):
 # =============================================================================
 
 
-def Transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
+def transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
     """
     Transform electronic integrals from an initial basis "B1" to a new basis "B2".
     The transformation is realized thanks to a passage matrix noted "C" linking
@@ -716,7 +716,7 @@ def Transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
     return h_B2, g_B2
 
 
-def Householder_transformation(M):
+def householder_transformation(M):
     """
     Householder transformation transforming a squarred matrix " M " into a
     block-diagonal matrix " M_BD " such that
@@ -757,7 +757,7 @@ def Householder_transformation(M):
     return P, vector
 
 
-def Block_householder_transformation(M, Block_size):
+def block_householder_transformation(M, Block_size):
     """
     Block Householder transformation transforming a squarred matrix ” M ” into a
     block-diagonal matrix ” M_BD ” such that
@@ -808,7 +808,7 @@ def Block_householder_transformation(M, Block_size):
 #  MISCELENAOUS
 # =============================================================================
 
-def Build_MO_1_and_2_RDMs(Psi_A, active_indices, N_MO, E_precomputed, e_precomputed):
+def build_mo_1rdm_and_2rdm(Psi_A, active_indices, N_MO, E_precomputed, e_precomputed):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a 
@@ -858,7 +858,7 @@ def Build_MO_1_and_2_RDMs(Psi_A, active_indices, N_MO, E_precomputed, e_precompu
     return ONE_RDM_A, TWO_RDM_A
 
 
-def Generate_H_chain_geometry(N_atoms, dist_HH):
+def generate_h_chain_geometry(N_atoms, dist_HH):
     """
     A function to build a Hydrogen chain geometry (on the x-axis)
 
@@ -874,7 +874,7 @@ def Generate_H_chain_geometry(N_atoms, dist_HH):
     return H_chain_geometry
 
 
-def Generate_H_ring_geometry(N_atoms, radius):
+def generate_h_ring_geometry(N_atoms, radius):
     """
     A function to build a Hydrogen ring geometry (in the x-y plane)
                          H - H
