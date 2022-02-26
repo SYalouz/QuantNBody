@@ -24,3 +24,14 @@ block_householder_transformation        block_householder_transformation
 Build_MO_1_and_2_RDMs                   build_mo_1rdm_and_2rdm
 Generate_H_chain_geometry               generate_h_chain_geometry
 Generate_H_ring_geometry                generate_h_ring_geometry
+
+
+---- Renamed variables -------------------------------------------------------------
+N_elec                  N_electron
+...fockstate...         ...fock_state...
+...NBody_Basis...       ...nbody_basis...
+S_z                     s_z
+S_z_slater_determinant  s_z_slater_determinant
+
+Block_size              block_size
+Slater_determinant      slater_determinant

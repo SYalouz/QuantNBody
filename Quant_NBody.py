@@ -10,7 +10,7 @@ from tqdm import tqdm
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
 
-def build_nbody_basis(N_MO, N_elec, S_z_cleaning=False):
+def build_nbody_basis(N_MO, N_electron, S_z_cleaning=False):
     """
     Create a many-body basis formed by a list of slater-determinants
     (i.e. their occupation number)
@@ -18,31 +18,31 @@ def build_nbody_basis(N_MO, N_elec, S_z_cleaning=False):
     Parameters
     ----------
     N_MO         :  Number of molecular orbitals
-    N_elec       :  Number of electrons
-    S_z_cleaning :  Option if we want to get read of the S_z != 0 states (default is False)
+    N_electron   :  Number of electrons
+    S_z_cleaning :  Option if we want to get read of the s_z != 0 states (default is False)
 
     Returns
     -------
-    NBody_Basis :  List of many-body states (occupation number states) in the basis (occupation number vectors)
+    nbody_basis :  List of many-body states (occupation number states) in the basis (occupation number vectors)
     """
     # Building the N-electron many-body basis
-    NBody_Basis = []
-    for combination in combinations(range(2 * N_MO), N_elec):
-        fockstate = [0 for i in range(2 * N_MO)]
+    nbody_basis = []
+    for combination in combinations(range(2 * N_MO), N_electron):
+        fock_state = [0] * (2 * N_MO)
         for index in list(combination):
-            fockstate[index] += 1
-        NBody_Basis += [fockstate]
+            fock_state[index] += 1
+        nbody_basis += [fock_state]
 
-        # In case we want to get rid of states with S_z != 0
+        # In case we want to get rid of states with s_z != 0
     if S_z_cleaning:
-        NBody_Basis_cleaned = NBody_Basis.copy()
-        for i in range(np.shape(NBody_Basis)[0]):
-            S_z = check_sz(NBody_Basis[i])
-            if S_z != 0:
-                NBody_Basis_cleaned.remove(NBody_Basis[i])
-        NBody_Basis = NBody_Basis_cleaned
+        nbody_basis_cleaned = nbody_basis.copy()
+        for i in range(np.shape(nbody_basis)[0]):
+            s_z = check_sz(nbody_basis[i])
+            if s_z != 0:
+                nbody_basis_cleaned.remove(nbody_basis[i])
+        nbody_basis = nbody_basis_cleaned
 
-    return NBody_Basis
+    return nbody_basis
 
 
 def check_sz(ref_state):
@@ -55,26 +55,26 @@ def check_sz(ref_state):
 
     Returns
     -------
-    S_z_slater_determinant : value of S_z for the given slater determinant
+    s_z_slater_determinant : value of S_z for the given slater determinant
     """
-    S_z_slater_determinant = 0
+    s_z_slater_determinant = 0
     for elem in range(len(ref_state)):
         if elem % 2 == 0:
-            S_z_slater_determinant += + 1 * ref_state[elem] / 2
+            s_z_slater_determinant += + 1 * ref_state[elem] / 2
         else:
-            S_z_slater_determinant += - 1 * ref_state[elem] / 2
+            s_z_slater_determinant += - 1 * ref_state[elem] / 2
 
-    return S_z_slater_determinant
+    return s_z_slater_determinant
 
 
-def build_operator_a_dagger_a(NBody_Basis):
+def build_operator_a_dagger_a(nbody_basis):
     """
     Create a matrix representation of the a_dagger_a operator
     in the many-body basis
 
     Parameters
     ----------
-    NBody_Basis :  List of many-body states (occupation number states) (occupation number states)
+    nbody_basis :  List of many-body states (occupation number states) (occupation number states)
 
     Returns
     -------
@@ -82,9 +82,9 @@ def build_operator_a_dagger_a(NBody_Basis):
 
     """
     # Dimensions of problem
-    dim_H = len(NBody_Basis)
-    N_MO = len(NBody_Basis[0]) // 2
-    Mapping_kappa_ = build_mapping(np.array(NBody_Basis))
+    dim_H = len(nbody_basis)
+    N_MO = len(nbody_basis[0]) // 2
+    Mapping_kappa_ = build_mapping(np.array(nbody_basis))
 
     a_dagger_a = np.zeros((2 * N_MO, 2 * N_MO), dtype=object)
     for p in range(2 * N_MO):
@@ -95,7 +95,7 @@ def build_operator_a_dagger_a(NBody_Basis):
     for MO_q in (range(N_MO)):
         for MO_p in range(MO_q, N_MO):
             for kappa in range(dim_H):
-                ref_state = NBody_Basis[kappa]
+                ref_state = nbody_basis[kappa]
 
                 # Single excitation : spin alpha -- alpha
                 p, q = 2 * MO_p, 2 * MO_q
@@ -141,24 +141,24 @@ def build_operator_a_dagger_a(NBody_Basis):
 
 
 @njit
-def build_mapping(NBody_Basis):
+def build_mapping(nbody_basis):
     """
     Function to create a unique mapping between a kappa vector and an occupation
     number state.
 
     Parameters
     ----------
-    NBody_Basis :  Many-
+    nbody_basis :  Many-
 
     Returns
     -------
     Mapping_kappa : List of unique values associated to each kappa
     """
     Mapping_kappa = np.zeros(10 ** 9, dtype=np.int32)
-    Num_digits = np.shape(NBody_Basis)[1]
-    dim_H = np.shape(NBody_Basis)[0]
+    Num_digits = np.shape(nbody_basis)[1]
+    dim_H = np.shape(nbody_basis)[0]
     for kappa in range(dim_H):
-        ref_state = NBody_Basis[kappa]
+        ref_state = nbody_basis[kappa]
         number = 0
         for digit in range(Num_digits):
             number += ref_state[digit] * 2 ** (Num_digits - digit - 1)
@@ -188,33 +188,33 @@ def make_integer_out_of_bit_vector(ref_state):
 
 
 @njit
-def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fockstate):
+def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
     """
 
     Parameters
     ----------
-    type_of_op    :  type of operator to apply (creation of anihilation)
+    type_of_op    :  type of operator to apply (creation of annihilation)
     index_mode    :  index of the second quantized mode to occupy/empty
-    ref_fockstate :  initial state to be transformed
+    ref_fock_state :  initial state to be transformed
 
     Returns
     -------
-    new_fockstate :  Resulting occupation number form of the transformed state
+    new_fock_state :  Resulting occupation number form of the transformed state
     coeff_phase   :  Phase attached to the resulting state
 
     """
-    new_fockstate = ref_fockstate.copy()
+    new_fock_state = ref_fock_state.copy()
     coeff_phase = 1
     if type_of_op == 'a':
-        new_fockstate[index_mode] += -1
+        new_fock_state[index_mode] += -1
         if index_mode > 0:
-            coeff_phase = (-1.) ** np.sum(ref_fockstate[0:index_mode])
+            coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
     elif type_of_op == 'a^':
-        new_fockstate[index_mode] += 1
+        new_fock_state[index_mode] += 1
         if index_mode > 0:
-            coeff_phase = (-1.) ** np.sum(ref_fockstate[0:index_mode])
+            coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
 
-    return new_fockstate, coeff_phase
+    return new_fock_state, coeff_phase
 
 
 @njit
@@ -226,21 +226,22 @@ def build_final_state_ad_a(ref_state, p, q, Mapping_kappa_):
     return kappa_, p1, p2
 
 
-def my_state(Slater_determinant, NBody_Basis):
+def my_state(slater_determinant, nbody_basis):
     """
-    Translate a Slater determinant (occupation numbe list) into a many-body
+    Translate a Slater determinant (occupation number list) into a many-body
     state referenced into a given Many-body basis.
 
     Parameters
     ----------
-    NBody_Basis   : List of many-body states (occupation number states)
+    slater_determinant  : occupation number list
+    nbody_basis   : List of many-body states (occupation number states)
 
     Returns
     -------
     State :  The slater determinant referenced in the many-body basis
     """
-    kappa = NBody_Basis.index(Slater_determinant)
-    State = np.zeros(np.shape(NBody_Basis)[0])
+    kappa = nbody_basis.index(slater_determinant)
+    State = np.zeros(np.shape(nbody_basis)[0])
     State[kappa] = 1.
 
     return State
@@ -250,16 +251,16 @@ def my_state(Slater_determinant, NBody_Basis):
 #  MANY-BODY HAMILTONIANS (FERMI HUBBARD AND QUANTUM CHEMISTRY)
 # =============================================================================
 
-def build_hamiltonian_quantum_chemistry(h_, g_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
+def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
-    Create a matrix representation of the electornic strucutre Hamiltonian in any
+    Create a matrix representation of the electronic structure Hamiltonian in any
     extended many-body basis
 
     Parameters
     ----------
     h_          :  One-body integrals
     g_          :  TODO: What is parameter name, maybe Two-body integrals
-    NBody_Basis :  List of many-body states (occupation number states)
+    nbody_basis :  List of many-body states (occupation number states)
     a_dagger_a  :  Matrix representation of the a_dagger_a operator
     S_2         :  Matrix representation of the S_2 operator (default is None)
     S_2_target  :  Value of the S_2 mean value we want to target (default is None)
@@ -267,11 +268,11 @@ def build_hamiltonian_quantum_chemistry(h_, g_, NBody_Basis, a_dagger_a, S_2=Non
 
     Returns
     -------
-    H_Chemistry :  Matrix representation of the electornic structure Hamiltonian
+    H_Chemistry :  Matrix representation of the electronic structure Hamiltonian
 
     """
     # Dimension of the problem 
-    dim_H = len(NBody_Basis)
+    dim_H = len(nbody_basis)
     N_MO = np.shape(h_)[0]
 
     # Building the spin-preserving one-body excitation operator  
@@ -312,7 +313,7 @@ def build_hamiltonian_quantum_chemistry(h_, g_, NBody_Basis, a_dagger_a, S_2=Non
     return H_Chemistry
 
 
-def build_hamiltonian_fermi_hubbard(h_, U_, NBody_Basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
+def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
     Create a matrix representation of the Fermi-Hubbard Hamiltonian in any
     extended many-body basis.
@@ -321,7 +322,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, NBody_Basis, a_dagger_a, S_2=None, S
     ----------
     h_          :  One-body integrals
     U_          :  Two-body integrals
-    NBody_Basis :  List of many-body states (occupation number states)
+    nbody_basis :  List of many-body states (occupation number states)
     a_dagger_a  :  Matrix representation of the a_dagger_a operator
     S_2         :  Matrix representation of the S_2 operator (default is None)
     S_2_target  :  Value of the S_2 mean value we want to target (default is None)
@@ -333,7 +334,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, NBody_Basis, a_dagger_a, S_2=None, S
 
     """
     # # Dimension of the problem 
-    dim_H = len(NBody_Basis)
+    dim_H = len(nbody_basis)
     N_MO = np.shape(h_)[0]
 
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
@@ -647,13 +648,13 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVEFUNCTIONS
 # =============================================================================
 
-def visualize_wft(WFT, NBody_Basis, cutoff=0.005):
+def visualize_wft(WFT, nbody_basis, cutoff=0.005):
     """
     Print the decomposition of a given input wavefunction in a many-body basis.
     ----------
     WFT            : Reference wavefunction
-    NBody_Basis    : List of many-body states (occupation number states)
-    cutoff         : Cuoff for the amplitudes retained (default is 0.005)
+    nbody_basis    : List of many-body states (occupation number states)
+    cutoff         : Cut off for the amplitudes retained (default is 0.005)
 
     Returns
     -------
@@ -666,7 +667,7 @@ def visualize_wft(WFT, NBody_Basis, cutoff=0.005):
     Coeffs = []
     for indx in list_indx:
         Coeffs += [WFT[indx]]
-        States += [NBody_Basis[indx]]
+        States += [nbody_basis[indx]]
 
     list_sorted_indx = np.flip(np.argsort(np.abs(Coeffs)))
 
@@ -757,7 +758,7 @@ def householder_transformation(M):
     return P, vector
 
 
-def block_householder_transformation(M, Block_size):
+def block_householder_transformation(M, block_size):
     """
     Block Householder transformation transforming a squarred matrix ” M ” into a
     block-diagonal matrix ” M_BD ” such that
@@ -769,33 +770,34 @@ def block_householder_transformation(M, Block_size):
     Parameters
     ----------
     M :  Squarred matrix to be transformed
+    block_size : Size of a block
     Returns
     -------
     P :  Transformation matrix
     v :  Householder vector
     """
-    Block_size = Block_size // 2
+    block_size = block_size // 2
     N = np.shape(M)[0]
 
     """ WILL BE WITH THE INVERSE SIGN OF X """
-    A1 = M[:Block_size, Block_size:2 * Block_size]
+    A1 = M[:block_size, block_size:2 * block_size]
     A1_inv = np.linalg.inv(A1)
-    A2 = M[:Block_size, 2 * Block_size:]
-    A2A1_inv_tr = np.zeros((Block_size, N - 2 * Block_size))
-    for i in range(N - 2 * Block_size):
-        for j in range(Block_size):
-            for k in range(Block_size):
+    A2 = M[:block_size, 2 * block_size:]
+    A2A1_inv_tr = np.zeros((block_size, N - 2 * block_size))
+    for i in range(N - 2 * block_size):
+        for j in range(block_size):
+            for k in range(block_size):
                 A2A1_inv_tr[j, i] = A2A1_inv_tr[j, i] + A2[k, i] * A1_inv[j, k]
 
     # A2A1_inv = np.transpose(A2A1_inv_tr) 
-    A3 = np.eye(Block_size) + A2A1_inv_tr @ A2A1_inv_tr.T
+    A3 = np.eye(block_size) + A2A1_inv_tr @ A2A1_inv_tr.T
     w, v = np.linalg.eig(A3)
     eigval = np.diag(w)
     Xd = v.T @ eigval ** 0.5 @ v
 
     X = A1 @ Xd
     Y = A1 + X
-    V_tr = np.block([np.zeros((Block_size, Block_size)), Y, M[:Block_size, 2 * Block_size:]])
+    V_tr = np.block([np.zeros((block_size, block_size)), Y, M[:block_size, 2 * block_size:]])
 
     V_trV = V_tr @ V_tr.T
     V_trV_inv = np.linalg.inv(V_trV)
