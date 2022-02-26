@@ -103,5 +103,14 @@ BH      bh
 H as Hamiltonian (dim_H, H_chemistry, H_fermi_hubbard)
 E as operator E
 P as householder transformation matrix
-
+also some arguements of the functions:
+    WFT
+    S_2
+    N_electron
+    U_
+    C
+    M
+    Psi_A
+    N_atoms
+    dist_HH
 
