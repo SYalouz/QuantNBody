@@ -33,5 +33,19 @@ N_elec                  N_electron
 S_z                     s_z
 S_z_slater_determinant  s_z_slater_determinant
 
+Mapping_kappa_          mapping_kappa
+
+list_indx               list_index
+list_sorted_indx        list_sorted_index
 Block_size              block_size
 Slater_determinant      slater_determinant
+
+ONE_RDM_A               one_rdm_a
+TWO_RDM_A               two_rdm_a
+S_2_minus_target        s_2_minus_target
+
+States                  states
+Coeffs                  coeffs
+Mapping_kappa           mapping_kappa
+
+Num_digits              num_digits

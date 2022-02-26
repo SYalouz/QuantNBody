@@ -84,7 +84,7 @@ def build_operator_a_dagger_a(nbody_basis):
     # Dimensions of problem
     dim_H = len(nbody_basis)
     N_MO = len(nbody_basis[0]) // 2
-    Mapping_kappa_ = build_mapping(np.array(nbody_basis))
+    mapping_kappa = build_mapping(np.array(nbody_basis))
 
     a_dagger_a = np.zeros((2 * N_MO, 2 * N_MO), dtype=object)
     for p in range(2 * N_MO):
@@ -102,7 +102,7 @@ def build_operator_a_dagger_a(nbody_basis):
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
                 elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                     # Single excitation : spin beta -- beta
@@ -110,7 +110,7 @@ def build_operator_a_dagger_a(nbody_basis):
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
                 elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                 if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
@@ -120,7 +120,7 @@ def build_operator_a_dagger_a(nbody_basis):
                     if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                         pass
                     elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
                         # Single excitation : spin alpha -- beta
@@ -129,7 +129,7 @@ def build_operator_a_dagger_a(nbody_basis):
                     if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                         pass
                     elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, Mapping_kappa_)
+                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
     print()
@@ -152,19 +152,19 @@ def build_mapping(nbody_basis):
 
     Returns
     -------
-    Mapping_kappa : List of unique values associated to each kappa
+    mapping_kappa : List of unique values associated to each kappa
     """
-    Mapping_kappa = np.zeros(10 ** 9, dtype=np.int32)
-    Num_digits = np.shape(nbody_basis)[1]
+    mapping_kappa = np.zeros(10 ** 9, dtype=np.int32)
+    num_digits = np.shape(nbody_basis)[1]
     dim_H = np.shape(nbody_basis)[0]
     for kappa in range(dim_H):
         ref_state = nbody_basis[kappa]
         number = 0
-        for digit in range(Num_digits):
-            number += ref_state[digit] * 2 ** (Num_digits - digit - 1)
-        Mapping_kappa[number] = kappa
+        for digit in range(num_digits):
+            number += ref_state[digit] * 2 ** (num_digits - digit - 1)
+        mapping_kappa[number] = kappa
 
-    return Mapping_kappa
+    return mapping_kappa
 
 
 @njit
@@ -178,7 +178,7 @@ def make_integer_out_of_bit_vector(ref_state):
 
     Returns
     -------
-    number : unique integer  refering to the slater determinant
+    number : unique integer referring to the slater determinant
     """
     number = 0
     for digit in range(len(ref_state)):
@@ -218,10 +218,10 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
 
 
 @njit
-def build_final_state_ad_a(ref_state, p, q, Mapping_kappa_):
+def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
     state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
-    kappa_ = Mapping_kappa_[make_integer_out_of_bit_vector(state_two)]
+    kappa_ = mapping_kappa[make_integer_out_of_bit_vector(state_two)]
 
     return kappa_, p1, p2
 
@@ -354,8 +354,8 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     # quadruplet =>  S=3/2  and  S_2=15/4
     # quintet    =>  S=2    and  S_2=6
     if S_2 is not None and S_2_target is not None:
-        S_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
-        H_Fermi_Hubbard += S_2_minus_target @ S_2_minus_target * penalty
+        s_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
+        H_Fermi_Hubbard += s_2_minus_target @ s_2_minus_target * penalty
 
     return H_Fermi_Hubbard
 
@@ -484,11 +484,11 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
 def build_1rdm_alpha(WFT, a_dagger_a):
     """
-    Create a spin-alpha 1 RDM out of a given wavefunction
+    Create a spin-alpha 1 RDM out of a given wave function
 
     Parameters
     ----------
-    WFT        :  Wavefunction for which we want to build the 1-RDM
+    WFT        :  Wave function for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
     Returns
@@ -506,11 +506,11 @@ def build_1rdm_alpha(WFT, a_dagger_a):
 
 def build_1rdm_beta(WFT, a_dagger_a):
     """
-    Create a spin-beta 1 RDM out of a given wavefunction
+    Create a spin-beta 1 RDM out of a given wave function
 
     Parameters
     ----------
-    WFT        :  Wavefunction for which we want to build the 1-RDM
+    WFT        :  Wave function for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
     Returns
@@ -528,11 +528,11 @@ def build_1rdm_beta(WFT, a_dagger_a):
 
 def build_1rdm_spin_free(WFT, a_dagger_a):
     """
-    Create a spin-free 1 RDM out of a given wavefunction
+    Create a spin-free 1 RDM out of a given wave function
 
     Parameters
     ----------
-    WFT        :  Wavefunction for which we want to build the 1-RDM
+    WFT        :  Wave function for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
     Returns
@@ -551,11 +551,11 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
 
 def build_2rdm_fh(WFT, a_dagger_a):
     """
-    Create a spin-free 1 RDM out of a given wavefunction
+    Create a spin-free 1 RDM out of a given wave function
 
     Parameters
     ----------
-    WFT        :  Wavefunction for which we want to build the 1-RDM
+    WFT        :  Wave function for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
     Returns
@@ -576,11 +576,11 @@ def build_2rdm_fh(WFT, a_dagger_a):
 
 def build_2rdm_spin_free(WFT, a_dagger_a):
     """
-    Create a spin-free 2 RDM out of a given wavefunction
+    Create a spin-free 2 RDM out of a given wave function
 
     Parameters
     ----------
-    WFT        :  Wavefunction for which we want to build the 1-RDM
+    WFT        :  Wave function for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
     Returns
@@ -610,11 +610,11 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
 
 def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     """
-    Create a spin-free 2 RDM out of a given wavefunction
+    Create a spin-free 2 RDM out of a given wave function
 
     Parameters
     ----------
-    WFT        :  Wavefunction for which we want to build the 1-RDM
+    WFT        :  Wave function for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
     Returns
@@ -645,42 +645,42 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
 
 
 # =============================================================================
-#  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVEFUNCTIONS
+#  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
 # =============================================================================
 
 def visualize_wft(WFT, nbody_basis, cutoff=0.005):
     """
-    Print the decomposition of a given input wavefunction in a many-body basis.
+    Print the decomposition of a given input wave function in a many-body basis.
     ----------
-    WFT            : Reference wavefunction
+    WFT            : Reference wave function
     nbody_basis    : List of many-body states (occupation number states)
     cutoff         : Cut off for the amplitudes retained (default is 0.005)
 
     Returns
     -------
-    Printing in the terminal the wavefunction
+    Printing in the terminal the wave function
 
     """
-    list_indx = np.where(abs(WFT) > cutoff)[0]
+    list_index = np.where(abs(WFT) > cutoff)[0]
 
-    States = []
-    Coeffs = []
-    for indx in list_indx:
-        Coeffs += [WFT[indx]]
-        States += [nbody_basis[indx]]
+    states = []
+    coeffs = []
+    for index in list_index:
+        coeffs += [WFT[index]]
+        states += [nbody_basis[index]]
 
-    list_sorted_indx = np.flip(np.argsort(np.abs(Coeffs)))
+    list_sorted_index = np.flip(np.argsort(np.abs(coeffs)))
 
     print()
     print('\t ----------- ')
     print('\t Coeff.      N-body state')
     print('\t -------     -------------')
-    for indx in list_sorted_indx[0:8]:
+    for index in list_sorted_index[0:8]:
         sign_ = '+'
-        if abs(Coeffs[indx]) != Coeffs[indx]:
+        if abs(coeffs[index]) != coeffs[index]:
             sign_ = '-'
-        print('\t', sign_, '{:1.5f}'.format(abs(Coeffs[indx])),
-              '\t|{}⟩'.format(' '.join([str(elem) for elem in States[indx]]).replace(" ", "")))
+        print('\t', sign_, '{:1.5f}'.format(abs(coeffs[index])),
+              '\t|{}⟩'.format(' '.join([str(elem) for elem in states[index]]).replace(" ", "")))
 
     return
 
@@ -719,12 +719,12 @@ def transform_1_2_body_tensors_in_new_basis(h_B1, g_B1, C):
 
 def householder_transformation(M):
     """
-    Householder transformation transforming a squarred matrix " M " into a
+    Householder transformation transforming a squared matrix " M " into a
     block-diagonal matrix " M_BD " such that
 
                            M_BD = P M P
 
-    where " P " represents the Householrder transfomration built from the
+    where " P " represents the Householder transformation built from the
     vector "v" such that
 
                          P = Id - 2 * v.v^T
@@ -733,7 +733,7 @@ def householder_transformation(M):
 
     Parameters
     ----------
-    M :  Squarred matrix to be transformed
+    M :  Squared matrix to be transformed
 
     Returns
     -------
@@ -742,11 +742,11 @@ def householder_transformation(M):
 
     """
     N = np.shape(M)[0]
-    # Build the Housholder vector "H_vector" 
+    # Build the Householder vector "H_vector" 
     alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, N)) ** 0.5
     r = (0.5 * (alpha ** 2. - alpha * M[1, 0])) ** 0.5
 
-    # print("HH param transfomration",M,r,alpha)
+    # print("HH param transformation",M,r,alpha)
     vector = np.zeros((N, 1))
     vector[1] = (M[1, 0] - alpha) / (2.0 * r)
     for j in range(2, N):
@@ -760,16 +760,16 @@ def householder_transformation(M):
 
 def block_householder_transformation(M, block_size):
     """
-    Block Householder transformation transforming a squarred matrix ” M ” into a
+    Block Householder transformation transforming a squared matrix ” M ” into a
     block-diagonal matrix ” M_BD ” such that
                            M_BD = P M P
-    where ” P ” represents the Householrder transfomration built from the
+    where ” P ” represents the Householder transformation built from the
     vector “v” such that
                          !!!!!!P = Id - 2 * v.v^T                                TO BE CHANGED !!!
     NB : This returns a 2x2 block on left top corner
     Parameters
     ----------
-    M :  Squarred matrix to be transformed
+    M :  Squared matrix to be transformed
     block_size : Size of a block
     Returns
     -------
@@ -817,18 +817,18 @@ def build_mo_1rdm_and_2rdm(Psi_A, active_indices, N_MO, E_precomputed, e_precomp
     reference wavefunction expressed in the computational basis
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     """
-    ONE_RDM_A = np.zeros((N_MO, N_MO))
-    TWO_RDM_A = np.zeros((N_MO, N_MO, N_MO, N_MO))
+    one_rdm_a = np.zeros((N_MO, N_MO))
+    two_rdm_a = np.zeros((N_MO, N_MO, N_MO, N_MO))
     first_act_index = active_indices[0]
     # Creating RDMs elements only within the frozen space
     if first_act_index > 0:
         for I in range(first_act_index):
             for J in range(first_act_index):
-                ONE_RDM_A[I, J] = 2. * delta(I, J)
+                one_rdm_a[I, J] = 2. * delta(I, J)
                 for K in range(first_act_index):
                     for L in range(first_act_index):
                         # State A
-                        TWO_RDM_A[I, J, K, L] = 4. * delta(I, J) * delta(K, L) - 2. * delta(I, L) * delta(J, K)
+                        two_rdm_a[I, J, K, L] = 4. * delta(I, J) * delta(K, L) - 2. * delta(I, L) * delta(J, K)
 
                         # Creating RDMs elements in the the active/frozen spaces
     for P in active_indices:
@@ -838,7 +838,7 @@ def build_mo_1rdm_and_2rdm(Psi_A, active_indices, N_MO, E_precomputed, e_precomp
             Q_ = Q - first_act_index
             # 1-RDM elements only within the active space
             # State A
-            ONE_RDM_A[P, Q] = (np.conj(Psi_A.T) @ E_precomputed[P_, Q_] @ Psi_A).real
+            one_rdm_a[P, Q] = (np.conj(Psi_A.T) @ E_precomputed[P_, Q_] @ Psi_A).real
 
             # 2-RDM elements only within the active space
             for R in active_indices:
@@ -847,17 +847,17 @@ def build_mo_1rdm_and_2rdm(Psi_A, active_indices, N_MO, E_precomputed, e_precomp
                     R_ = R - first_act_index
                     S_ = S - first_act_index
                     # State A
-                    TWO_RDM_A[P, Q, R, S] = (np.conj(Psi_A.T) @ e_precomputed[P_, Q_, R_, S_] @ Psi_A).real
+                    two_rdm_a[P, Q, R, S] = (np.conj(Psi_A.T) @ e_precomputed[P_, Q_, R_, S_] @ Psi_A).real
 
             if first_act_index > 0:
                 # 2-RDM elements between the active and frozen spaces
                 for I in range(first_act_index):
                     for J in range(first_act_index):
                         # State A
-                        TWO_RDM_A[I, J, P, Q] = TWO_RDM_A[P, Q, I, J] = 2. * delta(I, J) * ONE_RDM_A[P, Q]
-                        TWO_RDM_A[P, I, J, Q] = TWO_RDM_A[J, Q, P, I] = - delta(I, J) * ONE_RDM_A[P, Q]
+                        two_rdm_a[I, J, P, Q] = two_rdm_a[P, Q, I, J] = 2. * delta(I, J) * one_rdm_a[P, Q]
+                        two_rdm_a[P, I, J, Q] = two_rdm_a[J, Q, P, I] = - delta(I, J) * one_rdm_a[P, Q]
 
-    return ONE_RDM_A, TWO_RDM_A
+    return one_rdm_a, two_rdm_a
 
 
 def generate_h_chain_geometry(N_atoms, dist_HH):
@@ -887,7 +887,7 @@ def generate_h_ring_geometry(N_atoms, radius):
     N_atoms  :: Total number of Hydrogen atoms
     radius   :: Radius of the ring
     """
-    theta_HH = 2 * m.pi / N_atoms  # Angle separating two consecutive H atoms (homogene distribution)
+    theta_HH = 2 * m.pi / N_atoms  # Angle separating two consecutive H atoms (homogeneous distribution)
     theta_ini = 0.0
     H_ring_geometry = '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(theta_ini), radius * m.sin(
         theta_ini))  # 'H {:.16f} 0. 0.'.format( radius )  # Define the position of the first atom
