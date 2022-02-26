@@ -67,7 +67,7 @@ def check_sz(ref_state):
     return s_z_slater_determinant
 
 
-def build_operator_a_dagger_a(nbody_basis):
+def build_operator_a_dagger_a(nbody_basis, silent=False):
     """
     Create a matrix representation of the a_dagger_a operator
     in the many-body basis
@@ -75,7 +75,7 @@ def build_operator_a_dagger_a(nbody_basis):
     Parameters
     ----------
     nbody_basis :  List of many-body states (occupation number states) (occupation number states)
-
+    silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
     Returns
     -------
     a_dagger_a :  Matrix representation of the a_dagger_a operator
@@ -131,11 +131,11 @@ def build_operator_a_dagger_a(nbody_basis):
                     elif ref_state[q] == 1:
                         kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-    print()
-    print('\t ===========================================')
-    print('\t ====  The matrix form of a^a is built  ====')
-    print('\t ===========================================')
+    if not silent:
+        print()
+        print('\t ===========================================')
+        print('\t ====  The matrix form of a^a is built  ====')
+        print('\t ===========================================')
 
     return a_dagger_a
 
