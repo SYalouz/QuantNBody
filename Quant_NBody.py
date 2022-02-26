@@ -10,14 +10,14 @@ from tqdm import tqdm
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
 
-def build_nbody_basis(N_MO, N_electron, S_z_cleaning=False):
+def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     """
     Create a many-body basis formed by a list of slater-determinants
     (i.e. their occupation number)
 
     Parameters
     ----------
-    N_MO         :  Number of molecular orbitals
+    n_mo         :  Number of molecular orbitals
     N_electron   :  Number of electrons
     S_z_cleaning :  Option if we want to get read of the s_z != 0 states (default is False)
 
@@ -27,8 +27,8 @@ def build_nbody_basis(N_MO, N_electron, S_z_cleaning=False):
     """
     # Building the N-electron many-body basis
     nbody_basis = []
-    for combination in combinations(range(2 * N_MO), N_electron):
-        fock_state = [0] * (2 * N_MO)
+    for combination in combinations(range(2 * n_mo), N_electron):
+        fock_state = [0] * (2 * n_mo)
         for index in list(combination):
             fock_state[index] += 1
         nbody_basis += [fock_state]
@@ -83,17 +83,17 @@ def build_operator_a_dagger_a(nbody_basis):
     """
     # Dimensions of problem
     dim_H = len(nbody_basis)
-    N_MO = len(nbody_basis[0]) // 2
+    n_mo = len(nbody_basis[0]) // 2
     mapping_kappa = build_mapping(np.array(nbody_basis))
 
-    a_dagger_a = np.zeros((2 * N_MO, 2 * N_MO), dtype=object)
-    for p in range(2 * N_MO):
-        for q in range(p, 2 * N_MO):
+    a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(2 * n_mo):
+        for q in range(p, 2 * n_mo):
             a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
             a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
 
-    for MO_q in (range(N_MO)):
-        for MO_p in range(MO_q, N_MO):
+    for MO_q in (range(n_mo)):
+        for MO_p in range(MO_q, n_mo):
             for kappa in range(dim_H):
                 ref_state = nbody_basis[kappa]
 
@@ -273,30 +273,30 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     """
     # Dimension of the problem 
     dim_H = len(nbody_basis)
-    N_MO = np.shape(h_)[0]
+    n_mo = np.shape(h_)[0]
 
     # Building the spin-preserving one-body excitation operator  
-    E_ = np.empty((2 * N_MO, 2 * N_MO), dtype=object)
-    e_ = np.empty((2 * N_MO, 2 * N_MO, 2 * N_MO, 2 * N_MO), dtype=object)
-    for p in range(N_MO):
-        for q in range(N_MO):
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    e_ = np.empty((2 * n_mo, 2 * n_mo, 2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
 
-    for p in range(N_MO):
-        for q in range(N_MO):
-            for r in range(N_MO):
-                for s in range(N_MO):
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
                     e_[p, q, r, s] = E_[p, q] @ E_[r, s]
                     if q == r:
                         e_[p, q, r, s] += - E_[p, s]
 
                     # Building the N-electron electronic structure hamiltonian
     H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in range(N_MO):
-        for q in range(N_MO):
+    for p in range(n_mo):
+        for q in range(n_mo):
             H_chemistry += E_[p, q] * h_[p, q]
-            for r in range(N_MO):
-                for s in range(N_MO):
+            for r in range(n_mo):
+                for s in range(n_mo):
                     H_chemistry += e_[p, q, r, s] * g_[p, q, r, s] / 2.
 
                     # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
@@ -335,15 +335,15 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     """
     # # Dimension of the problem 
     dim_H = len(nbody_basis)
-    N_MO = np.shape(h_)[0]
+    n_mo = np.shape(h_)[0]
 
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
     H_Fermi_Hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in tqdm(range(N_MO)):
-        for q in range(N_MO):
+    for p in tqdm(range(n_mo)):
+        for q in range(n_mo):
             H_Fermi_Hubbard += (a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]) * h_[p, q]
-            for r in range(N_MO):
-                for s in range(N_MO):
+            for r in range(n_mo):
+                for s in range(n_mo):
                     H_Fermi_Hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
 
     # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1 
@@ -465,11 +465,11 @@ def build_s2_sz_splus_operator(a_dagger_a):
     S_2, S_plus, S_z :  matrix representation of the S_2, S_plus and S_z operators
                         in the many-body basis.
     """
-    N_MO = np.shape(a_dagger_a)[0] // 2
+    n_mo = np.shape(a_dagger_a)[0] // 2
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     S_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
     S_z = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in range(N_MO):
+    for p in range(n_mo):
         S_plus += a_dagger_a[2 * p, 2 * p + 1]
         S_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
 
@@ -496,10 +496,10 @@ def build_1rdm_alpha(WFT, a_dagger_a):
     One_RDM_alpha : spin-alpha 1-RDM
 
     """
-    N_MO = np.shape(a_dagger_a)[0] // 2
-    one_rdm_alpha = np.zeros((N_MO, N_MO))
-    for p in range(N_MO):
-        for q in range(N_MO):
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm_alpha = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
             one_rdm_alpha[p, q] = WFT.T @ a_dagger_a[2 * p, 2 * q] @ WFT
     return one_rdm_alpha
 
@@ -518,10 +518,10 @@ def build_1rdm_beta(WFT, a_dagger_a):
     One_RDM_alpha : Spin-beta 1-RDM
 
     """
-    N_MO = np.shape(a_dagger_a)[0] // 2
-    one_rdm_beta = np.zeros((N_MO, N_MO))
-    for p in range(N_MO):
-        for q in range(N_MO):
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm_beta = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
             one_rdm_beta[p, q] = WFT.T @ a_dagger_a[2 * p + 1, 2 * q + 1] @ WFT
     return one_rdm_beta
 
@@ -540,10 +540,10 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
     One_RDM_alpha : Spin-free 1-RDM
 
     """
-    N_MO = np.shape(a_dagger_a)[0] // 2
-    one_rdm = np.zeros((N_MO, N_MO))
-    for p in range(N_MO):
-        for q in range(N_MO):
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
             E_pq = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
             one_rdm[p, q] = WFT.T @ E_pq @ WFT
     return one_rdm
@@ -563,12 +563,12 @@ def build_2rdm_fh(WFT, a_dagger_a):
     One_RDM_alpha : Spin-free 1-RDM
 
     """
-    N_MO = np.shape(a_dagger_a)[0] // 2
-    two_RDM_FH = np.zeros((N_MO, N_MO, N_MO, N_MO))
-    for p in range(N_MO):
-        for q in range(N_MO):
-            for r in range(N_MO):
-                for s in range(N_MO):
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    two_RDM_FH = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
                     two_RDM_FH[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] @ WFT
 
     return two_RDM_FH
@@ -588,18 +588,18 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
     One_RDM_alpha : Spin-free 1-RDM
 
     """
-    N_MO = np.shape(a_dagger_a)[0] // 2
-    two_RDM = np.zeros((N_MO, N_MO, N_MO, N_MO))
-    E_ = np.empty((2 * N_MO, 2 * N_MO), dtype=object)
-    for p in range(N_MO):
-        for q in range(N_MO):
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    two_RDM = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
 
-    for p in range(N_MO):
-        for q in range(N_MO):
+    for p in range(n_mo):
+        for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
-            for r in range(N_MO):
-                for s in range(N_MO):
+            for r in range(n_mo):
+                for s in range(n_mo):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
                     two_RDM[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
                     if q == r:
@@ -622,20 +622,20 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     One_RDM_alpha : Spin-free 1-RDM
 
     """
-    N_MO = np.shape(a_dagger_a)[0] // 2
-    one_rdm = np.zeros((N_MO, N_MO))
-    two_rdm = np.zeros((N_MO, N_MO, N_MO, N_MO))
-    E_ = np.empty((2 * N_MO, 2 * N_MO), dtype=object)
-    for p in range(N_MO):
-        for q in range(N_MO):
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm = np.zeros((n_mo, n_mo))
+    two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
 
-    for p in range(N_MO):
-        for q in range(N_MO):
+    for p in range(n_mo):
+        for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
             one_rdm[p, q] = WFT.T @ E_[p, q] @ WFT
-            for r in range(N_MO):
-                for s in range(N_MO):
+            for r in range(n_mo):
+                for s in range(n_mo):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
                     two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
                     if q == r:
@@ -810,15 +810,15 @@ def block_householder_transformation(M, block_size):
 #  MISCELENAOUS
 # =============================================================================
 
-def build_mo_1rdm_and_2rdm(Psi_A, active_indices, N_MO, E_precomputed, e_precomputed):
+def build_mo_1rdm_and_2rdm(Psi_A, active_indices, n_mo, E_precomputed, e_precomputed):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a 
     reference wavefunction expressed in the computational basis
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     """
-    one_rdm_a = np.zeros((N_MO, N_MO))
-    two_rdm_a = np.zeros((N_MO, N_MO, N_MO, N_MO))
+    one_rdm_a = np.zeros((n_mo, n_mo))
+    two_rdm_a = np.zeros((n_mo, n_mo, n_mo, n_mo))
     first_act_index = active_indices[0]
     # Creating RDMs elements only within the frozen space
     if first_act_index > 0:

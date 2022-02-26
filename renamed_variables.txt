@@ -69,4 +69,6 @@ h_B2                    h_b2
 g_B1                    g_b1
 g_B2                    g_b2
 
+N_MO                    n_mo
+
 
