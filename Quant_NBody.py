@@ -312,6 +312,73 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
 
     return H_chemistry
 
+def build_hamiltonian_quantum_chemistry_fast(h_, g_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
+    """
+    Create a matrix representation of the electronic structure Hamiltonian in any
+    extended many-body basis
+
+    Parameters
+    ----------
+    h_          :  One-body integrals
+    g_          :  Two-body integrals
+    nbody_basis :  List of many-body states (occupation number states)
+    a_dagger_a  :  Matrix representation of the a_dagger_a operator
+    S_2         :  Matrix representation of the S_2 operator (default is None)
+    S_2_target  :  Value of the S_2 mean value we want to target (default is None)
+    penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
+
+    Returns
+    -------
+    H_chemistry :  Matrix representation of the electronic structure Hamiltonian
+
+    """
+    # Dimension of the problem
+    dim_H = len(nbody_basis)
+    n_mo = np.shape(h_)[0]
+
+    # Building the spin-preserving one-body excitation operator
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    e_ = np.empty((2 * n_mo, 2 * n_mo, 2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(p, n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+            E_[q, p] = E_[p, q]
+
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(p, n_mo):
+                for s in range(q, n_mo):
+                    e_[p, q, r, s] = E_[p, q] @ E_[r, s]
+                    if q == r:
+                        e_[p, q, r, s] += - E_[p, s]
+
+                    # Symmetry operations:
+                    e_[r, q, p, s] = e_[p, q, r, s]
+                    e_[p, s, r, q] = e_[p, q, r, s]
+                    e_[r, s, p, q] = e_[p, q, r, s]
+
+                    # Building the N-electron electronic structure hamiltonian
+    H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            H_chemistry += E_[p, q] * h_[p, q]
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    H_chemistry += e_[p, q, r, s] * g_[p, q, r, s] / 2.
+
+                    # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
+    # with S = the number of unpaired electrons x 1/2
+    # singlet    =>  S=0    and  S_2=0
+    # doublet    =>  S=1/2  and  S_2=3/4
+    # triplet    =>  S=1    and  S_2=2
+    # quadruplet =>  S=3/2  and  S_2=15/4
+    # quintet    =>  S=2    and  S_2=6
+    if S_2 is not None and S_2_target is not None:
+        s_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
+        H_chemistry += s_2_minus_target @ s_2_minus_target * penalty
+
+    return H_chemistry
+
 
 def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
