@@ -45,7 +45,7 @@ TWO_RDM_A               two_rdm_a
 S_2_minus_target        s_2_minus_target
 
 States                  states
-Coeffs                  coeffs
+Coeffs                  coefficients
 Mapping_kappa           mapping_kappa
 
 Num_digits              num_digits
@@ -57,9 +57,14 @@ angle_H                 angle_h
 theta_HH                theta_HH
 H_ring_geometry         h_ring_geometry
 H_chain_geometry        h_chain_geometry
-
+two_RDM_FH              two_rdm_fh
 two_RDM                 two_rdm
 Core_energy             core_energy
+
+H_Fermi_Hubbard         H_fermi_hubbard
+S_plus                  s_plus
+S_z                     s_z
+S_2                     s_2
 
 
 # Block Householder
@@ -79,5 +84,24 @@ L                       l
 P                       p
 Q                       q
 
+
+## Block Householder ####
+A1      a1
+A1_inv  a1_inv
+A2      a2
+A2A1_inv_tr     a2_a1_inv_tr
+A3      a3
+Xd      x_d
+X       x
+Y       y
+V_tr    v_tr
+V_trV   v_tr_v
+V_trV_inv      v_tr_v_inv
+BH      bh
+
+## Exceptions #######
+H as Hamiltonian (dim_H, H_chemistry, H_fermi_hubbard)
+E as operator E
+P as householder transformation matrix
 
 

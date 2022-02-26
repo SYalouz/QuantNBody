@@ -330,7 +330,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
 
     Returns
     -------
-    H_Fermi_Hubbard :  Matrix representation of the Fermi-Hubbard Hamiltonian
+    H_fermi_hubbard :  Matrix representation of the Fermi-Hubbard Hamiltonian
 
     """
     # # Dimension of the problem 
@@ -338,13 +338,13 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     n_mo = np.shape(h_)[0]
 
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
-    H_Fermi_Hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
+    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in tqdm(range(n_mo)):
         for q in range(n_mo):
-            H_Fermi_Hubbard += (a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]) * h_[p, q]
+            H_fermi_hubbard += (a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]) * h_[p, q]
             for r in range(n_mo):
                 for s in range(n_mo):
-                    H_Fermi_Hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
+                    H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
 
     # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1 
     # with S = the number of unpaired electrons x 1/2 
@@ -355,9 +355,9 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     # quintet    =>  S=2    and  S_2=6
     if S_2 is not None and S_2_target is not None:
         s_2_minus_target = S_2 - S_2_target * np.eye(dim_H)
-        H_Fermi_Hubbard += s_2_minus_target @ s_2_minus_target * penalty
+        H_fermi_hubbard += s_2_minus_target @ s_2_minus_target * penalty
 
-    return H_Fermi_Hubbard
+    return H_fermi_hubbard
 
 
 def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
@@ -453,7 +453,7 @@ def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupi
 
 def build_s2_sz_splus_operator(a_dagger_a):
     """
-    Create a matrix representation of the spin operators S_2, S_z and S_plus
+    Create a matrix representation of the spin operators s_2, s_z and s_plus
     in the many-body basis.
 
     Parameters
@@ -462,20 +462,20 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
     Returns
     -------
-    S_2, S_plus, S_z :  matrix representation of the S_2, S_plus and S_z operators
+    s_2, s_plus, s_z :  matrix representation of the s_2, s_plus and s_z operators
                         in the many-body basis.
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
-    S_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
-    S_z = scipy.sparse.csr_matrix((dim_H, dim_H))
+    s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
+    s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mo):
-        S_plus += a_dagger_a[2 * p, 2 * p + 1]
-        S_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
+        s_plus += a_dagger_a[2 * p, 2 * p + 1]
+        s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
 
-    S_2 = S_plus @ S_plus.T + S_z @ S_z - S_z
+    s_2 = s_plus @ s_plus.T + s_z @ s_z - s_z
 
-    return S_2, S_plus, S_z
+    return s_2, s_plus, s_z
 
 
 # =============================================================================
@@ -564,14 +564,14 @@ def build_2rdm_fh(WFT, a_dagger_a):
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
-    two_RDM_FH = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
     for p in range(n_mo):
         for q in range(n_mo):
             for r in range(n_mo):
                 for s in range(n_mo):
-                    two_RDM_FH[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] @ WFT
+                    two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] @ WFT
 
-    return two_RDM_FH
+    return two_rdm_fh
 
 
 def build_2rdm_spin_free(WFT, a_dagger_a):
@@ -589,7 +589,7 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
-    two_RDM = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
         for q in range(n_mo):
@@ -601,11 +601,11 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
             for r in range(n_mo):
                 for s in range(n_mo):
                     E_[r, s] = a_dagger_a[2 * r, 2 * s] + a_dagger_a[2 * r + 1, 2 * s + 1]
-                    two_RDM[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
+                    two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
                     if q == r:
-                        two_RDM[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+                        two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
 
-    return two_RDM
+    return two_rdm
 
 
 def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
@@ -664,12 +664,12 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005):
     list_index = np.where(abs(WFT) > cutoff)[0]
 
     states = []
-    coeffs = []
+    coefficients = []
     for index in list_index:
-        coeffs += [WFT[index]]
+        coefficients += [WFT[index]]
         states += [nbody_basis[index]]
 
-    list_sorted_index = np.flip(np.argsort(np.abs(coeffs)))
+    list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
 
     print()
     print('\t ----------- ')
@@ -677,9 +677,9 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005):
     print('\t -------     -------------')
     for index in list_sorted_index[0:8]:
         sign_ = '+'
-        if abs(coeffs[index]) != coeffs[index]:
+        if abs(coefficients[index]) != coefficients[index]:
             sign_ = '-'
-        print('\t', sign_, '{:1.5f}'.format(abs(coeffs[index])),
+        print('\t', sign_, '{:1.5f}'.format(abs(coefficients[index])),
               '\t|{}⟩'.format(' '.join([str(elem) for elem in states[index]]).replace(" ", "")))
 
     return
@@ -696,7 +696,7 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
     The transformation is realized thanks to a passage matrix noted "C" linking
     both basis like
 
-            | B2_l > = \sum_{p} | B1_p >  C_{pl}
+            | B2_l > = \\sum_{p} | B1_p >  C_{pl}
 
     with | B2_l > and | B1_p > are vectors of the basis B1 and B2 respectively
 
@@ -779,31 +779,31 @@ def block_householder_transformation(M, block_size):
     block_size = block_size // 2
     n = np.shape(M)[0]
 
-    """ WILL BE WITH THE INVERSE SIGN OF X """
-    A1 = M[:block_size, block_size:2 * block_size]
-    A1_inv = np.linalg.inv(A1)
-    A2 = M[:block_size, 2 * block_size:]
-    A2A1_inv_tr = np.zeros((block_size, n - 2 * block_size))
+    """ WILL BE WITH THE INVERSE SIGN OF x """
+    a1 = M[:block_size, block_size:2 * block_size]
+    a1_inv = np.linalg.inv(a1)
+    a2 = M[:block_size, 2 * block_size:]
+    a2_a1_inv_tr = np.zeros((block_size, n - 2 * block_size))
     for i in range(n - 2 * block_size):
         for j in range(block_size):
             for k in range(block_size):
-                A2A1_inv_tr[j, i] = A2A1_inv_tr[j, i] + A2[k, i] * A1_inv[j, k]
+                a2_a1_inv_tr[j, i] = a2_a1_inv_tr[j, i] + a2[k, i] * a1_inv[j, k]
 
-    # A2A1_inv = np.transpose(A2A1_inv_tr) 
-    A3 = np.eye(block_size) + A2A1_inv_tr @ A2A1_inv_tr.T
-    w, v = np.linalg.eig(A3)
+    # A2A1_inv = np.transpose(a2_a1_inv_tr)
+    a3 = np.eye(block_size) + a2_a1_inv_tr @ a2_a1_inv_tr.T
+    w, v = np.linalg.eig(a3)
     eigval = np.diag(w)
-    Xd = v.T @ eigval ** 0.5 @ v
+    x_d = v.T @ eigval ** 0.5 @ v
 
-    X = A1 @ Xd
-    Y = A1 + X
-    V_tr = np.block([np.zeros((block_size, block_size)), Y, M[:block_size, 2 * block_size:]])
+    x = a1 @ x_d
+    y = a1 + x
+    v_tr = np.block([np.zeros((block_size, block_size)), y, M[:block_size, 2 * block_size:]])
 
-    V_trV = V_tr @ V_tr.T
-    V_trV_inv = np.linalg.inv(V_trV)
-    BH = np.eye(n) - 2. * V_tr.T @ V_trV_inv @ V_tr
+    v_tr_v = v_tr @ v_tr.T
+    v_tr_v_inv = np.linalg.inv(v_tr_v)
+    bh = np.eye(n) - 2. * v_tr.T @ v_tr_v_inv @ v_tr
 
-    return BH
+    return bh
 
 
 # =============================================================================
@@ -880,9 +880,9 @@ def generate_h_ring_geometry(N_atoms, radius):
     """
     A function to build a Hydrogen ring geometry (in the x-y plane)
                          H - H
-                        /     \
+                        /     \\
                        H       H
-                        \     /
+                        \\     /
                          H - H
     N_atoms  :: Total number of Hydrogen atoms
     radius   :: Radius of the ring
