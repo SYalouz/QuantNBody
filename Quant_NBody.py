@@ -278,28 +278,24 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     # Building the spin-preserving one-body excitation operator  
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     e_ = np.empty((2 * n_mo, 2 * n_mo, 2 * n_mo, 2 * n_mo), dtype=object)
+    H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
+
     for p in range(n_mo):
         for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
 
     for p in range(n_mo):
         for q in range(n_mo):
+            H_chemistry += E_[p, q] * h_[p, q]
             for r in range(n_mo):
                 for s in range(n_mo):
                     e_[p, q, r, s] = E_[p, q] @ E_[r, s]
                     if q == r:
                         e_[p, q, r, s] += - E_[p, s]
 
-                    # Building the N-electron electronic structure hamiltonian
-    H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in range(n_mo):
-        for q in range(n_mo):
-            H_chemistry += E_[p, q] * h_[p, q]
-            for r in range(n_mo):
-                for s in range(n_mo):
                     H_chemistry += e_[p, q, r, s] * g_[p, q, r, s] / 2.
 
-                    # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
+    # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
     # with S = the number of unpaired electrons x 1/2
     # singlet    =>  S=0    and  S_2=0
     # doublet    =>  S=1/2  and  S_2=3/4
@@ -311,6 +307,7 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
         H_chemistry += s_2_minus_target @ s_2_minus_target * penalty
 
     return H_chemistry
+
 
 def build_hamiltonian_quantum_chemistry_fast(h_, g_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
     """
