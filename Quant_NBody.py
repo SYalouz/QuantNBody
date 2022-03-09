@@ -550,7 +550,7 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
 
 def build_2rdm_fh(WFT, a_dagger_a):
     """
-    Create a spin-free 1 RDM out of a given wave function
+    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function
 
     Parameters
     ----------
