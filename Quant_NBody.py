@@ -544,11 +544,11 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
         for q in range(p, n_mo):
             E_pq = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
             one_rdm[p, q] = WFT.T @ E_pq @ WFT
-            one_rdm[p, q] = one_rdm[p, q]
+            one_rdm[q, p] = one_rdm[p, q]
     return one_rdm
 
 
-def build_2rdm_fh(WFT, a_dagger_a):
+def build_2rdm_fh_v2(WFT, a_dagger_a):
     """
     Create a spin-free 2 RDM out of a given Fermi Hubbard wave function
 
@@ -578,6 +578,30 @@ def build_2rdm_fh(WFT, a_dagger_a):
     return two_rdm_fh
 
 
+def build_2rdm_fh(WFT, a_dagger_a):
+    """
+    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function
+
+    Parameters
+    ----------
+    WFT        :  Wave function for which we want to build the 1-RDM
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    One_RDM_alpha : Spin-free 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] @ WFT
+    return two_rdm_fh
+
+
 def build_2rdm_spin_free(WFT, a_dagger_a):
     """
     Create a spin-free 2 RDM out of a given wave function
@@ -594,22 +618,25 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    two_rdm[:] = np.nan
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
         for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
 
     for p in range(n_mo):
-        for q in range(n_mo):
+        for q in range(p, n_mo):
             for r in range(p, n_mo):
-                for s in range(q, n_mo):
-                    two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
-                    if q == r:
-                        two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
-                    # Symmetry operations:
-                    two_rdm[r, q, p, s] = two_rdm[p, q, r, s]
-                    two_rdm[p, s, r, q] = two_rdm[p, q, r, s]
-                    two_rdm[r, s, p, q] = two_rdm[p, q, r, s]
+                for s in range(p, n_mo):
+                    if np.isnan(two_rdm[p, q, r, s]):
+                        two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
+                        if q == r:
+                            two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+
+                        # Symmetry operations:
+                        two_rdm[r, s, p, q] = two_rdm[p, q, r, s]
+                        two_rdm[q, p, s, r] = two_rdm[p, q, r, s]
+                        two_rdm[s, r, q, p] = two_rdm[p, q, r, s]
 
     return two_rdm
 
@@ -631,24 +658,27 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     n_mo = np.shape(a_dagger_a)[0] // 2
     one_rdm = np.zeros((n_mo, n_mo))
     two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    two_rdm[:] = np.nan
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
         for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
 
     for p in range(n_mo):
-        for q in range(n_mo):
+        for q in range(p, n_mo):
+            one_rdm[p, q] = WFT.T @ E_[p, q] @ WFT
+            one_rdm[q, p] = one_rdm[p, q]
             for r in range(p, n_mo):
-                one_rdm[p, r] = WFT.T @ E_[p, r] @ WFT
-                for s in range(q, n_mo):
-                    two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
-                    if q == r:
-                        two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+                for s in range(p, n_mo):
+                    if np.isnan(two_rdm[p, q, r, s]):
+                        two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
+                        if q == r:
+                            two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
 
-                    # Symmetry operations:
-                    two_rdm[r, q, p, s] = two_rdm[p, q, r, s]
-                    two_rdm[p, s, r, q] = two_rdm[p, q, r, s]
-                    two_rdm[r, s, p, q] = two_rdm[p, q, r, s]
+                        # Symmetry operations:
+                        two_rdm[r, s, p, q] = two_rdm[p, q, r, s]
+                        two_rdm[q, p, s, r] = two_rdm[p, q, r, s]
+                        two_rdm[s, r, q, p] = two_rdm[p, q, r, s]
 
     return one_rdm, two_rdm
 
