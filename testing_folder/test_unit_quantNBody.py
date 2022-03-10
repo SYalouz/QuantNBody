@@ -3,8 +3,70 @@ import unittest
 import Quant_NBody
 import testing_folder.Quant_NBody_main_branch as Quant_NBody_old
 import numpy as np
-import e_operator
 import parameterized  # conda install -c conda-forge parameterized
+import Quant_NBody
+from tqdm import tqdm
+import Quant_NBody
+import math
+import pyscf
+from pyscf import gto, scf, ao2mo, mcscf, fci
+import psi4
+
+
+# list_of_pubchem_ids = [962] --> water
+def generate_atom_list_from_pubchem(pubchem_id):
+    # Get molecules coordinates
+    mol = psi4.geometry(f"pubchem:{pubchem_id}")
+    mol.update_geometry()
+    xyz_string = mol.save_string_xyz()
+
+    # Generate atom list that is compatible with gto
+    atom_list = []
+    for line in xyz_string.split('\n')[1:-1]:
+        line = line.split(' ')
+        line = [i for i in line if i != '']
+        print(line)
+        atom_list.append([line[0], (float(line[1]), float(line[2]), float(line[3]))])
+    print(atom_list)
+
+    return atom_list
+
+
+def generate_molecule(atom_list):
+    # generate gto molecule object
+    mol = gto.Mole()
+    mol.build(atom=atom_list,  # in Angstrom
+              basis='STO-3G',
+              symmetry=False,
+              spin=0)
+    N_elec = mol.nelectron
+    N_MO = mol.nao_nr()
+
+    # MO coefficients
+    mf = scf.RHF(mol)
+    mf.kernel()
+
+    # generation of 1 and 2 electron integrals
+    h_MO = np.einsum('pi,pq,qj->ij', mf.mo_coeff,
+                     mol.intor_symmetric('int1e_kin') + mol.intor_symmetric('int1e_nuc'),
+                     mf.mo_coeff)
+    g_MO = ao2mo.kernel(mol, mf.mo_coeff)
+    g_MO = ao2mo.restore('s1', g_MO, N_MO)
+
+    E_rep_nuc = mol.energy_nuc()  # Nuclei repuslion energy
+    return h_MO, g_MO, N_elec, N_MO, E_rep_nuc
+
+
+def generate_random_xyz_he_h2(seed=1):
+    random.seed(seed)
+    d1 = 0.3 * (random.random() - 0.5) + 1.333
+    d2 = 0.3 * (random.random() - 0.5) + 1.333
+    phi2 = 1.2 * (random.random() - 0.5)
+    print(f'phi = {phi2 * 180 / 3.14}')
+    XYZ_geometry = f""" He   0.   0.  0.
+ H   -{d1}  0.  0. 
+ H  {d2 * np.cos(phi2)}   {d2 * np.sin(phi2)}  0."""
+    return XYZ_geometry
 
 
 def generate_from_graph(sites, connections):
@@ -80,8 +142,8 @@ class TestQuantNBody(unittest.TestCase):
         a_dagger_a = Quant_NBody.build_operator_a_dagger_a(nbody_basis)
 
         for seed in np.arange(5, 20, 4):
-            heh2 = e_operator.generate_random_xyz_he_h2(seed)
-            h_MO, g_MO, N_elec, N_MO, E_rep_nuc = e_operator.generate_molecule(heh2)
+            heh2 = generate_random_xyz_he_h2(seed)
+            h_MO, g_MO, N_elec, N_MO, E_rep_nuc = generate_molecule(heh2)
             if n_mo != N_MO or n_electron != N_elec:
                 raise Exception('Problem112233')
 
@@ -149,8 +211,8 @@ class TestQuantNBody(unittest.TestCase):
 
     def test_rdms(self):
         # I will generate molecule of water in STO-3G basis set and compare all generated 1RDMS
-        atom_list = e_operator.generate_atom_list_from_pubchem(962)
-        h_MO, g_MO, N_elec, N_MO, E_rep_nuc = e_operator.generate_molecule(atom_list)
+        atom_list = generate_atom_list_from_pubchem(962)
+        h_MO, g_MO, N_elec, N_MO, E_rep_nuc = generate_molecule(atom_list)
 
         nbody_basis = Quant_NBody.build_nbody_basis(N_MO, N_elec)
         a_dagger_a = Quant_NBody.build_operator_a_dagger_a(nbody_basis)
