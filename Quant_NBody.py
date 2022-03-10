@@ -340,7 +340,8 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
             H_fermi_hubbard += (a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]) * h_[p, q]
             for r in range(n_mo):
                 for s in range(n_mo):
-                    H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
+                    if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
+                        H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
 
     # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1 
     # with S = the number of unpaired electrons x 1/2 
@@ -546,36 +547,6 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
             one_rdm[p, q] = WFT.T @ E_pq @ WFT
             one_rdm[q, p] = one_rdm[p, q]
     return one_rdm
-
-
-def build_2rdm_fh_v2(WFT, a_dagger_a):
-    """
-    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function
-
-    Parameters
-    ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
-
-    Returns
-    -------
-    One_RDM_alpha : Spin-free 1-RDM
-
-    """
-    n_mo = np.shape(a_dagger_a)[0] // 2
-    two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
-    for p in range(n_mo):
-        for q in range(n_mo):
-            for r in range(p, n_mo):
-                for s in range(q, n_mo):
-                    two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] @ WFT
-
-                    # Symmetry operations:
-                    two_rdm_fh[r, q, p, s] = two_rdm_fh[p, q, r, s]
-                    two_rdm_fh[p, s, r, q] = two_rdm_fh[p, q, r, s]
-                    two_rdm_fh[r, s, p, q] = two_rdm_fh[p, q, r, s]
-
-    return two_rdm_fh
 
 
 def build_2rdm_fh(WFT, a_dagger_a):
