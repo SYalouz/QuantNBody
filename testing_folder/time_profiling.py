@@ -1,19 +1,12 @@
 import Quant_NBody
-
-import sys
-sys.path.append('/mnt/c/Users/tinc9/Documents/CNRS-offline/Quant_N_Body/pybind')
-import Quant_NBody_fast as Quant_NBody_fast
 import testing_folder.Quant_NBody_main_branch as Quant_NBody_old  # This is the original library that I compare with.
 
 from datetime import datetime
 
+
+
 def build_a_dagger_a_nbasis_new(n_mo, n_electrons):
     nbody_basis_new = Quant_NBody.build_nbody_basis(n_mo, n_electrons)
-    a_dagger_a_new = Quant_NBody.build_operator_a_dagger_a(nbody_basis_new, True)
-    return a_dagger_a_new
-
-def build_a_dagger_a_nbasis_fast(n_mo, n_electrons):
-    nbody_basis_fast = Quant_NBody.build_nbody_basis(n_mo, n_electrons)
     a_dagger_a_new = Quant_NBody.build_operator_a_dagger_a(nbody_basis_new, True)
     return a_dagger_a_new
 
