@@ -1,6 +1,10 @@
 import random
 import unittest
-import Quant_NBody
+TEST_CPP_ACCELERATED = False
+if TEST_CPP_ACCELERATED:
+    import pybind.Quant_NBody_fast as Quant_NBody
+else:
+    import Quant_NBody
 import testing_folder.Quant_NBody_main_branch as Quant_NBody_old # This is the original library that I compare with.
 import numpy as np
 import parameterized  # conda install -c conda-forge parameterized
@@ -116,7 +120,7 @@ class TestQuantNBody(unittest.TestCase):
             print(f'N_mo: {n_mo}, N_electrons: {n_electrons}')
             nbody_basis_new = Quant_NBody.build_nbody_basis(n_mo, n_electrons)
             nbody_basis_old = Quant_NBody_old.Build_NBody_Basis(n_mo, n_electrons)
-            self.assertEqual(nbody_basis_new, nbody_basis_old)
+            self.assertEqual(nbody_basis_new.tolist(), nbody_basis_old)
 
             a_dagger_a_new = Quant_NBody.build_operator_a_dagger_a(nbody_basis_new)
             a_dagger_a_old = Quant_NBody_old.Build_operator_a_dagger_a(nbody_basis_old)
@@ -128,7 +132,6 @@ class TestQuantNBody(unittest.TestCase):
                 for j in range(shape1[1]):
                     self.assertTrue(np.allclose(a_dagger_a_new[i, j].A, a_dagger_a_old[i, j].A))
 
-    # check_sz, my_state weren't checked
 
     def test_build_hamiltonian(self):
         # I assume that a_dagger_a and nbody_basis are same from the previous test.
