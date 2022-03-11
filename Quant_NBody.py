@@ -42,7 +42,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
                 nbody_basis_cleaned.remove(nbody_basis[i])
         nbody_basis = nbody_basis_cleaned
 
-    return nbody_basis
+    return np.array(nbody_basis, dtype=int)
 
 
 def check_sz(ref_state):
@@ -84,7 +84,7 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
     # Dimensions of problem
     dim_H = len(nbody_basis)
     n_mo = len(nbody_basis[0]) // 2
-    mapping_kappa = build_mapping(np.array(nbody_basis))
+    mapping_kappa = build_mapping(nbody_basis)
 
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(2 * n_mo):
@@ -163,8 +163,8 @@ def build_operator_a_dagger_a_v2(nbody_basis, silent=False):
     """
     # Dimensions of problem
     dim_H = len(nbody_basis)
-    n_mo = len(nbody_basis[0]) // 2
-    mapping_kappa = build_mapping(np.array(nbody_basis))
+    n_mo = nbody_basis.shape[1] // 2
+    mapping_kappa = build_mapping(nbody_basis)
 
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(2 * n_mo):
@@ -175,7 +175,7 @@ def build_operator_a_dagger_a_v2(nbody_basis, silent=False):
     for MO_q in (range(n_mo)):
         for MO_p in range(MO_q, n_mo):
             for kappa in range(dim_H):
-                ref_state = np.array(nbody_basis[kappa])
+                ref_state = nbody_basis[kappa]
 
                 # Single excitation : spin alpha -- alpha
                 update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_q, mapping_kappa)
@@ -294,7 +294,7 @@ def my_state(slater_determinant, nbody_basis):
     -------
     state :  The slater determinant referenced in the many-body basis
     """
-    kappa = nbody_basis.index(slater_determinant)
+    kappa = np.flatnonzero((nbody_basis == slater_determinant).all(1))[0]  # nbody_basis.index(slater_determinant)
     state = np.zeros(np.shape(nbody_basis)[0])
     state[kappa] = 1.
 
