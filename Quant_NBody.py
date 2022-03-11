@@ -204,15 +204,11 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
 
     """
     new_fock_state = ref_fock_state.copy()
-    coeff_phase = 1
+    coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
     if type_of_op == 'a':
         new_fock_state[index_mode] += -1
-        if index_mode > 0:
-            coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
     elif type_of_op == 'a^':
         new_fock_state[index_mode] += 1
-        if index_mode > 0:
-            coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
 
     return new_fock_state, coeff_phase
 
