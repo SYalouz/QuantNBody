@@ -1,12 +1,10 @@
 import random
 import unittest
 import Quant_NBody
-import testing_folder.Quant_NBody_main_branch as Quant_NBody_old
+import testing_folder.Quant_NBody_main_branch as Quant_NBody_old # This is the original library that I compare with.
 import numpy as np
 import parameterized  # conda install -c conda-forge parameterized
-import Quant_NBody
 from tqdm import tqdm
-import Quant_NBody
 import math
 import pyscf
 from pyscf import gto, scf, ao2mo, mcscf, fci
@@ -110,7 +108,7 @@ PARAM_TEST_TRANSFORMATIONS = [
 
 
 class TestQuantNBody(unittest.TestCase):
-    @parametrized.parameterized.expand(PARAM_TEST_FIRST)
+    @parameterized.parameterized.expand(PARAM_TEST_FIRST)
     def test_first(self, name, n_mo, n_electrons):
         # Check if build_a_dagger_a and build_nbody_basis work based on different number of orbitals and electrons
         print(name)
@@ -152,7 +150,7 @@ class TestQuantNBody(unittest.TestCase):
 
             self.assertTrue(np.allclose(H_new.A, H_old.A))
 
-    @parametrized.parameterized.expand([
+    @parameterized.parameterized.expand([
         ["0_5_5", 0, 5, 5],
         ["0_6_5", 0, 6, 5],
         ["0_5_10", 0, 5, 10],
@@ -162,7 +160,7 @@ class TestQuantNBody(unittest.TestCase):
         Here I generate random molecules with random parameters.
         Parameters
         ----------
-        name: used for parametrized library
+        name: used for parameterized library
         seed: Seed for random generator
         site_number: Number of sites in the molecule
         bond_number: Number of bonds (actual number could be smaller)
