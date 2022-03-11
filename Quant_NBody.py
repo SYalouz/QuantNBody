@@ -154,9 +154,9 @@ def build_mapping(nbody_basis):
     -------
     mapping_kappa : List of unique values associated to each kappa
     """
-    mapping_kappa = np.zeros(10 ** 9, dtype=np.int32)
     num_digits = np.shape(nbody_basis)[1]
     dim_H = np.shape(nbody_basis)[0]
+    mapping_kappa = np.zeros(2 ** num_digits, dtype=np.int32)
     for kappa in range(dim_H):
         ref_state = nbody_basis[kappa]
         number = 0
