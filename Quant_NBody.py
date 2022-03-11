@@ -140,6 +140,64 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
     return a_dagger_a
 
 
+def update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa):
+    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
+        pass
+    elif ref_state[q] == 1:
+        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
+        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
+
+def build_operator_a_dagger_a_v2(nbody_basis, silent=False):
+    """
+    Create a matrix representation of the a_dagger_a operator
+    in the many-body basis
+
+    Parameters
+    ----------
+    nbody_basis :  List of many-body states (occupation number states) (occupation number states)
+    silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
+    Returns
+    -------
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    """
+    # Dimensions of problem
+    dim_H = len(nbody_basis)
+    n_mo = len(nbody_basis[0]) // 2
+    mapping_kappa = build_mapping(np.array(nbody_basis))
+
+    a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(2 * n_mo):
+        for q in range(p, 2 * n_mo):
+            a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
+            a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
+
+    for MO_q in (range(n_mo)):
+        for MO_p in range(MO_q, n_mo):
+            for kappa in range(dim_H):
+                ref_state = np.array(nbody_basis[kappa])
+
+                # Single excitation : spin alpha -- alpha
+                update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_q, mapping_kappa)
+                # Single excitation : spin beta -- beta
+                update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_q + 1, mapping_kappa)
+
+                if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
+
+                    # Single excitation : spin beta -- alpha
+                    update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_p, mapping_kappa)
+
+                    # Single excitation : spin alpha -- beta
+                    update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_p + 1, mapping_kappa)
+    if not silent:
+        print()
+        print('\t ===========================================')
+        print('\t ====  The matrix form of a^a is built  ====')
+        print('\t ===========================================')
+
+    return a_dagger_a
+
+
 @njit
 def build_mapping(nbody_basis):
     """
