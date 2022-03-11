@@ -1,8 +1,11 @@
 import random
 import unittest
-TEST_CPP_ACCELERATED = False
+TEST_CPP_ACCELERATED = True
 if TEST_CPP_ACCELERATED:
+    import sys
+    sys.path.append('/mnt/c/Users/tinc9/Documents/CNRS-offline/Quant_N_Body')
     import pybind.Quant_NBody_fast as Quant_NBody
+    print(f'\n\n{"*"*30}n{"*"*30}TAKING C++ VERSION!!!!!!n{"*"*30}n{"*"*30}\n\n')
 else:
     import Quant_NBody
 import testing_folder.Quant_NBody_main_branch as Quant_NBody_old # This is the original library that I compare with.
