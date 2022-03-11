@@ -70,7 +70,6 @@ def check_sz(ref_state):
 
 def update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa, kappa, a_dagger_a):
     kappa_, p1p2 = fast.update_a_dagger_a_p_q_fast(ref_state, p, q, mapping_kappa)
-    print(kappa_, p1p2)
     if (kappa_, p1p2) != (-10, -10):
         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1p2
 
@@ -896,5 +895,5 @@ def delta(index_1, index_2):
     return d
 
 if __name__ == '__main__':
-    nbody_basis = build_nbody_basis(2, 2)
+    nbody_basis = build_nbody_basis(8, 8)
     a_dagger_a = build_operator_a_dagger_a(nbody_basis)
