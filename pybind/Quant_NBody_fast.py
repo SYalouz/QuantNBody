@@ -1,9 +1,11 @@
+import scipy
+from scipy import sparse
+import inspect
 import numpy as np
 import math as m
-import scipy
 from itertools import combinations
 from tqdm import tqdm
-
+import pybind.Quant_NBody_accelerate as fast
 
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
@@ -66,6 +68,13 @@ def check_sz(ref_state):
     return s_z_slater_determinant
 
 
+def update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa, kappa, a_dagger_a):
+    kappa_, p1p2 = fast.update_a_dagger_a_p_q_fast(ref_state, p, q, mapping_kappa)
+    print(kappa_, p1p2)
+    if (kappa_, p1p2) != (-10, -10):
+        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1p2
+
+
 def build_operator_a_dagger_a(nbody_basis, silent=False):
     """
     Create a matrix representation of the a_dagger_a operator
@@ -82,88 +91,8 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
     """
     # Dimensions of problem
     dim_H = len(nbody_basis)
-    n_mo = len(nbody_basis[0]) // 2
-    mapping_kappa = build_mapping(nbody_basis)
-
-    a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
-    for p in range(2 * n_mo):
-        for q in range(p, 2 * n_mo):
-            a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
-            a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
-
-    for MO_q in (range(n_mo)):
-        for MO_p in range(MO_q, n_mo):
-            for kappa in range(dim_H):
-                ref_state = nbody_basis[kappa]
-
-                # Single excitation : spin alpha -- alpha
-                p, q = 2 * MO_p, 2 * MO_q
-                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                    pass
-                elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                    # Single excitation : spin beta -- beta
-                p, q = 2 * MO_p + 1, 2 * MO_q + 1
-                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                    pass
-                elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
-
-                    # Single excitation : spin beta -- alpha
-                    p, q = 2 * MO_p + 1, 2 * MO_p
-                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                        pass
-                    elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                        # Single excitation : spin alpha -- beta
-                    p, q = 2 * MO_p, 2 * MO_p + 1
-
-                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                        pass
-                    elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-    if not silent:
-        print()
-        print('\t ===========================================')
-        print('\t ====  The matrix form of a^a is built  ====')
-        print('\t ===========================================')
-
-    return a_dagger_a
-
-
-def update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa, kappa):
-    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-        pass
-    elif ref_state[q] == 1:
-        kappa_, p1, p2 = build_final_state_ad_a(ref_state, p, q, mapping_kappa)
-        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-def build_operator_a_dagger_a_v2(nbody_basis, silent=False):
-    """
-    Create a matrix representation of the a_dagger_a operator
-    in the many-body basis
-
-    Parameters
-    ----------
-    nbody_basis :  List of many-body states (occupation number states) (occupation number states)
-    silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
-    Returns
-    -------
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
-
-    """
-    # Dimensions of problem
-    dim_H = len(nbody_basis)
     n_mo = nbody_basis.shape[1] // 2
-    mapping_kappa = build_mapping(nbody_basis)
+    mapping_kappa = fast.build_mapping_fast(nbody_basis)
 
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(2 * n_mo):
@@ -177,17 +106,17 @@ def build_operator_a_dagger_a_v2(nbody_basis, silent=False):
                 ref_state = nbody_basis[kappa]
 
                 # Single excitation : spin alpha -- alpha
-                update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_q, mapping_kappa, kappa)
+                update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_q, mapping_kappa, kappa, a_dagger_a)
                 # Single excitation : spin beta -- beta
-                update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_q + 1, mapping_kappa, kappa)
+                update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_q + 1, mapping_kappa, kappa, a_dagger_a)
 
                 if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
 
                     # Single excitation : spin beta -- alpha
-                    update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_p, mapping_kappa, kappa)
+                    update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_p, mapping_kappa, kappa, a_dagger_a)
 
                     # Single excitation : spin alpha -- beta
-                    update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_p + 1, mapping_kappa, kappa)
+                    update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_p + 1, mapping_kappa, kappa, a_dagger_a)
     if not silent:
         print()
         print('\t ===========================================')
@@ -197,86 +126,82 @@ def build_operator_a_dagger_a_v2(nbody_basis, silent=False):
     return a_dagger_a
 
 
-@njit
-def build_mapping(nbody_basis):
-    """
-    Function to create a unique mapping between a kappa vector and an occupation
-    number state.
-
-    Parameters
-    ----------
-    nbody_basis :  Many-
-
-    Returns
-    -------
-    mapping_kappa : List of unique values associated to each kappa
-    """
-    num_digits = np.shape(nbody_basis)[1]
-    dim_H = np.shape(nbody_basis)[0]
-    mapping_kappa = np.zeros(2 ** num_digits, dtype=np.int32)
-    for kappa in range(dim_H):
-        ref_state = nbody_basis[kappa]
-        number = 0
-        for digit in range(num_digits):
-            number += ref_state[digit] * 2 ** (num_digits - digit - 1)
-        mapping_kappa[number] = kappa
-
-    return mapping_kappa
-
-
-@njit
-def make_integer_out_of_bit_vector(ref_state):
-    """
-    Function to translate a slater determinant into an unique integer
-
-    Parameters
-    ----------
-    ref_state : Reference slater determinant to turn out into an integer
-
-    Returns
-    -------
-    number : unique integer referring to the slater determinant
-    """
-    number = 0
-    for digit in range(len(ref_state)):
-        number += ref_state[digit] * 2 ** (len(ref_state) - digit - 1)
-
-    return number
-
-
-@njit
-def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
-    """
-
-    Parameters
-    ----------
-    type_of_op    :  type of operator to apply (creation of annihilation)
-    index_mode    :  index of the second quantized mode to occupy/empty
-    ref_fock_state :  initial state to be transformed
-
-    Returns
-    -------
-    new_fock_state :  Resulting occupation number form of the transformed state
-    coeff_phase   :  Phase attached to the resulting state
-
-    """
-    new_fock_state = ref_fock_state.copy()
-    coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
-    if type_of_op == 'a':
-        new_fock_state[index_mode] += -1
-    elif type_of_op == 'a^':
-        new_fock_state[index_mode] += 1
-
-    return new_fock_state, coeff_phase
-
-
-@njit
-def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
-    state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
-    state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
-    kappa_ = mapping_kappa[make_integer_out_of_bit_vector(state_two)]
-
-    return kappa_, p1, p2
+# def build_mapping(nbody_basis):
+#     """
+#     Function to create a unique mapping between a kappa vector and an occupation
+#     number state.
+#
+#     Parameters
+#     ----------
+#     nbody_basis :  Many-
+#
+#     Returns
+#     -------
+#     mapping_kappa : List of unique values associated to each kappa
+#     """
+#     num_digits = np.shape(nbody_basis)[1]
+#     dim_H = np.shape(nbody_basis)[0]
+#     mapping_kappa = np.zeros(2 ** num_digits, dtype=np.int32)
+#     for kappa in range(dim_H):
+#         ref_state = nbody_basis[kappa]
+#         number = 0
+#         for digit in range(num_digits):
+#             number += ref_state[digit] * 2 ** (num_digits - digit - 1)
+#         mapping_kappa[number] = kappa
+#
+#     return mapping_kappa
+#
+#
+# def make_integer_out_of_bit_vector(ref_state):
+#     """
+#     Function to translate a slater determinant into an unique integer
+#
+#     Parameters
+#     ----------
+#     ref_state : Reference slater determinant to turn out into an integer
+#
+#     Returns
+#     -------
+#     number : unique integer referring to the slater determinant
+#     """
+#     number = 0
+#     for digit in range(len(ref_state)):
+#         number += ref_state[digit] * 2 ** (len(ref_state) - digit - 1)
+#
+#     return number
+#
+#
+# def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
+#     """
+#
+#     Parameters
+#     ----------
+#     type_of_op    :  type of operator to apply (creation of annihilation)
+#     index_mode    :  index of the second quantized mode to occupy/empty
+#     ref_fock_state :  initial state to be transformed
+#
+#     Returns
+#     -------
+#     new_fock_state :  Resulting occupation number form of the transformed state
+#     coeff_phase   :  Phase attached to the resulting state
+#
+#     """
+#     new_fock_state = ref_fock_state.copy()
+#     coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
+#     if type_of_op == 'a':
+#         new_fock_state[index_mode] += -1
+#     elif type_of_op == 'a^':
+#         new_fock_state[index_mode] += 1
+#
+#     return new_fock_state, coeff_phase
+#
+#
+# def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
+#     state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
+#     state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
+#     kappa_ = mapping_kappa[make_integer_out_of_bit_vector(state_two)]
+#
+#     return kappa_, p1, p2
 
 
 def my_state(slater_determinant, nbody_basis):
@@ -969,3 +894,7 @@ def delta(index_1, index_2):
     if index_1 == index_2:
         d = 1.0
     return d
+
+if __name__ == '__main__':
+    nbody_basis = build_nbody_basis(2, 2)
+    a_dagger_a = build_operator_a_dagger_a(nbody_basis)
