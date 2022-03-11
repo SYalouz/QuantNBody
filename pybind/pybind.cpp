@@ -106,7 +106,7 @@ py::array_t<int> build_mapping(py::array_t<int> nbody_basis){
 		
 		for (int digit = 0; digit < num_digits; digit++){
 			number += ptr_basis[id_start + digit] * pow(2, num_digits - digit - 1);
-			std::cout<<"       "<<num_digits - digit - 1<< "  "<<ptr_basis[digit]<<"  "<<number<<std::endl;
+//			std::cout<<"       "<<num_digits - digit - 1<< "  "<<ptr_basis[digit]<<"  "<<number<<std::endl;
 		}
 		std::cout<<kappa<< "  "<<id_start<<"  "<<id_end<<"  "<<number<<std::endl;
 		ptr_map[number] = kappa; //kappa
