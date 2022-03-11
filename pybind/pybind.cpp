@@ -1,7 +1,3 @@
-// The compile command
-// Ubuntu:
-// clang++ -shared -fPIC -std=c++11 -I./pybind11/include/ -I/home/mrgulin/miniconda3/include/python3.9/ `python3.9 -m pybind11 --includes` pybind.cpp -o mymodule.so `python3.9-config --ldflags`
-
 #include <pybind11/pybind11.h>
 #include <string>
 #include <pybind11/numpy.h>
@@ -11,12 +7,7 @@
 
 namespace py = pybind11;
 
-
-int add(int a, int b){
-    return a+b;
-}
-
-int make_integer_out_of_bit_vector(py::array_t<int> ref_state){
+inline int make_integer_out_of_bit_vector(py::array_t<int> ref_state){
 	py::buffer_info buf_ref_state = ref_state.request();
 	int *ptr_ref_state = (int *) buf_ref_state.ptr;
 	
@@ -24,7 +15,7 @@ int make_integer_out_of_bit_vector(py::array_t<int> ref_state){
 	int index = 0;
 	int ref_state_length = buf_ref_state.shape[0];
     for  (int digit=0; digit < ref_state_length; digit++){
-		number += digit * pow(2, ref_state_length - index - 1);
+		number += ptr_ref_state[digit] * pow(2, ref_state_length - index - 1);
 		index += 1;
 		
 	}
@@ -32,17 +23,7 @@ int make_integer_out_of_bit_vector(py::array_t<int> ref_state){
     return number;
 }
 
-struct Pet{
-    Pet(const std::string &name) : name(name){}
-    void setName(const std::string &name_){
-        name = name_;
-    }
-    const std::string &getName() const { return name; }
-
-    std::string name;
-};
-
-std::tuple<py::array_t<int>,int> new_state_after_sq_fermi_op(bool type_of_op, int index_mode, py::array_t<int>& fock_state){
+inline std::tuple<py::array_t<int>,int> new_state_after_sq_fermi_op(bool type_of_op, int index_mode, py::array_t<int>& fock_state){
 	/* now type of op is bool and True is creation and False is annihilation */
 	
 	py::buffer_info buf_fock_state = fock_state.request();
@@ -58,6 +39,12 @@ std::tuple<py::array_t<int>,int> new_state_after_sq_fermi_op(bool type_of_op, in
 	}else{
 		ptr_fock_state[index_mode] -= 1;
 	}
+//
+//
+//	for (int i=0; i<buf_fock_state.shape[0]; i++){
+//	    std::cout << ptr_fock_state[i] << ' ';
+//	}
+//	std::cout << std::endl;
 	return std::make_tuple(fock_state, coeff_phase);
 }
 
@@ -130,7 +117,7 @@ py::array_t<int> build_mapping(py::array_t<int> nbody_basis){
 
 
 
-std::tuple<int,int> build_final_state_ad_a(py::array_t<int>& ref_state, int p, int q, py::array_t<int>& mapping_kappa){
+inline std::tuple<int,int> build_final_state_ad_a(py::array_t<int>& ref_state, int p, int q, py::array_t<int>& mapping_kappa){
 	
 	std::tuple<py::array_t<int>,int> ret1 = new_state_after_sq_fermi_op(false, q, ref_state);
 	py::array_t<int> state_one = std::get<0>(ret1);
@@ -148,10 +135,12 @@ std::tuple<int,int> build_final_state_ad_a(py::array_t<int>& ref_state, int p, i
 }
 
 std::tuple<int,int> update_a_dagger_a_p_q(py::array_t<int> & ref_state, int p, int q, py::array_t<int>& mapping_kappa){
-	py::buffer_info buf_ref_state = mapping_kappa.request();
+	py::buffer_info buf_ref_state = ref_state.request();
 	int *ptr_ref_state = (int *) buf_ref_state.ptr;
-	
-	if (!(p != q and (ptr_ref_state[q] == 0 or ptr_ref_state[p] == 1)) && (ptr_ref_state[q] == 1)){
+	bool bool1 = (p != q and (ptr_ref_state[q] == 0 or ptr_ref_state[p] == 1));
+	bool bool2 = (ptr_ref_state[q] == 1);
+//	std::cout << p << ' ' << q << ' ' << ptr_ref_state[q] << ' ' << ptr_ref_state[p] << ' ' << bool1 << ' ' << bool2 << ' ' << std::endl;
+	if ((!bool1) && (bool2)){
 		return build_final_state_ad_a(ref_state, p, q, mapping_kappa);
 	}
 	
@@ -163,13 +152,12 @@ std::tuple<int,int> update_a_dagger_a_p_q(py::array_t<int> & ref_state, int p, i
 
 // Creates a macro function that will be called
 // whenever the module is imported into python
-// 'mymodule' is what we 'import' into python.
+// 'Quant_NBody_accelerate' is what we 'import' into python.
 // 'm' is the interface (creates a py::module object)
 //      for which the bindings are created.
 //  The magic here is in 'template metaprogramming'
-PYBIND11_MODULE(mymodule, m){
+PYBIND11_MODULE(Quant_NBody_accelerate, m){
     m.doc() = "example plugin"; // Optional docstring
-    m.def("add", &add, "Add two integers.");
 	
 	m.def("make_integer_out_of_bit_vector_fast", &make_integer_out_of_bit_vector, "fast implementation of make_integer_out_of_bit_vector in C++");
 	
@@ -180,11 +168,6 @@ PYBIND11_MODULE(mymodule, m){
 	m.def("build_final_state_ad_a_fast", &build_final_state_ad_a, "fast implementation of build_final_state_ad_a in C++", 
 		  py::return_value_policy::move);	
 	m.def("update_a_dagger_a_p_q_fast", &update_a_dagger_a_p_q, "fast implementation of the first part of update_a_dagger_a_p_q in C++", 
-		  py::return_value_policy::copy); 
-    py::class_<Pet>(m, "Pet")
-            .def(py::init<const std::string &>())   // our constructor
-            .def("setName", &Pet::setName)      // Expose member methods
-            .def("getName", &Pet::getName)      // Think about the syntax "&Pet then "::" and the method name
-            .def_readwrite("name",&Pet::name);  // Expose member variables
+		  py::return_value_policy::copy);
 }
 
