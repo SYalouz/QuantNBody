@@ -8,6 +8,7 @@ from tqdm import tqdm
 import pybind.Quant_NBody_accelerate as fast
 import scipy.special
 
+
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
@@ -44,7 +45,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
                 nbody_basis_cleaned.remove(nbody_basis[i])
         nbody_basis = nbody_basis_cleaned
 
-    return np.array(nbody_basis, dtype=int)
+    return np.array(nbody_basis, dtype=np.int8)
 
 
 def check_sz(ref_state):
@@ -93,7 +94,7 @@ def check_sz(ref_state):
 #     dim_H = len(nbody_basis)
 #     n_mo = nbody_basis.shape[1] // 2
 #     mapping_kappa = fast.build_mapping_fast(nbody_basis)
-#     cpp_object = fast.CppObject(nbody_basis, mapping_kappa)
+#     cpp_object = fast.CppObject(nbody_basis)
 #     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
 #     for p in range(2 * n_mo):
 #         for q in range(p, 2 * n_mo):
@@ -126,20 +127,21 @@ def check_sz(ref_state):
 #     return a_dagger_a
 
 
-def calculate_sparse_elements(nbody_basis, p, q, mapping_kappa):
+def calculate_sparse_elements(p, q, cpp_object):
     """
     This was prototype for c++ implementation of this function
     Parameters
     ----------
-    nbody_basis
     p
     q
-    mapping_kappa
+    cpp_object: this is just approximation for how C++ handles an object. Here cpp_object is just tuple of nbody_basis
+    and mapping_kappa
 
     Returns
     -------
 
     """
+    nbody_basis, mapping_kappa = cpp_object
     if p == q:
         i = 0
         sparse_num = int(dim_H * n_electron / (n_mo * 2)) + 100
@@ -195,9 +197,8 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
     # Dimensions of problem
     dim_H = len(nbody_basis)
     n_mo = nbody_basis.shape[1] // 2
-    mapping_kappa = fast.build_mapping_fast(nbody_basis)
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
-    cpp_obj = fast.CppObject(nbody_basis, mapping_kappa)
+    cpp_obj = fast.CppObject(nbody_basis)  # mapping_kappa is called in c++ and it stays in c++
     print(cpp_obj)
     for q in (range(2 * n_mo)):
         for p in range(q, 2 * n_mo):
@@ -219,7 +220,6 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
         print('\t ===========================================')
 
     return a_dagger_a
-
 
 
 # def build_mapping(nbody_basis):
@@ -345,11 +345,11 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     H_chemistry :  Matrix representation of the electronic structure Hamiltonian
 
     """
-    # Dimension of the problem 
+    # Dimension of the problem
     dim_H = len(nbody_basis)
     n_mo = np.shape(h_)[0]
 
-    # Building the spin-preserving one-body excitation operator  
+    # Building the spin-preserving one-body excitation operator
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     e_ = np.empty((2 * n_mo, 2 * n_mo, 2 * n_mo, 2 * n_mo), dtype=object)
     H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -403,7 +403,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     H_fermi_hubbard :  Matrix representation of the Fermi-Hubbard Hamiltonian
 
     """
-    # # Dimension of the problem 
+    # # Dimension of the problem
     dim_H = len(nbody_basis)
     n_mo = np.shape(h_)[0]
 
@@ -417,9 +417,9 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
                     if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
                         H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
 
-    # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1 
-    # with S = the number of unpaired electrons x 1/2 
-    # singlet    =>  S=0    and  S_2=0 
+    # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1
+    # with S = the number of unpaired electrons x 1/2
+    # singlet    =>  S=0    and  S_2=0
     # doublet    =>  S=1/2  and  S_2=3/4
     # triplet    =>  S=1    and  S_2=2
     # quadruplet =>  S=3/2  and  S_2=15/4
@@ -474,8 +474,8 @@ def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=No
 def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupied_indices=None, active_indices=None):
     """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        Restricts a Quantum chemistry Hamiltonian at a spatial orbital level 
-        to an active space. This active space may be defined by a list of 
+        Restricts a Quantum chemistry Hamiltonian at a spatial orbital level
+        to an active space. This active space may be defined by a list of
         active indices and doubly occupied indices. Note that one_body_integrals and
         two_body_integrals must be defined in an orthonormal basis set (MO like).
         Args:
@@ -770,7 +770,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005):
 
 
 # =============================================================================
-# USEFUL TRANSFORMATIONS 
+# USEFUL TRANSFORMATIONS
 # =============================================================================
 
 
@@ -826,7 +826,7 @@ def householder_transformation(M):
 
     """
     n = np.shape(M)[0]
-    # Build the Householder vector "H_vector" 
+    # Build the Householder vector "H_vector"
     alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, n)) ** 0.5
     r = (0.5 * (alpha ** 2. - alpha * M[1, 0])) ** 0.5
 
@@ -836,7 +836,7 @@ def householder_transformation(M):
     for j in range(2, n):
         vector[j] = M[j, 0] / (2.0 * r)
 
-    # Building the transformation matrix "P" 
+    # Building the transformation matrix "P"
     P = np.eye(n) - 2 * vector @ vector.T
 
     return P, vector
@@ -897,7 +897,7 @@ def block_householder_transformation(M, block_size):
 def build_mo_1rdm_and_2rdm(Psi_A, active_indices, n_mo, E_precomputed, e_precomputed):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a 
+    Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a
     reference wavefunction expressed in the computational basis
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     """
@@ -991,11 +991,14 @@ def delta(index_1, index_2):
         d = 1.0
     return d
 
+
 if __name__ == '__main__':
     nbb = build_nbody_basis(8, 8)
     import datetime
+
     time0 = datetime.datetime.now()
     import testing_folder.Quant_NBody_main_branch as Quant_NBody_old
+
     time1 = datetime.datetime.now()
     ada = Quant_NBody_old.Build_operator_a_dagger_a(nbb)
     time2 = datetime.datetime.now()
