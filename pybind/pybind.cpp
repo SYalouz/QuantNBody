@@ -7,6 +7,18 @@
 #include <vector>
 
 namespace py = pybind11;
+class Hold_vectors {
+    public:
+        std::vector<std::vector<int>> nbody_basis;
+        std::vector<int> mapping_kappa;
+        Hold_vectors (std::vector<std::vector<int>> nbody_basis_inp, std::vector<int> mapping_kappa_inp){
+            nbody_basis = nbody_basis_inp;
+            mapping_kappa = mapping_kappa_inp;
+        }
+        ~Hold_vectors (){
+            std::cout << "Destructed object" << std::endl;
+        }
+};
 
 
 int binomial(int n, int k) {
@@ -17,15 +29,12 @@ int binomial(int n, int k) {
     return (int)(res + 0.01);
 }
 
-inline int make_integer_out_of_bit_vector(py::array_t<int> ref_state){
-	py::buffer_info buf_ref_state = ref_state.request();
-	int *ptr_ref_state = (int *) buf_ref_state.ptr;
-	
+inline int make_integer_out_of_bit_vector(std::vector<int> ref_state){
 	int number = 0;
 	int index = 0;
-	int ref_state_length = buf_ref_state.shape[0];
+	int ref_state_length = ref_state.size();
     for  (int digit=0; digit < ref_state_length; digit++){
-		number += ptr_ref_state[digit] * pow(2, ref_state_length - index - 1);
+		number += ref_state[digit] * pow(2, ref_state_length - index - 1);
 		index += 1;
 		
 	}
@@ -33,21 +42,19 @@ inline int make_integer_out_of_bit_vector(py::array_t<int> ref_state){
     return number;
 }
 
-inline std::tuple<py::array_t<int>,int> new_state_after_sq_fermi_op(bool type_of_op, int index_mode, py::array_t<int>& fock_state){
+inline std::tuple<std::vector<int>,int> new_state_after_sq_fermi_op(bool type_of_op, int index_mode, std::vector<int>& fock_state){
 	/* now type of op is bool and True is creation and False is annihilation */
 	
-	py::buffer_info buf_fock_state = fock_state.request();
-	int *ptr_fock_state = (int *) buf_fock_state.ptr;
-	
+
 	int sum_creation_op=0;
 	for (int i=0; i<index_mode; i++){
-		sum_creation_op += ptr_fock_state[i];
+		sum_creation_op += fock_state[i];
 	}
 	int coeff_phase = 1 - 2 * (sum_creation_op % 2);
 	if (type_of_op){ // Creation operator
-		ptr_fock_state[index_mode] += 1;
+		fock_state[index_mode] += 1;
 	}else{
-		ptr_fock_state[index_mode] -= 1;
+		fock_state[index_mode] -= 1;
 	}
 //
 //
@@ -127,34 +134,28 @@ py::array_t<int> build_mapping(py::array_t<int> nbody_basis){
 
 
 
-inline std::tuple<int,int> build_final_state_ad_a(py::array_t<int>& ref_state, int p, int q, py::array_t<int>& mapping_kappa){
+inline std::tuple<int,int> build_final_state_ad_a(std::vector<int>& ref_state, int p, int q, Hold_vectors& hold_vector){
 	
-	std::tuple<py::array_t<int>,int> ret1 = new_state_after_sq_fermi_op(false, q, ref_state);
-	py::array_t<int> state_one = std::get<0>(ret1);
-	std::tuple<py::array_t<int>,int> ret2 = new_state_after_sq_fermi_op(true, p, state_one);
-	
-	py::buffer_info buf_map = mapping_kappa.request();
-	int *ptr_map = (int *) buf_map.ptr;
-	
-	py::array_t<int> state_two = std::get<0>(ret2);
-	int kappa = ptr_map[make_integer_out_of_bit_vector(state_two)];
+	std::tuple<std::vector<int>,int> ret1 = new_state_after_sq_fermi_op(false, q, ref_state);
+	std::vector<int> state_one = std::get<0>(ret1);
+	std::tuple<std::vector<int>,int> ret2 = new_state_after_sq_fermi_op(true, p, state_one);
+
+	std::vector<int> state_two = std::get<0>(ret2);
+	int kappa = hold_vector.mapping_kappa[make_integer_out_of_bit_vector(state_two)];
 	int p1 = std::get<1>(ret1);
 	int p2 = std::get<1>(ret2);
     return std::make_tuple(kappa, p1 * p2);
 	
 }
 
-std::tuple<int,int> update_a_dagger_a_p_q(py::array_t<int> & ref_state, int p, int q, py::array_t<int>& mapping_kappa){
-	py::buffer_info buf_ref_state = ref_state.request();
-	int *ptr_ref_state = (int *) buf_ref_state.ptr;
-	bool bool1 = (p != q and (ptr_ref_state[q] == 0 or ptr_ref_state[p] == 1));
-	bool bool2 = (ptr_ref_state[q] == 1);
+std::tuple<int,int> update_a_dagger_a_p_q(std::vector<int> & ref_state, int p, int q, Hold_vectors& hold_vector){
+	bool bool1 = (p != q and (ref_state[q] == 0 or ref_state[p] == 1));
+	bool bool2 = (ref_state[q] == 1);
 //	std::cout << p << ' ' << q << ' ' << ptr_ref_state[q] << ' ' << ptr_ref_state[p] << ' ' << bool1 << ' ' << bool2 << ' ' << std::endl;
 	if ((!bool1) && (bool2)){
-		return build_final_state_ad_a(ref_state, p, q, mapping_kappa);
+		return build_final_state_ad_a(ref_state, p, q, hold_vector);
 	}
-	
-	return std::make_tuple(-10, -10);	
+	return std::make_tuple(-10, -10);
 }
 
 // inspired by https://github.com/pybind/pybind11/blob/master/tests/test_numpy_dtypes.cpp --> 151
@@ -165,17 +166,15 @@ py::array_t<T> mkarray_via_buffer(size_t n) {
 }
 
 
-std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_sparse_elements(py::array_t<int> & nbody_basis, int p, int q, py::array_t<int>& mapping_kappa){
-	py::buffer_info buff_basis = nbody_basis.request();
-	int *ptr_basis = (int *) buff_basis.ptr;
-
+std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_sparse_elements(int p, int q, Hold_vectors&hold_vector){
+//    std:: cout << &hold_vector << std::endl;
     int sparse_num;
-    int dim_H = buff_basis.shape[0];
-    int n_mo = buff_basis.shape[1] / 2;
+    int dim_H = hold_vector.nbody_basis.size();
+    int n_mo = hold_vector.nbody_basis[0].size() / 2;
     // py::array_t<int>& mapping_kappa build_mapping(nbody_basis); TODO: What to do with this nbody_basis. Is it better if we copy it to the object  every time?
     int n_electron = 0;
     for (int i=0; i<n_mo * 2; i++){
-        n_electron += ptr_basis[i]; // We count number of electrons in the first vector
+        n_electron += hold_vector.nbody_basis[0][i]; // We count number of electrons in the first vector
     }
     if (p == q){
         sparse_num = dim_H * n_electron / (n_mo * 2);
@@ -188,9 +187,7 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
         std::vector<int> value_list(sparse_num, 0);
     if (p == q){
         for (int kappa=0; kappa<dim_H; kappa++){
-            int q_new = kappa * n_mo * 2 + q;
-            int p_new = kappa * n_mo * 2 + p;
-            if (ptr_basis[q_new] == 0){
+            if (hold_vector.nbody_basis[kappa][q] == 0){
                 continue;
             }
             x_list[i] = kappa;
@@ -200,21 +197,14 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
         }
     }else if ((p/2 == q/2) || ((p - q) % 2 == 0)){
         for (int kappa=0; kappa<dim_H; kappa++){
-            int q_new = kappa * n_mo * 2 + q;
-            int p_new = kappa * n_mo * 2 + p;
+            std::vector<int> ref_state;
+            ref_state = hold_vector.nbody_basis[kappa];
 
-            // Generate ref_state
-            auto ref_state = mkarray_via_buffer<int>(n_mo * 2);
-            py::buffer_info buff_ref_state = ref_state.request();
-            int *ptr_ref_state = (int *) buff_ref_state.ptr;
-            for (int i = 0; i < n_mo * 2; i++){
-                ptr_ref_state[i] = ptr_basis[i+kappa * n_mo * 2];
-            }
-//            std::cout << ptr_basis[q_new] << "  " << ptr_ref_state[q] << " | " << ptr_basis[p_new] << "  " << ptr_ref_state[p] << std::endl;
-            if ((ptr_basis[q_new] == 0) || (ptr_basis[p_new] == 1)){
+            if ((ref_state[q] == 0) || (ref_state[p] == 1)){
                 continue;
             }
-            auto ret_tuple = build_final_state_ad_a(ref_state, p, q, mapping_kappa);
+
+            auto ret_tuple = build_final_state_ad_a(ref_state, p, q, hold_vector);
             int kappa2= std::get<0>(ret_tuple);
 	        int p1p2 = std::get<1>(ret_tuple);
             x_list[i] = kappa;
@@ -223,12 +213,6 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
             value_list[i] = p1p2;
             i++;
         }
-
-//                    kappa2, p1p2 = fast.build_final_state_ad_a_fast(ref_state, p, q, mapping_kappa)
-//                    x_list[i] = kappa
-//                    y_list[i] = kappa2
-//                    value_list[i] = p1p2
-//                    i += 1
     }else{
         std::vector<int> empty(0, 0);
         return std::make_tuple(empty, empty, empty);
@@ -242,25 +226,30 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
 //    }
 //    return std::make_tuple(x_list, y_list, value_list);
 //}
-std::vector<int> test_function(std::vector<int> A, std::vector<int> B, py::array_t<int> D){
-    std::vector<int> result (A.size(), 0);
-    for (int i = 0; i < A.size(); i++){
-        result[i] = A[i] + B[i];
-    }
+//std::vector<int> test_function(std::vector<int> A, std::vector<int> B, py::array_t<int> D){
+//    std::vector<int> result (A.size(), 0);
+//    for (int i = 0; i < A.size(); i++){
+//        result[i] = A[i] + B[i];
+//    }
+//
+//    py::buffer_info buff_D = D.request();
+//	int *ptr_D = (int *) buff_D.ptr;
+//    auto E = mkarray_via_buffer<int>(buff_D.shape[0] - 1);
+//    py::buffer_info buff_E = E.request();
+//	int *ptr_E = (int *) buff_E.ptr;
+//    for (int i = 0; i < buff_D.shape[0] - 1; i++){
+//        ptr_E[i] = ptr_D[i] + 4;
+//        std::cout << ptr_E[i]<< ", ";
+//
+//    }
+//    return result;
+//}
 
-    py::buffer_info buff_D = D.request();
-	int *ptr_D = (int *) buff_D.ptr;
-    auto E = mkarray_via_buffer<int>(buff_D.shape[0] - 1);
-    py::buffer_info buff_E = E.request();
-	int *ptr_E = (int *) buff_E.ptr;
-    for (int i = 0; i < buff_D.shape[0] - 1; i++){
-        ptr_E[i] = ptr_D[i] + 4;
-        std::cout << ptr_E[i]<< ", ";
-
+void test_function(Hold_vectors& obj){
+    for (int i=0; i<obj.mapping_kappa.size();i++){
+        std::cout << obj.mapping_kappa[i] << ", ";
     }
-    return result;
 }
-
 
 // py::array_t<double, py::array::f_style> arr({ 3, 5 });
 
@@ -288,5 +277,8 @@ PYBIND11_MODULE(Quant_NBody_accelerate, m){
 		  py::return_value_policy::move);
 	m.def("calculate_sparse_elements_fast", &calculate_sparse_elements, "implementation of calculate_sparse_elements in C++",
 		  py::return_value_policy::move);
+
+    py::class_<Hold_vectors, std::shared_ptr<Hold_vectors>>(m, "CppObject")
+        .def(py::init<std::vector<std::vector<int>>, std::vector<int>>(), py::return_value_policy::reference);
 }
 

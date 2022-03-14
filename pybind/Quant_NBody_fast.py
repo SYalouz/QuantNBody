@@ -69,8 +69,8 @@ def check_sz(ref_state):
     return s_z_slater_determinant
 
 
-def update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa, kappa, a_dagger_a):
-    kappa_, p1p2 = fast.update_a_dagger_a_p_q_fast(ref_state, p, q, mapping_kappa)
+def update_a_dagger_a_p_q(ref_state, p, q, cpp_object, kappa, a_dagger_a):
+    kappa_, p1p2 = fast.update_a_dagger_a_p_q_fast(ref_state, p, q, cpp_object)
     if (kappa_, p1p2) != (-10, -10):
         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1p2
 
@@ -93,7 +93,7 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
     dim_H = len(nbody_basis)
     n_mo = nbody_basis.shape[1] // 2
     mapping_kappa = fast.build_mapping_fast(nbody_basis)
-
+    cpp_object = fast.CppObject(nbody_basis, mapping_kappa)
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(2 * n_mo):
         for q in range(p, 2 * n_mo):
@@ -106,17 +106,17 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
                 ref_state = nbody_basis[kappa]
 
                 # Single excitation : spin alpha -- alpha
-                update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_q, mapping_kappa, kappa, a_dagger_a)
+                update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_q, cpp_object, kappa, a_dagger_a)
                 # Single excitation : spin beta -- beta
-                update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_q + 1, mapping_kappa, kappa, a_dagger_a)
+                update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_q + 1, cpp_object, kappa, a_dagger_a)
 
                 if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
 
                     # Single excitation : spin beta -- alpha
-                    update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_p, mapping_kappa, kappa, a_dagger_a)
+                    update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_p, cpp_object, kappa, a_dagger_a)
 
                     # Single excitation : spin alpha -- beta
-                    update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_p + 1, mapping_kappa, kappa, a_dagger_a)
+                    update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_p + 1, cpp_object, kappa, a_dagger_a)
     if not silent:
         print()
         print('\t ===========================================')
@@ -197,16 +197,17 @@ def build_operator_a_dagger_a_v3(nbody_basis, silent=False):
     n_mo = nbody_basis.shape[1] // 2
     mapping_kappa = fast.build_mapping_fast(nbody_basis)
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
-
+    cpp_obj = fast.CppObject(nbody_basis, mapping_kappa)
+    print(cpp_obj)
     for q in (range(2 * n_mo)):
         for p in range(q, 2 * n_mo):
             # 1. counting operator or p==q
-            x_list, y_list, value_list = fast.calculate_sparse_elements_fast(nbody_basis, p, q, mapping_kappa)
+            x_list, y_list, value_list = fast.calculate_sparse_elements_fast(p, q, cpp_obj)
             if len(x_list) == 0:
                 temp1 = scipy.sparse.lil_matrix([], dtype=np.int8)
                 temp1.resize((dim_H, dim_H))
             else:
-                print(p, q, end=', ')
+                # print(p, q, end=', ')
                 # print(x_list, y_list, value_list)
                 temp1 = scipy.sparse.lil_matrix(scipy.sparse.csr_matrix((value_list, (y_list, x_list)), shape=(dim_H, dim_H), dtype=np.int8))
             a_dagger_a[p, q] = temp1
@@ -992,10 +993,11 @@ def delta(index_1, index_2):
     return d
 
 if __name__ == '__main__':
+    import testing_folder.Quant_NBody_main_branch as Quant_NBody_old
     nbb = build_nbody_basis(8, 8)
     import datetime
     time1 = datetime.datetime.now()
-    ada = build_operator_a_dagger_a(nbb)
+    ada = Quant_NBody_old.Build_operator_a_dagger_a(nbb)
     time2 = datetime.datetime.now()
     ada_v3 = build_operator_a_dagger_a_v3(nbb)
     time3 = datetime.datetime.now()
