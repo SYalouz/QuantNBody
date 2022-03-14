@@ -6,14 +6,18 @@
 #include <iostream>
 #include <vector>
 
-std::vector<int> build_mapping(std::vector<std::vector<int>> nbody_basis);
+typedef int8_t small_int;
 
 namespace py = pybind11;
+
+std::vector<int> build_mapping(std::vector<std::vector<small_int>> nbody_basis);
+
+
 class Hold_vectors {
     public:
-        std::vector<std::vector<int>> nbody_basis;
+        std::vector<std::vector<small_int>> nbody_basis;
         std::vector<int> mapping_kappa;
-        Hold_vectors (std::vector<std::vector<int>> nbody_basis_inp, std::vector<int> mapping_kappa_inp){
+        Hold_vectors (std::vector<std::vector<small_int>> nbody_basis_inp){
             nbody_basis = nbody_basis_inp;
             mapping_kappa = build_mapping(nbody_basis_inp);
         }
@@ -31,7 +35,7 @@ int binomial(int n, int k) {
     return (int)(res + 0.01);
 }
 
-inline int make_integer_out_of_bit_vector(std::vector<int> ref_state){
+inline int make_integer_out_of_bit_vector(std::vector<small_int> ref_state){
 	int number = 0;
 	int index = 0;
 	int ref_state_length = ref_state.size();
@@ -44,7 +48,7 @@ inline int make_integer_out_of_bit_vector(std::vector<int> ref_state){
     return number;
 }
 
-inline std::tuple<std::vector<int>,int> new_state_after_sq_fermi_op(bool type_of_op, int index_mode, std::vector<int>& fock_state){
+inline std::tuple<std::vector<small_int>,int> new_state_after_sq_fermi_op(bool type_of_op, int index_mode, std::vector<small_int>& fock_state){
 	/* now type of op is bool and True is creation and False is annihilation */
 	int sum_creation_op=0;
 	for (int i=0; i<index_mode; i++){
@@ -60,19 +64,17 @@ inline std::tuple<std::vector<int>,int> new_state_after_sq_fermi_op(bool type_of
 }
 
 
-std::vector<int> build_mapping(std::vector<std::vector<int>> nbody_basis){
+std::vector<int> build_mapping(std::vector<std::vector<small_int>> nbody_basis){
 	int dim_H = nbody_basis.size();
 	int num_digits =nbody_basis[1].size();
+
 	int size_map = pow(2, num_digits);
-	
-	
 	std::vector<int> mapping_kappa (size_map, 0);
 	
 	int number = 0;
 	for (int kappa = 0; kappa < dim_H; kappa++){
 		number = 0;
-		
-		
+
 		for (int digit = 0; digit < num_digits; digit++){
 			number += nbody_basis[kappa][digit] * pow(2, num_digits - digit - 1);
 		}
@@ -84,13 +86,13 @@ std::vector<int> build_mapping(std::vector<std::vector<int>> nbody_basis){
 
 
 
-inline std::tuple<int,int> build_final_state_ad_a(std::vector<int>& ref_state, int p, int q, Hold_vectors& hold_vector){
+inline std::tuple<int,int> build_final_state_ad_a(std::vector<small_int>& ref_state, int p, int q, Hold_vectors& hold_vector){
 	
-	std::tuple<std::vector<int>,int> ret1 = new_state_after_sq_fermi_op(false, q, ref_state);
-	std::vector<int> state_one = std::get<0>(ret1);
-	std::tuple<std::vector<int>,int> ret2 = new_state_after_sq_fermi_op(true, p, state_one);
+	std::tuple<std::vector<small_int>,int> ret1 = new_state_after_sq_fermi_op(false, q, ref_state);
+	std::vector<small_int> state_one = std::get<0>(ret1);
+	std::tuple<std::vector<small_int>,int> ret2 = new_state_after_sq_fermi_op(true, p, state_one);
+	std::vector<small_int> state_two = std::get<0>(ret2);
 
-	std::vector<int> state_two = std::get<0>(ret2);
 	int kappa = hold_vector.mapping_kappa[make_integer_out_of_bit_vector(state_two)];
 	int p1 = std::get<1>(ret1);
 	int p2 = std::get<1>(ret2);
@@ -98,7 +100,7 @@ inline std::tuple<int,int> build_final_state_ad_a(std::vector<int>& ref_state, i
 	
 }
 
-std::tuple<int,int> update_a_dagger_a_p_q(std::vector<int> & ref_state, int p, int q, Hold_vectors& hold_vector){
+std::tuple<int,int> update_a_dagger_a_p_q(std::vector<small_int> & ref_state, int p, int q, Hold_vectors& hold_vector){
 	bool bool1 = (p != q and (ref_state[q] == 0 or ref_state[p] == 1));
 	bool bool2 = (ref_state[q] == 1);
 	if ((!bool1) && (bool2)){
@@ -145,7 +147,7 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
         }
     }else if ((p/2 == q/2) || ((p - q) % 2 == 0)){
         for (int kappa=0; kappa<dim_H; kappa++){
-            std::vector<int> ref_state;
+            std::vector<small_int> ref_state;
             ref_state = hold_vector.nbody_basis[kappa];
 
             if ((ref_state[q] == 0) || (ref_state[p] == 1)){
@@ -221,6 +223,6 @@ PYBIND11_MODULE(Quant_NBody_accelerate, m){
 		  py::return_value_policy::move);
 
     py::class_<Hold_vectors, std::shared_ptr<Hold_vectors>>(m, "CppObject")
-        .def(py::init<std::vector<std::vector<int>>, std::vector<int>>(), py::return_value_policy::reference);
+        .def(py::init<std::vector<std::vector<small_int>>>(), py::return_value_policy::reference);
 }
 
