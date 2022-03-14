@@ -44,8 +44,6 @@ inline int make_integer_out_of_bit_vector(std::vector<int> ref_state){
 
 inline std::tuple<std::vector<int>,int> new_state_after_sq_fermi_op(bool type_of_op, int index_mode, std::vector<int>& fock_state){
 	/* now type of op is bool and True is creation and False is annihilation */
-	
-
 	int sum_creation_op=0;
 	for (int i=0; i<index_mode; i++){
 		sum_creation_op += fock_state[i];
@@ -56,77 +54,27 @@ inline std::tuple<std::vector<int>,int> new_state_after_sq_fermi_op(bool type_of
 	}else{
 		fock_state[index_mode] -= 1;
 	}
-//
-//
-//	for (int i=0; i<buf_fock_state.shape[0]; i++){
-//	    std::cout << ptr_fock_state[i] << ' ';
-//	}
-//	std::cout << std::endl;
 	return std::make_tuple(fock_state, coeff_phase);
 }
 
-py::array_t<double> add_arrays(py::array_t<double> input1, py::array_t<double> input2) {
-  py::buffer_info buf1 = input1.request();
-  py::buffer_info buf2 = input2.request();
 
-  if (buf1.size != buf2.size) {
-    throw std::runtime_error("Input shapes must match");
-  }
-
-  /*  allocate the buffer */
-  py::array_t<double> result = py::array_t<double>(buf1.size);
-
-  py::buffer_info buf3 = result.request();
-
-  double *ptr1 = (double *) buf1.ptr,
-         *ptr2 = (double *) buf2.ptr,
-         *ptr3 = (double *) buf3.ptr;
-  int X = buf1.shape[0];
-  int Y = buf1.shape[1];
-
-  for (size_t idx = 0; idx < X; idx++) {
-    for (size_t idy = 0; idy < Y; idy++) {
-      ptr3[idx*Y + idy] = ptr1[idx*Y+ idy] + ptr2[idx*Y+ idy];
-    }
-  }
- 
-  // reshape array to match input shape
-  result.resize({X,Y});
-
-  return result;
-}
-
-py::array_t<int> build_mapping(py::array_t<int> nbody_basis){
-	py::buffer_info buff_basis = nbody_basis.request();
-	int dim_H = buff_basis.shape[0];
-	int num_digits = buff_basis.shape[1];
-	// std::cout << dim_H << "   " << num_digits << std::endl;
+std::vector<int> build_mapping(std::vector<int> nbody_basis){
+	int dim_H = nbody_basis.size();
+	int num_digits =nbody_basis[1].size();
 	int size_map = pow(2, num_digits);
 	
 	
-	py::array_t<int> mapping_kappa = py::array_t<int>(size_map);
-	py::buffer_info buff_mapping_kappa = mapping_kappa.request();
-	
-	int *ptr_map = (int *) buff_mapping_kappa.ptr;
-	int *ptr_basis = (int *) buff_basis.ptr;
+	std::vector<int> mapping_kappa (size_map, 0);
 	
 	int number = 0;
-	int id_end, id_start;
-	for (int i = 0; i < size_map; i++){
-		ptr_map[i] = 0;
-	}
-	
 	for (int kappa = 0; kappa < dim_H; kappa++){
 		number = 0;
-		id_start = kappa * num_digits;
 		
 		
 		for (int digit = 0; digit < num_digits; digit++){
-			number += ptr_basis[id_start + digit] * pow(2, num_digits - digit - 1);
-//			std::cout<<"       "<<num_digits - digit - 1<< "  "<<ptr_basis[digit]<<"  "<<number<<std::endl;
+			number += nbody_basis[kappa][digit] * pow(2, num_digits - digit - 1);
 		}
-//		std::cout<<kappa<< "  "<<id_start<<"  "<<id_end<<"  "<<number<<std::endl;
-		ptr_map[number] = kappa; //kappa
+		mapping_kappa[number] = kappa;
 		
 	}
 	return mapping_kappa;
@@ -151,14 +99,13 @@ inline std::tuple<int,int> build_final_state_ad_a(std::vector<int>& ref_state, i
 std::tuple<int,int> update_a_dagger_a_p_q(std::vector<int> & ref_state, int p, int q, Hold_vectors& hold_vector){
 	bool bool1 = (p != q and (ref_state[q] == 0 or ref_state[p] == 1));
 	bool bool2 = (ref_state[q] == 1);
-//	std::cout << p << ' ' << q << ' ' << ptr_ref_state[q] << ' ' << ptr_ref_state[p] << ' ' << bool1 << ' ' << bool2 << ' ' << std::endl;
 	if ((!bool1) && (bool2)){
 		return build_final_state_ad_a(ref_state, p, q, hold_vector);
 	}
 	return std::make_tuple(-10, -10);
 }
 
-// inspired by https://github.com/pybind/pybind11/blob/master/tests/test_numpy_dtypes.cpp --> 151
+
 template <typename T>
 py::array_t<T> mkarray_via_buffer(size_t n) {
     return py::array(py::buffer_info(
@@ -171,7 +118,6 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
     int sparse_num;
     int dim_H = hold_vector.nbody_basis.size();
     int n_mo = hold_vector.nbody_basis[0].size() / 2;
-    // py::array_t<int>& mapping_kappa build_mapping(nbody_basis); TODO: What to do with this nbody_basis. Is it better if we copy it to the object  every time?
     int n_electron = 0;
     for (int i=0; i<n_mo * 2; i++){
         n_electron += hold_vector.nbody_basis[0][i]; // We count number of electrons in the first vector
@@ -220,30 +166,32 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
     return std::make_tuple(x_list, y_list, value_list);
 }
 
-//void test_function(py::array_t<int> & ref_state, int p, int q, py::array_t<int>& mapping_kappa){
-//    for(int k=0; k<1132560; k++){
-//        std::tuple<int,int> test_obj = update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa);
-//    }
-//    return std::make_tuple(x_list, y_list, value_list);
-//}
-//std::vector<int> test_function(std::vector<int> A, std::vector<int> B, py::array_t<int> D){
-//    std::vector<int> result (A.size(), 0);
-//    for (int i = 0; i < A.size(); i++){
-//        result[i] = A[i] + B[i];
-//    }
-//
-//    py::buffer_info buff_D = D.request();
-//	int *ptr_D = (int *) buff_D.ptr;
-//    auto E = mkarray_via_buffer<int>(buff_D.shape[0] - 1);
-//    py::buffer_info buff_E = E.request();
-//	int *ptr_E = (int *) buff_E.ptr;
-//    for (int i = 0; i < buff_D.shape[0] - 1; i++){
-//        ptr_E[i] = ptr_D[i] + 4;
-//        std::cout << ptr_E[i]<< ", ";
-//
-//    }
-//    return result;
-//}
+/*
+void test_function(py::array_t<int> & ref_state, int p, int q, py::array_t<int>& mapping_kappa){
+    for(int k=0; k<1132560; k++){
+        std::tuple<int,int> test_obj = update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa);
+    }
+    return std::make_tuple(x_list, y_list, value_list);
+}
+std::vector<int> test_function(std::vector<int> A, std::vector<int> B, py::array_t<int> D){
+    std::vector<int> result (A.size(), 0);
+    for (int i = 0; i < A.size(); i++){
+        result[i] = A[i] + B[i];
+    }
+
+    py::buffer_info buff_D = D.request();
+	int *ptr_D = (int *) buff_D.ptr;
+    auto E = mkarray_via_buffer<int>(buff_D.shape[0] - 1);
+    py::buffer_info buff_E = E.request();
+	int *ptr_E = (int *) buff_E.ptr;
+    for (int i = 0; i < buff_D.shape[0] - 1; i++){
+        ptr_E[i] = ptr_D[i] + 4;
+        std::cout << ptr_E[i]<< ", ";
+
+    }
+    return result;
+}
+*/
 
 void test_function(Hold_vectors& obj){
     for (int i=0; i<obj.mapping_kappa.size();i++){
@@ -251,14 +199,6 @@ void test_function(Hold_vectors& obj){
     }
 }
 
-// py::array_t<double, py::array::f_style> arr({ 3, 5 });
-
-// Creates a macro function that will be called
-// whenever the module is imported into python
-// 'Quant_NBody_accelerate' is what we 'import' into python.
-// 'm' is the interface (creates a py::module object)
-//      for which the bindings are created.
-//  The magic here is in 'template metaprogramming'
 PYBIND11_MODULE(Quant_NBody_accelerate, m){
     m.doc() = "example plugin"; // Optional docstring
 	
