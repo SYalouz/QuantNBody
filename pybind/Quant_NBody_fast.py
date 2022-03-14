@@ -5,7 +5,7 @@ import numpy as np
 import math as m
 from itertools import combinations
 from tqdm import tqdm
-import pybind.Quant_NBody_accelerate as fast
+from . import Quant_NBody_accelerate as fast
 import scipy.special
 
 
@@ -205,7 +205,7 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
             # 1. counting operator or p==q
             x_list, y_list, value_list = fast.calculate_sparse_elements_fast(p, q, cpp_obj)
             if len(x_list) == 0:
-                temp1 = scipy.sparse.csr_matrix(([], ([], [])), shape=(dim_H, dim_H), dtype=np.int8)
+                temp1 = scipy.sparse.csr_matrix((dim_H, dim_H), dtype=np.int8)
             else:
                 # print(p, q, end=', ')
                 # print(x_list, y_list, value_list)
@@ -352,7 +352,7 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     # Building the spin-preserving one-body excitation operator
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     e_ = np.empty((2 * n_mo, 2 * n_mo, 2 * n_mo, 2 * n_mo), dtype=object)
-    H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
+    H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H), dtype=np.float64)
 
     for p in range(n_mo):
         for q in range(n_mo):
@@ -408,7 +408,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     n_mo = np.shape(h_)[0]
 
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
-    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
+    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H), dtype=np.float64)
     for p in tqdm(range(n_mo)):
         for q in range(n_mo):
             H_fermi_hubbard += (a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]) * h_[p, q]
@@ -997,10 +997,9 @@ if __name__ == '__main__':
     import datetime
 
     time0 = datetime.datetime.now()
-    import testing_folder.Quant_NBody_main_branch as Quant_NBody_old
-
+    # import testing_folder.Quant_NBody_main_branch as Quant_NBody_old
     time1 = datetime.datetime.now()
-    ada = Quant_NBody_old.Build_operator_a_dagger_a(nbb)
+    # ada = Quant_NBody_old.Build_operator_a_dagger_a(nbb)
     time2 = datetime.datetime.now()
     ada_v3 = build_operator_a_dagger_a(nbb)
     time3 = datetime.datetime.now()
