@@ -209,7 +209,7 @@ def build_operator_a_dagger_a_v3(nbody_basis, silent=False):
             else:
                 # print(p, q, end=', ')
                 # print(x_list, y_list, value_list)
-                temp1 = scipy.sparse.lil_matrix(scipy.sparse.csr_matrix((value_list, (y_list, x_list)), shape=(dim_H, dim_H), dtype=np.int8))
+                temp1 = scipy.sparse.csr_matrix((value_list, (y_list, x_list)), shape=(dim_H, dim_H), dtype=np.int8)
             a_dagger_a[p, q] = temp1
             a_dagger_a[q, p] = temp1.T
 
