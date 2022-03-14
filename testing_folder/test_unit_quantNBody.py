@@ -133,7 +133,7 @@ class TestQuantNBody(unittest.TestCase):
             self.assertEqual(shape1, shape2)
             for i in range(shape1[0]):
                 for j in range(shape1[1]):
-                    self.assertTrue(np.allclose(a_dagger_a_new[i, j].A, a_dagger_a_old[i, j].A))
+                    self.assertEqual((a_dagger_a_new[i, j] != a_dagger_a_old[i, j]).nnz, 0)
 
 
     def test_build_hamiltonian(self):
@@ -153,8 +153,7 @@ class TestQuantNBody(unittest.TestCase):
 
             H_new = Quant_NBody.build_hamiltonian_quantum_chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
             H_old = Quant_NBody_old.Build_Hamiltonian_Quantum_Chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
-
-            self.assertTrue(np.allclose(H_new.A, H_old.A))
+            self.assertEqual((H_new != H_old).nnz, 0)
 
     @parameterized.parameterized.expand([
         ["0_5_5", 0, 5, 5],
@@ -202,7 +201,8 @@ class TestQuantNBody(unittest.TestCase):
             H_new = Quant_NBody.build_hamiltonian_fermi_hubbard(t + v, u, nbody_basis, a_dagger_a)
             H_old = Quant_NBody_old.Build_Hamiltonian_Fermi_Hubbard(t + v, u, nbody_basis, a_dagger_a)
 
-            self.assertTrue(np.allclose(H_new.A, H_old.A))
+            self.assertEqual((H_new != H_old).nnz, 0)
+            # There has to be 0 elements that don't match between these 2 matrices
 
             eig_energies_new, eig_vectors_new = np.linalg.eigh(H_new.A)
             WFT_new = eig_vectors_new[:, 0]
