@@ -71,7 +71,7 @@ def check_sz(ref_state):
 
 
 # def update_a_dagger_a_p_q(ref_state, p, q, cpp_object, kappa, a_dagger_a):
-#     kappa_, p1p2 = fast.update_a_dagger_a_p_q_fast(ref_state, p, q, cpp_object)
+#     kappa_, p1p2 = fast.update_a_dagger_a_p_q(ref_state, p, q, cpp_object)
 #     if (kappa_, p1p2) != (-10, -10):
 #         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1p2
 #
@@ -93,7 +93,7 @@ def check_sz(ref_state):
 #     # Dimensions of problem
 #     dim_H = len(nbody_basis)
 #     n_mo = nbody_basis.shape[1] // 2
-#     mapping_kappa = fast.build_mapping_fast(nbody_basis)
+#     mapping_kappa = fast.build_mapping(nbody_basis)
 #     cpp_object = fast.CppObject(nbody_basis)
 #     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
 #     for p in range(2 * n_mo):
@@ -170,7 +170,7 @@ def calculate_sparse_elements(p, q, cpp_object):
             # anything is happening only if ref_state[q] != 0
             if ref_state[q] == 0 or ref_state[p] == 1:
                 continue
-            kappa2, p1p2 = fast.build_final_state_ad_a_fast(ref_state, p, q, mapping_kappa)
+            kappa2, p1p2 = fast.build_final_state_ad_a(ref_state, p, q, mapping_kappa)
             x_list[i] = kappa
             y_list[i] = kappa2
             value_list[i] = p1p2
@@ -203,7 +203,7 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
     for q in (range(2 * n_mo)):
         for p in range(q, 2 * n_mo):
             # 1. counting operator or p==q
-            x_list, y_list, value_list = fast.calculate_sparse_elements_fast(p, q, cpp_obj)
+            x_list, y_list, value_list = fast.calculate_sparse_elements(p, q, cpp_obj)
             if len(x_list) == 0:
                 temp1 = scipy.sparse.csr_matrix((dim_H, dim_H), dtype=np.int8)
             else:

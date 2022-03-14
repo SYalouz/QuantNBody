@@ -206,20 +206,20 @@ void test_function(Hold_vectors& obj){
 PYBIND11_MODULE(Quant_NBody_accelerate, m){
     m.doc() = "example plugin"; // Optional docstring
 	
-	m.def("make_integer_out_of_bit_vector_fast", &make_integer_out_of_bit_vector, "fast implementation of make_integer_out_of_bit_vector in C++",
+	m.def("make_integer_out_of_bit_vector", &make_integer_out_of_bit_vector, "fast implementation of make_integer_out_of_bit_vector in C++",
 	      py::return_value_policy::move);
 	
-	m.def("new_state_after_sq_fermi_op_fast", &new_state_after_sq_fermi_op, "fast implementation of new_state_after_sq_fermi_op in C++", 
+	m.def("new_state_after_sq_fermi_op", &new_state_after_sq_fermi_op, "fast implementation of new_state_after_sq_fermi_op in C++",
 		  py::return_value_policy::move);
-	m.def("build_mapping_fast", &build_mapping, "fast implementation of build_mapping in C++", 
+	m.def("build_mapping", &build_mapping, "fast implementation of build_mapping in C++",
 		  py::return_value_policy::move);
-	m.def("build_final_state_ad_a_fast", &build_final_state_ad_a, "fast implementation of build_final_state_ad_a in C++", 
+	m.def("build_final_state_ad_a", &build_final_state_ad_a, "fast implementation of build_final_state_ad_a in C++",
 		  py::return_value_policy::move);
-	m.def("update_a_dagger_a_p_q_fast", &update_a_dagger_a_p_q, "fast implementation of the first part of update_a_dagger_a_p_q in C++", 
+	m.def("update_a_dagger_a_p_q", &update_a_dagger_a_p_q, "fast implementation of the first part of update_a_dagger_a_p_q in C++",
 		  py::return_value_policy::move);
 	m.def("test_function", &test_function, "test in C++",
 		  py::return_value_policy::move);
-	m.def("calculate_sparse_elements_fast", &calculate_sparse_elements, "implementation of calculate_sparse_elements in C++",
+	m.def("calculate_sparse_elements", &calculate_sparse_elements, "implementation of calculate_sparse_elements in C++",
 		  py::return_value_policy::move);
 
     py::class_<Hold_vectors, std::shared_ptr<Hold_vectors>>(m, "CppObject")
