@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+std::vector<int> build_mapping(std::vector<std::vector<int>> nbody_basis);
+
 namespace py = pybind11;
 class Hold_vectors {
     public:
@@ -13,7 +15,7 @@ class Hold_vectors {
         std::vector<int> mapping_kappa;
         Hold_vectors (std::vector<std::vector<int>> nbody_basis_inp, std::vector<int> mapping_kappa_inp){
             nbody_basis = nbody_basis_inp;
-            mapping_kappa = mapping_kappa_inp;
+            mapping_kappa = build_mapping(nbody_basis_inp);
         }
         ~Hold_vectors (){
             std::cout << "Destructed object" << std::endl;
@@ -58,7 +60,7 @@ inline std::tuple<std::vector<int>,int> new_state_after_sq_fermi_op(bool type_of
 }
 
 
-std::vector<int> build_mapping(std::vector<int> nbody_basis){
+std::vector<int> build_mapping(std::vector<std::vector<int>> nbody_basis){
 	int dim_H = nbody_basis.size();
 	int num_digits =nbody_basis[1].size();
 	int size_map = pow(2, num_digits);
