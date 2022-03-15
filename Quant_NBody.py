@@ -1,12 +1,16 @@
+import scipy
+from scipy import sparse
+import inspect
 import numpy as np
 import math as m
-import scipy
-from numba import njit, prange
 from itertools import combinations
 from tqdm import tqdm
+import scipy.special
+from numba import njit
 
 E_ = False
 e_ = False
+
 
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
@@ -44,7 +48,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
                 nbody_basis_cleaned.remove(nbody_basis[i])
         nbody_basis = nbody_basis_cleaned
 
-    return np.array(nbody_basis, dtype=int)
+    return np.array(nbody_basis, dtype=np.int8)
 
 
 def check_sz(ref_state):
@@ -69,6 +73,7 @@ def check_sz(ref_state):
     return s_z_slater_determinant
 
 
+# numba -> njit version of build_operator_a_dagger_a
 def build_operator_a_dagger_a(nbody_basis, silent=False):
     """
     Create a matrix representation of the a_dagger_a operator
@@ -133,64 +138,6 @@ def build_operator_a_dagger_a(nbody_basis, silent=False):
                     elif ref_state[q] == 1:
                         kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                         a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-    if not silent:
-        print()
-        print('\t ===========================================')
-        print('\t ====  The matrix form of a^a is built  ====')
-        print('\t ===========================================')
-
-    return a_dagger_a
-
-
-def update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa):
-    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-        pass
-    elif ref_state[q] == 1:
-        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-def build_operator_a_dagger_a_v2(nbody_basis, silent=False):
-    """
-    Create a matrix representation of the a_dagger_a operator
-    in the many-body basis
-
-    Parameters
-    ----------
-    nbody_basis :  List of many-body states (occupation number states) (occupation number states)
-    silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
-    Returns
-    -------
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
-
-    """
-    # Dimensions of problem
-    dim_H = len(nbody_basis)
-    n_mo = nbody_basis.shape[1] // 2
-    mapping_kappa = build_mapping(nbody_basis)
-
-    a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
-    for p in range(2 * n_mo):
-        for q in range(p, 2 * n_mo):
-            a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
-            a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
-
-    for MO_q in (range(n_mo)):
-        for MO_p in range(MO_q, n_mo):
-            for kappa in range(dim_H):
-                ref_state = nbody_basis[kappa]
-
-                # Single excitation : spin alpha -- alpha
-                update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_q, mapping_kappa)
-                # Single excitation : spin beta -- beta
-                update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_q + 1, mapping_kappa)
-
-                if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
-
-                    # Single excitation : spin beta -- alpha
-                    update_a_dagger_a_p_q(ref_state, 2 * MO_p + 1, 2 * MO_p, mapping_kappa)
-
-                    # Single excitation : spin alpha -- beta
-                    update_a_dagger_a_p_q(ref_state, 2 * MO_p, 2 * MO_p + 1, mapping_kappa)
     if not silent:
         print()
         print('\t ===========================================')
@@ -303,6 +250,109 @@ def my_state(slater_determinant, nbody_basis):
     return state
 
 
+# c++ with pybind11 version of build_operator_a_dagger_a
+try:
+    from .pybind import Quant_NBody_accelerate as fast
+
+
+    def build_operator_a_dagger_a_fast(nbody_basis, silent=False):
+        """
+        Create a matrix representation of the a_dagger_a operator
+        in the many-body basis
+
+        Parameters
+        ----------
+        nbody_basis :  List of many-body states (occupation number states) (occupation number states)
+        silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
+        Returns
+        -------
+        a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+        """
+        # Dimensions of problem
+        dim_H = len(nbody_basis)
+        n_mo = nbody_basis.shape[1] // 2
+        a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
+        cpp_obj = fast.CppObject(nbody_basis)  # mapping_kappa is called in c++ and it stays in c++
+        print(cpp_obj)
+        for q in (range(2 * n_mo)):
+            for p in range(q, 2 * n_mo):
+                # 1. counting operator or p==q
+                x_list, y_list, value_list = fast.calculate_sparse_elements(p, q, cpp_obj)
+                if len(x_list) == 0:
+                    temp1 = scipy.sparse.csr_matrix((dim_H, dim_H), dtype=np.int8)
+                else:
+                    # print(p, q, end=', ')
+                    # print(x_list, y_list, value_list)
+                    temp1 = scipy.sparse.csr_matrix((value_list, (y_list, x_list)), shape=(dim_H, dim_H), dtype=np.int8)
+                a_dagger_a[p, q] = temp1
+                a_dagger_a[q, p] = temp1.T
+
+        if not silent:
+            print()
+            print('\t ===========================================')
+            print('\t ====  The matrix form of a^a is built  ====')
+            print('\t ===========================================')
+
+        return a_dagger_a
+
+
+    def calculate_sparse_elements(p, q, cpp_object):
+        """
+        This was prototype for c++ implementation of this function
+        Parameters
+        ----------
+        p
+        q
+        cpp_object: this is just approximation for how C++ handles an object. Here cpp_object is just tuple of nbody_basis
+        and mapping_kappa
+
+        Returns
+        -------
+
+        """
+        nbody_basis, mapping_kappa = cpp_object
+        if p == q:
+            i = 0
+            sparse_num = int(dim_H * n_electron / (n_mo * 2)) + 100
+            x_list = [0] * sparse_num
+            y_list = [0] * sparse_num
+            value_list = [0] * sparse_num
+            for kappa in range(dim_H):
+                ref_state = nbody_basis[kappa]
+                # anything is happening only if ref_state[q] != 0
+                if ref_state[q] == 0:
+                    continue
+                x_list[i] = kappa
+                y_list[i] = kappa
+                value_list[i] = 1
+                i += 1
+        elif (p // 2 == q // 2) or ((p - q) % 2 == 0):
+            # In the first case these are alpha beta excitations in same MO
+            # In the second case spins of spin orbitals are the same and These are alpha beta excitations in same MO
+            i = 0
+            sparse_num = int(scipy.special.binom(2 * n_mo - 2, n_electron - 1))
+            x_list = [0] * sparse_num
+            y_list = [0] * sparse_num
+            value_list = [0] * sparse_num
+            for kappa in range(dim_H):
+                ref_state = nbody_basis[kappa]
+                # anything is happening only if ref_state[q] != 0
+                if ref_state[q] == 0 or ref_state[p] == 1:
+                    continue
+                kappa2, p1p2 = fast.build_final_state_ad_a(ref_state, p, q, mapping_kappa)
+                x_list[i] = kappa
+                y_list[i] = kappa2
+                value_list[i] = p1p2
+                i += 1
+        else:
+            return [], [], []
+        return x_list, y_list, value_list
+except ImportError:
+    print("Did not import fast implementation. If you want fast implementation compile the pybind/pybind.cpp to "
+          "pybind/Quant_NBody_accelerate.")
+
+
 # =============================================================================
 #  MANY-BODY HAMILTONIANS (FERMI HUBBARD AND QUANTUM CHEMISTRY)
 # =============================================================================
@@ -398,8 +448,8 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in tqdm(range(n_mo)):
         for q in range(n_mo):
-            E_[p, q]
-            H_fermi_hubbard += (a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]) * h_[p, q]
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+            H_fermi_hubbard += E_[p, q] * h_[p, q]
             for r in range(n_mo):
                 for s in range(n_mo):
                     if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
@@ -652,6 +702,7 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
     n_mo = np.shape(a_dagger_a)[0] // 2
     two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
     two_rdm[:] = np.nan
+    global E_
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
         for q in range(n_mo):
@@ -692,6 +743,7 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     one_rdm = np.zeros((n_mo, n_mo))
     two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
     two_rdm[:] = np.nan
+    global E_
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
         for q in range(n_mo):

@@ -170,32 +170,6 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<int>> calculate_spars
     return std::make_tuple(x_list, y_list, value_list);
 }
 
-/*
-void test_function(py::array_t<int> & ref_state, int p, int q, py::array_t<int>& mapping_kappa){
-    for(int k=0; k<1132560; k++){
-        std::tuple<int,int> test_obj = update_a_dagger_a_p_q(ref_state, p, q, mapping_kappa);
-    }
-    return std::make_tuple(x_list, y_list, value_list);
-}
-std::vector<int> test_function(std::vector<int> A, std::vector<int> B, py::array_t<int> D){
-    std::vector<int> result (A.size(), 0);
-    for (int i = 0; i < A.size(); i++){
-        result[i] = A[i] + B[i];
-    }
-
-    py::buffer_info buff_D = D.request();
-	int *ptr_D = (int *) buff_D.ptr;
-    auto E = mkarray_via_buffer<int>(buff_D.shape[0] - 1);
-    py::buffer_info buff_E = E.request();
-	int *ptr_E = (int *) buff_E.ptr;
-    for (int i = 0; i < buff_D.shape[0] - 1; i++){
-        ptr_E[i] = ptr_D[i] + 4;
-        std::cout << ptr_E[i]<< ", ";
-
-    }
-    return result;
-}
-*/
 
 void test_function(Hold_vectors& obj){
     for (int i=0; i<obj.mapping_kappa.size();i++){
@@ -204,7 +178,7 @@ void test_function(Hold_vectors& obj){
 }
 
 PYBIND11_MODULE(Quant_NBody_accelerate, m){
-    m.doc() = "example plugin"; // Optional docstring
+    m.doc() = "This module has fast C++ implementation of some functions of Quant_NBody"; // Optional docstring
 	
 	m.def("make_integer_out_of_bit_vector", &make_integer_out_of_bit_vector, "fast implementation of make_integer_out_of_bit_vector in C++",
 	      py::return_value_policy::move);
