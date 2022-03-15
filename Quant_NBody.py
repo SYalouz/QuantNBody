@@ -5,6 +5,8 @@ from numba import njit, prange
 from itertools import combinations
 from tqdm import tqdm
 
+E_ = False
+e_ = False
 
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
@@ -329,9 +331,11 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     dim_H = len(nbody_basis)
     n_mo = np.shape(h_)[0]
 
-    # Building the spin-preserving one-body excitation operator  
-    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
-    e_ = np.empty((2 * n_mo, 2 * n_mo, 2 * n_mo, 2 * n_mo), dtype=object)
+    # Building the spin-preserving one-body excitation operator
+    global E_
+    global e_
+    E_ = np.empty((n_mo, n_mo), dtype=object)
+    e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object)
     H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
 
     for p in range(n_mo):
@@ -387,10 +391,14 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     dim_H = len(nbody_basis)
     n_mo = np.shape(h_)[0]
 
+    global E_
+    E_ = np.empty((n_mo, n_mo), dtype=object)
+
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
     H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in tqdm(range(n_mo)):
         for q in range(n_mo):
+            E_[p, q]
             H_fermi_hubbard += (a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]) * h_[p, q]
             for r in range(n_mo):
                 for s in range(n_mo):
