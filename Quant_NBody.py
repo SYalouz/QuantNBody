@@ -251,10 +251,18 @@ def my_state(slater_determinant, nbody_basis):
 
 
 # c++ with pybind11 version of build_operator_a_dagger_a
+import_fast_functions = False
 try:
     from .pybind import Quant_NBody_accelerate as fast
-
-
+    import_fast_functions = True
+except ImportError:
+    pass
+try:
+    from pybind import Quant_NBody_accelerate as fast
+    import_fast_functions = True
+except ImportError:
+    pass
+if import_fast_functions:
     def build_operator_a_dagger_a_fast(nbody_basis, silent=False):
         """
         Create a matrix representation of the a_dagger_a operator
@@ -348,7 +356,7 @@ try:
         else:
             return [], [], []
         return x_list, y_list, value_list
-except ImportError:
+else:
     print("Did not import fast implementation. If you want fast implementation compile the pybind/pybind.cpp to "
           "pybind/Quant_NBody_accelerate.")
 
@@ -446,7 +454,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
 
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
     H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in tqdm(range(n_mo)):
+    for p in range(n_mo):
         for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
             H_fermi_hubbard += E_[p, q] * h_[p, q]
