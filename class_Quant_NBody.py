@@ -26,7 +26,7 @@ def print_matrix(matrix, plot_heatmap='', ret=False):
 class QuantNBody:
     def __init__(self, N_MO, N_elec, S_z_cleaning=False, override_NBody_basis=tuple()):
         self.n_mo = N_MO
-        self.n_elec = N_elec
+        self.n_electron = N_elec
         if not override_NBody_basis:
             self.nbody_basis = Quant_NBody.build_nbody_basis(N_MO, N_elec, S_z_cleaning)
         else:
@@ -38,6 +38,8 @@ class QuantNBody:
         self.U = np.array([], dtype=np.float64)
         self.ei_val = self.ei_vec = np.array([])
         self.WFT_0 = np.array([])
+        self.one_rdm = np.array([])  # IT IS ONLY SPIN ALPHA!!!!!!
+        self.two_rdm = np.array([])
 
     def build_operator_a_dagger_a(self):
         self.a_dagger_a = Quant_NBody.build_operator_a_dagger_a(self.nbody_basis)
@@ -84,8 +86,15 @@ class QuantNBody:
             print('\t', sign_, '{:1.5f}'.format(abs(coefficients[index])),
                   '\t' + get_better_ket(states[index]))
 
-    def calculate_1rdm_tot(self, index=0):
-        return Quant_NBody.Build_One_RDM_spin_free(self.ei_vec[:, index], self.a_dagger_a)
+    def calculate_1rdm(self, index=0):
+        """THIS CALCULATES ONLY SPIN ALPHA!!"""
+        self.one_rdm = Quant_NBody.build_1rdm_alpha(self.ei_vec[:, index], self.a_dagger_a)
+        return self.one_rdm
+
+    def calculate_2rdm_fh(self, index=0):
+        """THIS CALCULATES ONLY SPIN ALPHA!!"""
+        self.two_rdm = Quant_NBody.build_2rdm_fh(self.ei_vec[:, index], self.a_dagger_a)
+        return self.two_rdm
 
 
 def get_better_ket(state, bra=False):
