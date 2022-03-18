@@ -1,19 +1,13 @@
 import random
 import unittest
-TEST_CPP_ACCELERATED = True
-if TEST_CPP_ACCELERATED:
-    import sys
-    sys.path.append('/mnt/c/Users/tinc9/Documents/CNRS-offline/Quant_N_Body')
-    import pybind.Quant_NBody_fast as Quant_NBody
-    print(f'\n\n{"*"*30}n{"*"*30}TAKING C++ VERSION!!!!!!n{"*"*30}n{"*"*30}\n\n')
-else:
-    import Quant_NBody
-import testing_folder.Quant_NBody_main_branch as Quant_NBody_old # This is the original library that I compare with.
+import Quant_NBody
+import testing_folder.Quant_NBody_main_branch as Quant_NBody_old  # This is the original library that I compare with.
 import numpy as np
 import parameterized  # conda install -c conda-forge parameterized
 from tqdm import tqdm
 import math
 import pyscf
+import datetime
 from pyscf import gto, scf, ao2mo, mcscf, fci
 import psi4
 
@@ -85,14 +79,14 @@ def generate_from_graph(sites, connections):
     t = np.zeros((n_sites, n_sites), dtype=np.float64)
     v = np.zeros(n_sites, dtype=np.float64)
     u = np.zeros(n_sites, dtype=np.float64)
-    for id, params in sites.items():
+    for id1, params in sites.items():
         if 'U' in params:
-            u[id] = params['U']
+            u[id1] = params['U']
         elif 'u' in params:
-            u[id] = params['u']
+            u[id1] = params['u']
         else:
             raise "Problem with params: " + params
-        v[id] = params['v']
+        v[id1] = params['v']
     for pair, param in connections.items():
         t[pair[0], pair[1]] = -param
         t[pair[1], pair[0]] = -param
