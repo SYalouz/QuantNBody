@@ -95,9 +95,10 @@ def generate_from_graph(sites, connections):
 
 # Parameters setting:
 PARAM_TEST_FIRST = []
-for n_mo1 in range(1, 8):
-    for n_electrons1 in range(1, min(9, n_mo1 * 2)):
-        PARAM_TEST_FIRST.append([f'N-MO={n_mo1}_N-e={n_electrons1}', n_mo1, n_electrons1])
+for fast1 in [True, False]:
+    for n_mo1 in [2, 4, 6, 8]:
+        for n_electrons1 in range(1, min(9, n_mo1 * 2)):
+            PARAM_TEST_FIRST.append([f'N-MO={n_mo1}_N-e={n_electrons1}_{"fast" * fast1}', n_mo1, n_electrons1, fast1])
 
 PARAM_TEST_TRANSFORMATIONS = [
     ('0_10_2_F_F', 0, 10, 2, False, False),
@@ -110,7 +111,7 @@ PARAM_TEST_TRANSFORMATIONS = [
 
 class TestQuantNBody(unittest.TestCase):
     @parameterized.parameterized.expand(PARAM_TEST_FIRST)
-    def test_first(self, name, n_mo, n_electrons):
+    def test_first(self, name, n_mo, n_electrons, fast=False):
         # Check if build_a_dagger_a and build_nbody_basis work based on different number of orbitals and electrons
         print(name)
         with self.subTest(i=f"{n_mo}, {n_electrons}"):
@@ -118,8 +119,11 @@ class TestQuantNBody(unittest.TestCase):
             nbody_basis_new = Quant_NBody.build_nbody_basis(n_mo, n_electrons)
             nbody_basis_old = Quant_NBody_old.Build_NBody_Basis(n_mo, n_electrons)
             self.assertEqual(nbody_basis_new.tolist(), nbody_basis_old)
-
-            a_dagger_a_new = Quant_NBody.build_operator_a_dagger_a(nbody_basis_new)
+            if fast:
+                build_a_dagger_a = Quant_NBody.build_operator_a_dagger_a_fast
+            else:
+                build_a_dagger_a = Quant_NBody.build_operator_a_dagger_a
+            a_dagger_a_new = build_a_dagger_a(nbody_basis_new)
             a_dagger_a_old = Quant_NBody_old.Build_operator_a_dagger_a(nbody_basis_old)
             shape1 = a_dagger_a_new.shape
             shape2 = a_dagger_a_old.shape
@@ -128,7 +132,6 @@ class TestQuantNBody(unittest.TestCase):
             for i in range(shape1[0]):
                 for j in range(shape1[1]):
                     self.assertEqual((a_dagger_a_new[i, j] != a_dagger_a_old[i, j]).nnz, 0)
-
 
     def test_build_hamiltonian(self):
         # I assume that a_dagger_a and nbody_basis are same from the previous test.
@@ -144,15 +147,18 @@ class TestQuantNBody(unittest.TestCase):
             h_MO, g_MO, N_elec, N_MO, E_rep_nuc = generate_molecule(heh2)
             if n_mo != N_MO or n_electron != N_elec:
                 raise Exception('Problem112233')
-
+            time0_new = datetime.datetime.now()
             H_new = Quant_NBody.build_hamiltonian_quantum_chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
+            time0_old = time1_new = datetime.datetime.now()
             H_old = Quant_NBody_old.Build_Hamiltonian_Quantum_Chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
+            time1_old = datetime.datetime.now()
             self.assertEqual((H_new != H_old).nnz, 0)
+            print(f'old time: {time1_old - time0_old}\nnew time: {time1_new - time0_new}')
 
     @parameterized.parameterized.expand([
         ["0_5_5", 0, 5, 5],
         ["0_6_5", 0, 6, 5],
-        ["0_5_10", 0, 5, 10],
+        ["0_7_10", 0, 7, 10]
     ])
     def test_build_fh_hamiltonian(self, name, seed=0, site_number=5, bond_number=5):
         """
@@ -171,8 +177,11 @@ class TestQuantNBody(unittest.TestCase):
         print(name)
         n_mo = site_number
         n_electron = site_number
+        print('building nbody_basis')
         nbody_basis = Quant_NBody.build_nbody_basis(n_mo, n_electron)
+        print('building a_dagger_a')
         a_dagger_a = Quant_NBody.build_operator_a_dagger_a(nbody_basis)
+        print('finished building a_dagger_a')
 
         for i in range(5):
             """Checks build of Fermi Hubbard Hamiltonian and corresponding 2rdm"""
@@ -191,19 +200,24 @@ class TestQuantNBody(unittest.TestCase):
             t, v, u1d = generate_from_graph(sites, edges)
             u = np.zeros((site_number, site_number, site_number, site_number))
             u[np.diag_indices(site_number, ndim=4)] = u1d
-
+            time0_new = datetime.datetime.now()
             H_new = Quant_NBody.build_hamiltonian_fermi_hubbard(t + v, u, nbody_basis, a_dagger_a)
+            time0_old = time1_new = datetime.datetime.now()
             H_old = Quant_NBody_old.Build_Hamiltonian_Fermi_Hubbard(t + v, u, nbody_basis, a_dagger_a)
+            time1_old = datetime.datetime.now()
+            print(f'old time: {time1_old - time0_old}\nnew time: {time1_new - time0_new}')
 
             self.assertEqual((H_new != H_old).nnz, 0)
             # There has to be 0 elements that don't match between these 2 matrices
-
-            eig_energies_new, eig_vectors_new = np.linalg.eigh(H_new.A)
+            print('moving H from sparse to dense matrix')
+            H_new_array = H_new.A
+            print('Diagonalization of the new Hamiltonian')
+            eig_energies_new, eig_vectors_new = np.linalg.eigh(H_new_array)
             WFT_new = eig_vectors_new[:, 0]
-
+            print('Diagonalization of the old Hamiltonian')
             eig_energies_old, eig_vectors_old = np.linalg.eigh(H_old.A)
             WFT_old = eig_vectors_old[:, 0]
-
+            print('Finished')
             self.assertTrue(np.allclose(Quant_NBody.build_2rdm_fh(WFT_new, a_dagger_a),
                                         Quant_NBody_old.Build_two_RDM_FH(WFT_old, a_dagger_a)))
 
@@ -223,9 +237,6 @@ class TestQuantNBody(unittest.TestCase):
 
         self.assertTrue(np.allclose(Quant_NBody.build_1rdm_alpha(WFT, a_dagger_a),
                                     Quant_NBody_old.Build_One_RDM_alpha(WFT, a_dagger_a)))
-
-        a = Quant_NBody.build_1rdm_spin_free(WFT, a_dagger_a)
-        b = Quant_NBody_old.Build_One_RDM_spin_free(WFT, a_dagger_a)
 
         self.assertTrue(np.allclose(Quant_NBody.build_1rdm_spin_free(WFT, a_dagger_a),
                                     Quant_NBody_old.Build_One_RDM_spin_free(WFT, a_dagger_a)))
