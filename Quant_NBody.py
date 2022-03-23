@@ -874,6 +874,9 @@ def householder_transformation(M):
 
     """
     n = np.shape(M)[0]
+    if np.count_nonzero(M - np.diag(np.diagonal(M))) == 0:
+        print('\tinput was diagonal matrix')
+        return np.diag(np.zeros(n)+1), np.zeros((n, 1))
     # Build the Householder vector "H_vector" 
     alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, n)) ** 0.5
     r = (0.5 * (alpha ** 2. - alpha * M[1, 0])) ** 0.5
