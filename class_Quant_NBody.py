@@ -41,8 +41,8 @@ class QuantNBody:
         self.one_rdm = np.array([])  # IT IS ONLY SPIN ALPHA!!!!!!
         self.two_rdm = np.array([])
 
-    def build_operator_a_dagger_a(self):
-        self.a_dagger_a = Quant_NBody.build_operator_a_dagger_a(self.nbody_basis)
+    def build_operator_a_dagger_a(self, silent=False):
+        self.a_dagger_a = Quant_NBody.build_operator_a_dagger_a(self.nbody_basis, silent)
 
     def build_hamiltonian_quantum_chemistry(self, h_, U_, *args, **kwargs):
         self.h = h_
@@ -90,6 +90,12 @@ class QuantNBody:
         """THIS CALCULATES ONLY SPIN ALPHA!!"""
         self.one_rdm = Quant_NBody.build_1rdm_alpha(self.ei_vec[:, index], self.a_dagger_a)
         return self.one_rdm
+
+    def calculate_1rdm_spin_free(self, index=0):
+        """THIS CALCULATES ONLY SPIN ALPHA!!"""
+        self.one_rdm = Quant_NBody.build_1rdm_spin_free(self.ei_vec[:, index], self.a_dagger_a)
+        return self.one_rdm
+
 
     def calculate_2rdm_fh(self, index=0):
         """THIS CALCULATES ONLY SPIN ALPHA!!"""
