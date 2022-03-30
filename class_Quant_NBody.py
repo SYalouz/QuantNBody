@@ -3,6 +3,7 @@ import numpy as np
 import scipy.sparse
 import matplotlib.pyplot as plt
 from matplotlib import cm
+import scipy.optimize
 
 OUTPUT_FORMATTING_NUMBER = "+15.10f"
 OUTPUT_SEPARATOR = "  "
@@ -101,6 +102,37 @@ class QuantNBody:
         """THIS CALCULATES ONLY SPIN ALPHA!!"""
         self.two_rdm = Quant_NBody.build_2rdm_fh(self.ei_vec[:, index], self.a_dagger_a)
         return self.two_rdm
+
+    def calculate_v_hxc(self):
+        if self.ei_vec.shape[0] == 0:
+            raise Exception('diagonalization of Hamiltonian didnt happen yet')
+        self.calculate_1rdm()
+        occupations = self.one_rdm.diagonal()
+        model = scipy.optimize.root(cost_function_v_hxc, np.zeros(self.n_mo), args=(occupations, self.h,
+                                                                                    self.n_electron), method='lm')
+        energy_fci = self.ei_val[0]
+        h_ks = self.h + np.diag(v_hxc)
+        ei_val, ei_vec = np.linalg.eigh(h_ks)
+        n_ks = one_rdm.diagonal()
+        print(model)
+
+def generate_1rdm(Ns, Ne, wave_function):
+    # generation of 1RDM
+    if Ne % 2 != 0:
+        raise f'problem with number of electrons!! Ne = {Ne}, Ns = {Ns}'
+
+    y = np.zeros((Ns, Ns), dtype=np.float64)  # reset gamma
+    for k in range(int(Ne / 2)):  # go through all orbitals that are occupied!
+        vec_i = wave_function[:, k][np.newaxis]
+        y += vec_i.T @ vec_i  #
+    return y
+
+def cost_function_v_hxc(v_hxc, correct_values, h, Ne):
+    h_ks = h + np.diag(v_hxc)
+    ei_val, ei_vec = np.linalg.eigh(h_ks)
+    one_rdm = generate_1rdm(ei_vec.shape[0], Ne, ei_vec)
+    n_ks = one_rdm.diagonal()
+    return n_ks - correct_values
 
 
 def get_better_ket(state, bra=False):
