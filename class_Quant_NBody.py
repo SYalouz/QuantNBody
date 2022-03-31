@@ -103,18 +103,43 @@ class QuantNBody:
         self.two_rdm = Quant_NBody.build_2rdm_fh(self.ei_vec[:, index], self.a_dagger_a)
         return self.two_rdm
 
-    def calculate_v_hxc(self):
+    def calculate_v_hxc(self, starting_approximation, silent=False,
+                        solution_classification_tolerance=1e-3) -> typing.Union[bool, np.array]:
+        """
+        This function calculates real Hxc potentials based on the real wave function. It does so by optimizing
+        difference between real density and density obtained for KS system by some approximation for Hxc potentials.
+        In the end it returns False if converged distances are too far one from another (sum square)
+        Parameters
+        ----------
+        starting_approximation: First approximation for the Hxc potentials
+        silent: If False then it prints resulting object from optimization algorithm
+        solution_classification_tolerance: What is the highest acceptable sum square difference of KS density.
+
+        Returns
+        -------
+        False if it didn't converge or array of Hxc potentials
+        """
         if self.ei_vec.shape[0] == 0:
             raise Exception('diagonalization of Hamiltonian didnt happen yet')
         self.calculate_1rdm()
         occupations = self.one_rdm.diagonal()
-        model = scipy.optimize.root(cost_function_v_hxc, np.zeros(self.n_mo), args=(occupations, self.h,
-                                                                                    self.n_electron), method='lm')
+        model = scipy.optimize.root(cost_function_v_hxc, starting_approximation,
+                                    args=(occupations, self.h, self.n_electron))
+        if not model.success or np.sum(np.square(model.fun)) > solution_classification_tolerance:
+            return False
         energy_fci = self.ei_val[0]
+        v_hxc = model.x
         h_ks = self.h + np.diag(v_hxc)
         ei_val, ei_vec = np.linalg.eigh(h_ks)
-        n_ks = one_rdm.diagonal()
-        print(model)
+        one_rdm = generate_1rdm(self.n_mo, self.n_electron, ei_vec)
+        energy2 = 0
+        for i in range(self.n_electron):
+            # i goes over 0 to N_electron - 1
+            energy2 += ei_val[i // 2]
+        v_hxc_2 = v_hxc + (energy_fci - energy2) / self.n_electron
+        if not silent:
+            print(model)
+        return v_hxc_2
 
 def generate_1rdm(Ns, Ne, wave_function):
     # generation of 1RDM
