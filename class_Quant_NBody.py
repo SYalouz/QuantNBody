@@ -4,6 +4,7 @@ import scipy.sparse
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import scipy.optimize
+import typing
 
 OUTPUT_FORMATTING_NUMBER = "+15.10f"
 OUTPUT_SEPARATOR = "  "
