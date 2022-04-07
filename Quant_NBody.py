@@ -469,6 +469,8 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
                                 p, q, r, s]  # alpha - alpha
                             H_fermi_hubbard += a_dagger_a[2 * p + 1, 2 * q + 1] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[
                                 p, q, r, s]  # beta - beta
+                        elif p == q and r == s and p < r:
+                            continue
                         else:
                             print("PROBLEM: We have a term that we don't know how to transform into hamiltonian", p, q,
                                   r, s)
