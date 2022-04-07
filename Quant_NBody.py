@@ -425,7 +425,8 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     return H_chemistry
 
 
-def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
+def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100,
+                                    v_term=None):
     """
     Create a matrix representation of the Fermi-Hubbard Hamiltonian in any
     extended many-body basis.
@@ -439,6 +440,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
     S_2         :  Matrix representation of the S_2 operator (default is None)
     S_2_target  :  Value of the S_2 mean value we want to target (default is None)
     penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
+    v_term      :  4D matrix that is already transformed into correct representation.
 
     Returns
     -------
@@ -462,7 +464,13 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
                 for s in range(n_mo):
                     if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
                         H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
-
+    if v_term is not None:
+        for p in range(n_mo):
+            for q in range(n_mo):
+                for r in range(n_mo):
+                    for s in range(n_mo):
+                        if v_term[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
+                            H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
     # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1 
     # with S = the number of unpaired electrons x 1/2 
     # singlet    =>  S=0    and  S_2=0 
