@@ -901,7 +901,53 @@ def householder_transformation(M):
     return P, vector
 
 
-def block_householder_transformation(M, block_size):
+def block_householder_transformation(M, size):
+    """
+    Block Householder transformation transforming a squarred matrix ” M ” into a
+    block-diagonal matrix ” M_BD ” such that
+                           M_BD = H(V) M H(V)
+    where ” H(V) ” represents the Householder transformation built from the
+    matrix “V” such that
+                        H(V) = Id - 2. * V(V^{T} V)^{-1}V^{T}
+    NB : Depending on the size of the block needed (unchanged by the transformation),
+         this returns a (2xsize)*(2xsize) block on left top corner
+    ----------
+    Article : F. Rotella, I. Zambettakis, Block Householder Transformation for Parallel QR Factorization,
+              Applied Mathematics Letter 12 (1999) 29-34
+
+    Parameters
+    ----------
+    M :  Squarred matrix to be transformed
+    size : size of the block ( must be > 1)
+    Returns
+    -------
+    P :  Transformation matrix
+    V :  Householder matrix
+    """
+    n = np.shape(M)[0]
+    a1 = M[size:2 * size, :size]
+    a1_inv = np.linalg.inv(a1)
+    a2 = M[2 * size:, :size]
+    a2_a1_inv = a2 @ a1_inv
+    a2_a1_inv_tr = np.transpose(a2_a1_inv)
+    a3 = np.eye(size) + a2_a1_inv_tr @ a2_a1_inv
+    eigval, eigvec = np.linalg.eig(a3)
+    # eigvec v[:,i] corresponds to eigval w[i]
+    eigval = np.diag(eigval)
+    eigvec_tr = np.transpose(eigvec)
+    x_d = eigvec @ (eigval ** 0.5) @ eigvec_tr
+    x = x_d @ a1
+    y = a1 + x
+    v = np.block([[np.zeros((size, size))], [y], [M[2 * size:, :size]]])
+    v_tr = np.transpose(v)
+    v_tr_v = v_tr @ v
+    v_tr_v_inv = np.linalg.inv(v_tr_v)
+    moore_penrose_inv = v_tr_v_inv @ v_tr
+    P = np.eye(n) - 2. * v @ v_tr_v_inv @ v_tr
+    gamma0_bl = P @ M @ P
+    return gamma0_bl, P, moore_penrose_inv
+
+def block_householder_transformation_old(M, block_size):
     """
     Block Householder transformation transforming a squared matrix ” M ” into a
     block-diagonal matrix ” M_BD ” such that
