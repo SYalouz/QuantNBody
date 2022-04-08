@@ -11,7 +11,7 @@ The goal of the package is to provide a quick and easy way to build many-body op
  
 Hamiltonians already implemented:
 
-- Ab initio electronic strucutre Hamiltonian (needs psi4 or PySCf to provide the electronic integrals)
+- Ab initio electronic structure Hamiltonian (needs psi4 or PySCf to provide the electronic integrals)
 - Fermi-Hubbard molecules Hamiltonians ( parameters given by the user )
 
 
