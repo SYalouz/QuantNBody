@@ -99,10 +99,31 @@ class QuantNBody:
         return self.one_rdm
 
 
-    def calculate_2rdm_fh(self, index=0):
-        """THIS CALCULATES ONLY SPIN ALPHA!!"""
-        self.two_rdm = Quant_NBody.build_2rdm_fh(self.ei_vec[:, index], self.a_dagger_a)
-        return self.two_rdm
+    def calculate_2rdm_fh_with_v(self, v_tilde=None):
+        """
+        This generates an 2RDM that we need to calculate on-site repulsion and optionally v-term.
+        :return:
+        """
+        n_mo = self.n_mo
+        two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+        two_rdm[:] = np.nan
+        big_e_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+        for p in range(n_mo):
+            for q in range(n_mo):
+                big_e_[p, q] = self.a_dagger_a[2 * p, 2 * q] + self.a_dagger_a[2 * p + 1, 2 * q + 1]
+
+        for p in range(n_mo):
+            for q in range(n_mo):
+                for r in range(n_mo):
+                    for s in range(n_mo):
+                        if v_tilde is not None and v_tilde[p, q, r, s] != 0:
+                            two_rdm[p, q, r, s] = self.WFT_0.T @ big_e_[p, q] @ big_e_[r, s] @ self.WFT_0
+                        elif p == q == r == s:
+                            two_rdm[p, q, r, s] = self.WFT_0.T @ self.a_dagger_a[2 * p, 2 * q] @ \
+                                                  self.a_dagger_a[2 * r + 1, 2 * s + 1] @ self.WFT_0
+        two_rdm[np.isnan(two_rdm)] = 0
+        self.two_rdm = two_rdm
+        return two_rdm
 
     def calculate_v_hxc(self, starting_approximation, silent=False,
                         solution_classification_tolerance=1e-3) -> typing.Union[bool, np.array]:
