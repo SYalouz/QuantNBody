@@ -487,25 +487,23 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
 
 def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
     """
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        Restricts a Fermi-Hubard at a spatial orbital level to an active space
-        This active space may be defined by a list of active indices and
-        doubly occupied indices. Note that one_body_integrals and
-        two_body_integrals must be defined in an orthonormal basis set (MO like).
-        Args:
-             - occupied_indices: A list of spatial orbital indices
-               indicating which orbitals should be considered doubly occupied.
-             - active_indices: A list of spatial orbital indices indicating
-               which orbitals should be considered active.
-             - 1 and 2 body integrals.
-        Returns:
-            tuple: Tuple with the following entries:
-            **core_constant**: Adjustment to constant shift in Hamiltonian
-            from integrating out core orbitals
-            **one_body_integrals_new**: one-electron integrals over active space.
-            **two_body_integrals_new**: two-electron integrals over active space.
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        """
+    Restricts a Fermi-Hubard at a spatial orbital level to an active space
+    This active space may be defined by a list of active indices and
+    doubly occupied indices. Note that one_body_integrals and
+    two_body_integrals must be defined in an orthonormal basis set (MO like).
+    Args:
+         - occupied_indices: A list of spatial orbital indices
+           indicating which orbitals should be considered doubly occupied.
+         - active_indices: A list of spatial orbital indices indicating
+           which orbitals should be considered active.
+         - 1 and 2 body integrals.
+    Returns:
+        tuple: Tuple with the following entries:
+        **core_constant**: Adjustment to constant shift in Hamiltonian
+        from integrating out core orbitals
+        **one_body_integrals_new**: one-electron integrals over active space.
+        **two_body_integrals_new**: two-electron integrals over active space.
+    """
     # Determine core Energy from frozen MOs
     core_energy = 0
     for i in frozen_indices:
@@ -664,7 +662,7 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
 
     Returns
     -------
-    One_RDM_alpha : Spin-free 1-RDM
+    one_rdm : Spin-free 1-RDM
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2

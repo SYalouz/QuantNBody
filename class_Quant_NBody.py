@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import scipy.optimize
 import typing
+from typing import List
 
 OUTPUT_FORMATTING_NUMBER = "+15.10f"
 OUTPUT_SEPARATOR = "  "
@@ -38,6 +39,7 @@ class QuantNBody:
         self.H = scipy.sparse.csr_matrix((1, 1))
         self.h = np.array([], dtype=np.float64)
         self.U = np.array([], dtype=np.float64)
+        self.g = np.array([], dtype=np.float64)
         self.ei_val = self.ei_vec = np.array([])
         self.WFT_0 = np.array([])
         self.one_rdm = np.array([])  # IT IS ONLY SPIN ALPHA!!!!!!
@@ -46,27 +48,94 @@ class QuantNBody:
     def build_operator_a_dagger_a(self, silent=False):
         self.a_dagger_a = Quant_NBody.build_operator_a_dagger_a(self.nbody_basis, silent)
 
-    def build_hamiltonian_quantum_chemistry(self, h_, U_, *args, **kwargs):
+    def build_hamiltonian_quantum_chemistry(self, h_, g_, S_2=None, S_2_target=None, penalty=100):
+        """
+            Create a matrix representation of the electronic structure Hamiltonian in any
+            extended many-body basis
+
+            Parameters
+            ----------
+            h_          :  One-body integrals
+            g_          :  Two-body integrals
+            S_2         :  Matrix representation of the S_2 operator (default is None)
+            S_2_target  :  Value of the S_2 mean value we want to target (default is None)
+            penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
+
+            Returns
+            -------
+            H_chemistry :  Matrix representation of the electronic structure Hamiltonian
+
+        """
+        self.h = h_
+        self.g = g_
+        self.H = Quant_NBody.build_hamiltonian_quantum_chemistry(h_, g_, self.nbody_basis, self.a_dagger_a, S_2,
+                                                                 S_2_target, penalty)
+
+    def build_hamiltonian_fermi_hubbard(self, h_, U_, S_2=None, S_2_target=None, penalty=100, v_term=None):
+        """
+            Create a matrix representation of the Fermi-Hubbard Hamiltonian in any
+            extended many-body basis.
+
+            Parameters
+            ----------
+            h_          :  One-body integrals
+            U_          :  Two-body integrals (u[i,j,k,l] corresponds to a^+_i↑ a_j↑ a^+_k↓ a_l↓)
+            S_2         :  Matrix representation of the S_2 operator (default is None)
+            S_2_target  :  Value of the S_2 mean value we want to target (default is None)
+            penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
+            v_term      :  4D matrix that is already transformed into correct representation.
+                           (v_term[i,j,k,l] corresponds to E_ij E_kl)
+
+            Returns
+            -------
+            H_fermi_hubbard :  Matrix representation of the Fermi-Hubbard Hamiltonian
+
+            """
         self.h = h_
         self.U = U_
-        self.H = Quant_NBody.build_hamiltonian_quantum_chemistry(h_, U_, self.nbody_basis, self.a_dagger_a,
-                                                                 *args, **kwargs)
+        self.H = Quant_NBody.build_hamiltonian_fermi_hubbard(h_, U_, self.nbody_basis, self.a_dagger_a, S_2, S_2_target,
+                                                             penalty, v_term)
 
-    def build_hamiltonian_fermi_hubbard(self, h_, U_, *args, **kwargs):
-        self.h = h_
-        self.U = U_
-        self.H = Quant_NBody.build_hamiltonian_fermi_hubbard(h_, U_, self.nbody_basis, self.a_dagger_a,
-                                                             *args, **kwargs)
+    def my_state(self, slater_determinant: List[int]) -> List[int]:
+        """
+        Translate a Slater determinant (occupation number list) into a many-body
+        state referenced into a given Many-body basis.
 
-    def diagonalize_hamiltonian(self):
+        Parameters
+        ----------
+        slater_determinant  : occupation number list
+
+        Returns
+        -------
+        state :  The slater determinant referenced in the many-body basis
+        """
+        return Quant_NBody.my_state(slater_determinant, self.nbody_basis)
+
+    def diagonalize_hamiltonian(self, full: bool = False, number_of_states: int = 3) -> None:
+        """
+        This is a method that calculates Hamiltonian expectation values and wave functions from the generated
+        Hamiltonian. By default we don't calculate all eigenvectors because we don't need more than ground state
+        and in this way we can save some calculation time.
+        Parameters
+        ----------
+        full              : boolean that decides if we do costly costly full search or only diagonalizing first
+                            number_of_states states.
+        number_of_states  : Number of states that are calculated if full == False
+
+        Returns
+        -------
+        None
+        """
         if len(self.H.A) == 0:
             print('You have to generate H first')
+        if full:
+            self.ei_val, self.ei_vec = np.linalg.eigh(self.H.A)
+        else:
+            self.ei_val, self.ei_vec = scipy.sparse.linalg.eigsh(self.H, k=number_of_states, which='SA')
 
-        self.ei_val, self.ei_vec = np.linalg.eigh(self.H.A)
         self.WFT_0 = self.ei_vec[:, 0]
 
     def visualize_coefficients(self, index, cutoff=0.005):
-        # Quant_NBody.Visualize_WFT(self.ei_vec[index], self.nbody_basis, cutoff=cutoff)
         WFT = self.ei_vec[:, index]
         list_index = np.where(abs(WFT) > cutoff)[0]
 
@@ -88,16 +157,65 @@ class QuantNBody:
             print('\t', sign_, '{:1.5f}'.format(abs(coefficients[index])),
                   '\t' + get_better_ket(states[index]))
 
-    def calculate_1rdm(self, index=0):
-        """THIS CALCULATES ONLY SPIN ALPHA!!"""
+    def build_s2_sz_splus_operator(self):
+        """
+        Create a matrix representation of the spin operators s_2, s_z and s_plus
+        in the many-body basis.
+
+        Returns
+        -------
+        s_2, s_plus, s_z :  matrix representation of the s_2, s_plus and s_z operators
+                            in the many-body basis.
+        """
+        return Quant_NBody.build_s2_sz_splus_operator(self.a_dagger_a)
+
+    def calculate_1rdm_alpha(self, index=0):
+        """
+        Create a spin-alpha 1 RDM out of a given wave function
+
+        Parameters
+        ----------
+        index :  Wave function for which we want to build the 1-RDM
+
+        Returns
+        -------
+        one_rdm_alpha : spin-alpha 1-RDM
+        """
         self.one_rdm = Quant_NBody.build_1rdm_alpha(self.ei_vec[:, index], self.a_dagger_a)
         return self.one_rdm
 
-    def calculate_1rdm_spin_free(self, index=0):
-        """THIS CALCULATES ONLY SPIN ALPHA!!"""
-        self.one_rdm = Quant_NBody.build_1rdm_spin_free(self.ei_vec[:, index], self.a_dagger_a)
+    def calculate_1rdm_beta(self, index=0):
+        """
+        Create a spin-beta 1 RDM out of a given wave function
+
+        Parameters
+        ----------
+        index :  Wave function for which we want to build the 1-RDM. Ground state corresponds to default
+                 argument 0.
+
+        Returns
+        -------
+        one_rdm_beta : spin-beta 1-RDM
+        """
+        self.one_rdm = Quant_NBody.build_1rdm_beta(self.ei_vec[:, index], self.a_dagger_a)
         return self.one_rdm
 
+    def calculate_1rdm_spin_free(self, index=0):
+        """
+        Create a spin-free 1 RDM out of a given wave function
+
+        Parameters
+        ----------
+        index  : Wave function for which we want to build the 1-RDM. Ground state corresponds to default
+                 argument 0.
+
+        Returns
+        -------
+        one_rdm : Spin-free 1-RDM
+
+        """
+        self.one_rdm = Quant_NBody.build_1rdm_spin_free(self.ei_vec[:, index], self.a_dagger_a)
+        return self.one_rdm
 
     def calculate_2rdm_fh_with_v(self, v_tilde=None):
         """
@@ -163,6 +281,7 @@ class QuantNBody:
             print(model)
         return v_hxc_2
 
+
 def generate_1rdm(Ns, Ne, wave_function):
     # generation of 1RDM
     if Ne % 2 != 0:
@@ -173,6 +292,7 @@ def generate_1rdm(Ns, Ne, wave_function):
         vec_i = wave_function[:, k][np.newaxis]
         y += vec_i.T @ vec_i  #
     return y
+
 
 def cost_function_v_hxc(v_hxc, correct_values, h, Ne):
     h_ks = h + np.diag(v_hxc)
