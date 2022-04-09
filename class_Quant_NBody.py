@@ -135,28 +135,6 @@ class QuantNBody:
 
         self.WFT_0 = self.ei_vec[:, 0]
 
-    def visualize_coefficients(self, index, cutoff=0.005):
-        WFT = self.ei_vec[:, index]
-        list_index = np.where(abs(WFT) > cutoff)[0]
-
-        states = []
-        coefficients = []
-        for index in list_index:
-            coefficients += [WFT[index]]
-            states += [self.nbody_basis[index]]
-
-        list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
-
-        print()
-        print('\t ----------- ')
-        print('\t Coeff.      N-body state')
-        print('\t -------     -------------')
-        for index in list_sorted_index[0:8]:
-            sign_ = '+'
-            if abs(coefficients[index]) != coefficients[index]: sign_ = '-'
-            print('\t', sign_, '{:1.5f}'.format(abs(coefficients[index])),
-                  '\t' + get_better_ket(states[index]))
-
     def build_s2_sz_splus_operator(self):
         """
         Create a matrix representation of the spin operators s_2, s_z and s_plus
@@ -217,31 +195,113 @@ class QuantNBody:
         self.one_rdm = Quant_NBody.build_1rdm_spin_free(self.ei_vec[:, index], self.a_dagger_a)
         return self.one_rdm
 
-    def calculate_2rdm_fh_with_v(self, v_tilde=None):
+    def build_2rdm_fh_on_site_repulsion(self, mask=None):
         """
-        This generates an 2RDM that we need to calculate on-site repulsion and optionally v-term.
-        :return:
-        """
-        n_mo = self.n_mo
-        two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
-        two_rdm[:] = np.nan
-        big_e_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
-        for p in range(n_mo):
-            for q in range(n_mo):
-                big_e_[p, q] = self.a_dagger_a[2 * p, 2 * q] + self.a_dagger_a[2 * p + 1, 2 * q + 1]
+        Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for the on-site repulsion operator.
+        (u[i,j,k,l] corresponds to a^+_i↑ a_j↑ a^+_k↓ a_l↓)
 
-        for p in range(n_mo):
-            for q in range(n_mo):
-                for r in range(n_mo):
-                    for s in range(n_mo):
-                        if v_tilde is not None and v_tilde[p, q, r, s] != 0:
-                            two_rdm[p, q, r, s] = self.WFT_0.T @ big_e_[p, q] @ big_e_[r, s] @ self.WFT_0
-                        elif p == q == r == s:
-                            two_rdm[p, q, r, s] = self.WFT_0.T @ self.a_dagger_a[2 * p, 2 * q] @ \
-                                                  self.a_dagger_a[2 * r + 1, 2 * s + 1] @ self.WFT_0
-        two_rdm[np.isnan(two_rdm)] = 0
-        self.two_rdm = two_rdm
+        Parameters
+        ----------
+        mask       :  4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+                      For default None the whole 2RDM is calculated.
+                      If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+                      array that ensures that we won't calculate elements that are not going to be used in calculation of
+                      2-electron interactions.
+        Returns
+        -------
+        two_rdm for the on-site-repulsion operator
+        """
+        self.two_rdm = Quant_NBody.build_2rdm_fh_on_site_repulsion(self.WFT_0, self.a_dagger_a, mask=mask)
         return two_rdm
+
+    def build_2rdm_fh_dipolar_interactions(self, mask=None):
+        """
+        Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for the diplar interaction operator
+        it corresponds to <psi|(a^+_i↑ a_j↑ + a^+_i↓ a_j↓)(a^+_k↑ a_l↑ + a^+_k↓ a_l↓)|psi>
+
+        Parameters
+        ----------
+        mask       :  4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+                      For default None the whole 2RDM is calculated.
+                      If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+                      array that ensures that we won't calculate elements that are not going to be used in calculation of
+                      2-electron interactions.
+        Returns
+        -------
+        One_RDM_alpha : Spin-free 1-RDM
+        """
+        self.two_rdm = build_2rdm_fh_dipolar_interactions(self.WFT_0, self.a_dagger_a, mask=mask)
+        return self.two_rdm
+
+    # def calculate_2rdm_fh_with_v(self, v_tilde=None):
+    #     """
+    #     This generates an 2RDM that we need to calculate on-site repulsion and optionally v-term.
+    #     :return:
+    #     """
+    #     n_mo = self.n_mo
+    #     two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    #     two_rdm[:] = np.nan
+    #     big_e_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    #     for p in range(n_mo):
+    #         for q in range(n_mo):
+    #             big_e_[p, q] = self.a_dagger_a[2 * p, 2 * q] + self.a_dagger_a[2 * p + 1, 2 * q + 1]
+    #
+    #     for p in range(n_mo):
+    #         for q in range(n_mo):
+    #             for r in range(n_mo):
+    #                 for s in range(n_mo):
+    #                     if v_tilde is not None and v_tilde[p, q, r, s] != 0:
+    #                         two_rdm[p, q, r, s] = self.WFT_0.T @ big_e_[p, q] @ big_e_[r, s] @ self.WFT_0
+    #                     elif p == q == r == s:
+    #                         two_rdm[p, q, r, s] = self.WFT_0.T @ self.a_dagger_a[2 * p, 2 * q] @ \
+    #                                               self.a_dagger_a[2 * r + 1, 2 * s + 1] @ self.WFT_0
+    #     two_rdm[np.isnan(two_rdm)] = 0
+    #     self.two_rdm = two_rdm
+    #     return two_rdm
+
+    def build_2rdm_spin_free(self):
+        """
+        Create a spin-free 2 RDM out of a given wave function
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        2RDM : Spin-free 2-RDM
+
+        """
+        self.two_rdm = Quant_NBody.build_2rdm_spin_free(self.WFT_0, self.a_dagger_a)
+        return self.two_rdm
+
+    def build_1rdm_and_2rdm_spin_free(self, index=0):
+        """
+        Create a spin-free 2 RDM out of a given wave function
+
+        Parameters
+        ----------
+        index  :  Index of wave function for which we want to build the 1-RDM
+
+        Returns
+        -------
+        tuple(1RDM, 2RDM)  : Spin-free 1-RDM and spin-free 2-RDM
+        """
+        self.one_rdm, self.two_rdm = Quant_NBody.build_1rdm_and_2rdm_spin_free(self.ei_vec[:, index], self.a_dagger_a)
+
+    def visualize_coefficients(self, index, cutoff=0.005):
+        wft = self.ei_vec[:, index]
+        list_index = np.where(abs(wft) > cutoff)[0]
+        states = []
+        coefficients = []
+        for index in list_index:
+            coefficients += [wft[index]]
+            states += [self.nbody_basis[index]]
+        list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
+        print(f'\n\t{"-"*11}\n\t Coeff.      N-body state\n\t{"-"*7}     {"-"*13}')
+        for index in list_sorted_index[0:8]:
+            print('{:+11.5f}'.format(abs(coefficients[index])),
+                  '      ' + get_better_ket(states[index]))
+
 
     def calculate_v_hxc(self, starting_approximation, silent=False,
                         solution_classification_tolerance=1e-3) -> typing.Union[bool, np.array]:

@@ -675,19 +675,23 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
     return one_rdm
 
 
-def build_2rdm_fh(WFT, a_dagger_a):
+def build_2rdm_fh_on_site_repulsion(WFT, a_dagger_a, mask=None):
     """
-    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function
+    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for the on-site repulsion operator.
+    (u[i,j,k,l] corresponds to a^+_i↑ a_j↑ a^+_k↓ a_l↓)
 
     Parameters
     ----------
     WFT        :  Wave function for which we want to build the 1-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
-
+    mask       :  4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+                  For default None the whole 2RDM is calculated.
+                  If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+                  array that ensures that we won't calculate elements that are not going to be used in calculation of
+                  2-electron interactions.
     Returns
     -------
-    One_RDM_alpha : Spin-free 1-RDM
-
+    two_rdm for the on-site-repulsion operator
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
@@ -695,7 +699,42 @@ def build_2rdm_fh(WFT, a_dagger_a):
         for q in range(n_mo):
             for r in range(n_mo):
                 for s in range(n_mo):
-                    two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] @ WFT
+                    if mask is None or mask[p, q, r, s] != 0:
+                        two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1]\
+                                                  @ WFT
+    return two_rdm_fh
+
+def build_2rdm_fh_dipolar_interactions(WFT, a_dagger_a, mask=None):
+    """
+    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for the diplar interaction operator
+    it corresponds to <psi|(a^+_i↑ a_j↑ + a^+_i↓ a_j↓)(a^+_k↑ a_l↑ + a^+_k↓ a_l↓)|psi>
+
+    Parameters
+    ----------
+    WFT        :  Wave function for which we want to build the 1-RDM
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    mask       :  4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+                  For default None the whole 2RDM is calculated.
+                  If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+                  array that ensures that we won't calculate elements that are not going to be used in calculation of
+                  2-electron interactions.
+    Returns
+    -------
+    One_RDM_alpha : Spin-free 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    big_e_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            big_e_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    if mask is None or mask[p, q, r, s] != 0:
+                        two_rdm_fh[p, q, r, s] = WFT.T @ big_e_[p, q] @ big_e_[r, s] @ WFT
     return two_rdm_fh
 
 
