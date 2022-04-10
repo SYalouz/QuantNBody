@@ -312,7 +312,8 @@ if import_fast_functions:
         ----------
         p
         q
-        cpp_object: this is just approximation for how C++ handles an object. Here cpp_object is just tuple of nbody_basis
+        cpp_object: this is just approximation for how C++ handles an object. Here cpp_object is just tuple of
+                    nbody_basis
         and mapping_kappa
 
         Returns
@@ -487,7 +488,7 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
 
 def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
     """
-    Restricts a Fermi-Hubard at a spatial orbital level to an active space
+    Restricts a Fermi-Hubbard at a spatial orbital level to an active space
     This active space may be defined by a list of active indices and
     doubly occupied indices. Note that one_body_integrals and
     two_body_integrals must be defined in an orthonormal basis set (MO like).
@@ -835,7 +836,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
     WFT              : Reference wave function
     nbody_basis      : List of many-body states (occupation number states)
     cutoff           : Cut off for the amplitudes retained (default is 0.005)
-    atomic_orbitals  : Boolean; If True then instead of 0/1 for spin orabitals we get 0/alpha/beta/2 for atomic orbitals
+    atomic_orbitals  : Boolean; If True then instead of 0/1 for spin orbitals we get 0/alpha/beta/2 for atomic orbitals
 
     Returns
     -------
@@ -969,7 +970,7 @@ def block_householder_transformation(M, size):
     matrix “V” such that
                         H(V) = Id - 2. * V(V^{T} V)^{-1}V^{T}
     NB : Depending on the size of the block needed (unchanged by the transformation),
-         this returns a (2xsize)*(2xsize) block on left top corner
+         this returns a (2 x size)*(2 x size) block on left top corner
     ----------
     Article : F. Rotella, I. Zambettakis, Block Householder Transformation for Parallel QR Factorization,
               Applied Mathematics Letter 12 (1999) 29-34
