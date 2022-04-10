@@ -313,7 +313,7 @@ if import_fast_functions:
         p
         q
         cpp_object: this is just approximation for how C++ handles an object. Here cpp_object is just tuple of
-                    nbody_basis
+                    nbody_basis and a_dagger_a
         and mapping_kappa
 
         Returns
