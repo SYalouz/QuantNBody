@@ -1,14 +1,11 @@
 import random
 import unittest
-import Quant_NBody
+from quant_nbody import Quant_NBody
 import testing_folder.Quant_NBody_main_branch as Quant_NBody_old  # This is the original library that I compare with.
 import numpy as np
 import parameterized  # conda install -c conda-forge parameterized
-from tqdm import tqdm
-import math
-import pyscf
 import datetime
-from pyscf import gto, scf, ao2mo, mcscf, fci
+from pyscf import gto, scf, ao2mo
 import psi4
 
 

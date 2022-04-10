@@ -1,5 +1,4 @@
-import Quant_NBody
-import sys
+from quant_nbody import Quant_NBody
 import pybind.Quant_NBody_fast as Quant_NBody_fast
 import testing_folder.Quant_NBody_main_branch as Quant_NBody_old  # This is the original library that I compare with.
 
