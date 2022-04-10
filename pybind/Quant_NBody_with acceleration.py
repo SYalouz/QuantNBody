@@ -72,7 +72,7 @@ def check_sz(ref_state):
 
 
 # numba -> njit version of build_operator_a_dagger_a
-def build_operator_a_dagger_a(nbody_basis, silent=True):
+def build_operator_a_dagger_a(nbody_basis, silent=False):
     """
     Create a matrix representation of the a_dagger_a operator
     in the many-body basis
@@ -246,6 +246,120 @@ def my_state(slater_determinant, nbody_basis):
     state[kappa] = 1.
 
     return state
+
+
+# c++ with pybind11 version of build_operator_a_dagger_a
+import_fast_functions = False
+try:
+    from .pybind import Quant_NBody_accelerate as fast
+
+    import_fast_functions = True
+except ImportError:
+    pass
+try:
+    from pybind import Quant_NBody_accelerate as fast
+
+    import_fast_functions = True
+except ImportError:
+    pass
+if import_fast_functions:
+    def build_operator_a_dagger_a_fast(nbody_basis, silent=False):
+        """
+        Create a matrix representation of the a_dagger_a operator
+        in the many-body basis
+
+        Parameters
+        ----------
+        nbody_basis :  List of many-body states (occupation number states) (occupation number states)
+        silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
+        Returns
+        -------
+        a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+        """
+        # Dimensions of problem
+        dim_H = len(nbody_basis)
+        n_mo = nbody_basis.shape[1] // 2
+        a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
+        cpp_obj = fast.CppObject(nbody_basis)  # mapping_kappa is called in c++ and it stays in c++
+        print(cpp_obj)
+        for q in (range(2 * n_mo)):
+            for p in range(q, 2 * n_mo):
+                # 1. counting operator or p==q
+                x_list, y_list, value_list = fast.calculate_sparse_elements(p, q, cpp_obj)
+                if len(x_list) == 0:
+                    temp1 = scipy.sparse.csr_matrix((dim_H, dim_H), dtype=np.int8)
+                else:
+                    # print(p, q, end=', ')
+                    # print(x_list, y_list, value_list)
+                    temp1 = scipy.sparse.csr_matrix((value_list, (y_list, x_list)), shape=(dim_H, dim_H), dtype=np.int8)
+                a_dagger_a[p, q] = temp1
+                a_dagger_a[q, p] = temp1.T
+
+        if not silent:
+            print()
+            print('\t ===========================================')
+            print('\t ====  The matrix form of a^a is built  ====')
+            print('\t ===========================================')
+
+        return a_dagger_a
+
+
+    def calculate_sparse_elements(p, q, cpp_object):
+        """
+        This was prototype for c++ implementation of this function
+        Parameters
+        ----------
+        p
+        q
+        cpp_object: this is just approximation for how C++ handles an object. Here cpp_object is just tuple of
+                    nbody_basis and a_dagger_a
+        and mapping_kappa
+
+        Returns
+        -------
+
+        """
+        nbody_basis, mapping_kappa = cpp_object
+        if p == q:
+            i = 0
+            sparse_num = int(dim_H * n_electron / (n_mo * 2)) + 100
+            x_list = [0] * sparse_num
+            y_list = [0] * sparse_num
+            value_list = [0] * sparse_num
+            for kappa in range(dim_H):
+                ref_state = nbody_basis[kappa]
+                # anything is happening only if ref_state[q] != 0
+                if ref_state[q] == 0:
+                    continue
+                x_list[i] = kappa
+                y_list[i] = kappa
+                value_list[i] = 1
+                i += 1
+        elif (p // 2 == q // 2) or ((p - q) % 2 == 0):
+            # In the first case these are alpha beta excitations in same MO
+            # In the second case spins of spin orbitals are the same and These are alpha beta excitations in same MO
+            i = 0
+            sparse_num = int(scipy.special.binom(2 * n_mo - 2, n_electron - 1))
+            x_list = [0] * sparse_num
+            y_list = [0] * sparse_num
+            value_list = [0] * sparse_num
+            for kappa in range(dim_H):
+                ref_state = nbody_basis[kappa]
+                # anything is happening only if ref_state[q] != 0
+                if ref_state[q] == 0 or ref_state[p] == 1:
+                    continue
+                kappa2, p1p2 = fast.build_final_state_ad_a(ref_state, p, q, mapping_kappa)
+                x_list[i] = kappa
+                y_list[i] = kappa2
+                value_list[i] = p1p2
+                i += 1
+        else:
+            return [], [], []
+        return x_list, y_list, value_list
+else:
+    print("Did not import fast implementation. If you want fast implementation compile the pybind/pybind.cpp to "
+          "pybind/Quant_NBody_accelerate.")
 
 
 # =============================================================================
@@ -835,6 +949,7 @@ def householder_transformation(M):
     alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, n)) ** 0.5
     r = (0.5 * (alpha ** 2. - alpha * M[1, 0])) ** 0.5
 
+    # print("HH param transformation",M,r,alpha)
     vector = np.zeros((n, 1))
     vector[1] = (M[1, 0] - alpha) / (2.0 * r)
     for j in range(2, n):
