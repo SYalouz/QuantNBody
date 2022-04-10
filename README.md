@@ -1,5 +1,5 @@
-# QuantNBody : an exact diagonalization python package for quantum chemistry and many-body Hamiltonians.
-
+#QuantNBody : an exact diagonalization python package for quantum chemistry and many-body Hamiltonians.
+# QuantNBody : a python package for methodological developments in quantum chemistry and many-body Hamiltonians
 The goal of the package is to provide a quick and easy way to build many-body operators and get access
 (in a few python lines) to important quantities/objects such as :
  
