@@ -7,15 +7,12 @@ import scipy.optimize
 import typing
 from typing import List
 
-OUTPUT_FORMATTING_NUMBER = "+15.10f"
-OUTPUT_SEPARATOR = "  "
 
-
-def print_matrix(matrix, plot_heatmap='', ret=False):
+def print_matrix(matrix, plot_heatmap='', ret=False, output_formatting_number="+15.10f", output_separator='  '):
     ret_string = ""
     for line in matrix:
-        l1 = ['{num:{dec}}'.format(num=cell, dec=OUTPUT_FORMATTING_NUMBER) for cell in line]
-        ret_string += f'{OUTPUT_SEPARATOR}'.join(l1) + "\n"
+        l1 = ['{num:{dec}}'.format(num=cell, dec=output_formatting_number) for cell in line]
+        ret_string += f'{output_separator}'.join(l1) + "\n"
     if plot_heatmap:
         plt.imshow(matrix, cmap='hot', interpolation='nearest')
         plt.colorbar()
@@ -27,9 +24,9 @@ def print_matrix(matrix, plot_heatmap='', ret=False):
 
 
 class QuantNBody:
-    def __init__(self, N_MO, N_elec, S_z_cleaning=False, override_NBody_basis=tuple()):
+    def __init__(self, N_MO, N_electron, S_z_cleaning=False, override_NBody_basis=tuple()):
         self.n_mo = N_MO
-        self.n_electron = N_elec
+        self.n_electron = N_electron
         if not override_NBody_basis:
             self.nbody_basis = Quant_NBody.build_nbody_basis(N_MO, N_elec, S_z_cleaning)
         else:
@@ -202,11 +199,11 @@ class QuantNBody:
 
         Parameters
         ----------
-        mask       :  4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
-                      For default None the whole 2RDM is calculated.
-                      If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
-                      array that ensures that we won't calculate elements that are not going to be used in calculation of
-                      2-electron interactions.
+        mask  : 4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+                For default None the whole 2RDM is calculated.
+                if we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+                array that ensures that we won't calculate elements that are not going to be used in calculation of
+                2-electron interactions.
         Returns
         -------
         two_rdm for the on-site-repulsion operator
@@ -216,16 +213,16 @@ class QuantNBody:
 
     def build_2rdm_fh_dipolar_interactions(self, mask=None):
         """
-        Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for the diplar interaction operator
+        Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for the dipolar interaction operator
         it corresponds to <psi|(a^+_i↑ a_j↑ + a^+_i↓ a_j↓)(a^+_k↑ a_l↑ + a^+_k↓ a_l↓)|psi>
 
         Parameters
         ----------
-        mask       :  4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
-                      For default None the whole 2RDM is calculated.
-                      If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
-                      array that ensures that we won't calculate elements that are not going to be used in calculation of
-                      2-electron interactions.
+        mask  : 4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+                For default None the whole 2RDM is calculated.
+                If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+                array that ensures that we won't calculate elements that are not going to be used in calculation of
+                2-electron interactions.
         Returns
         -------
         One_RDM_alpha : Spin-free 1-RDM
@@ -288,20 +285,31 @@ class QuantNBody:
         """
         self.one_rdm, self.two_rdm = Quant_NBody.build_1rdm_and_2rdm_spin_free(self.ei_vec[:, index], self.a_dagger_a)
 
-    def visualize_coefficients(self, index, cutoff=0.005):
-        wft = self.ei_vec[:, index]
-        list_index = np.where(abs(wft) > cutoff)[0]
-        states = []
-        coefficients = []
-        for index in list_index:
-            coefficients += [wft[index]]
-            states += [self.nbody_basis[index]]
-        list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
-        print(f'\n\t{"-"*11}\n\t Coeff.      N-body state\n\t{"-"*7}     {"-"*13}')
-        for index in list_sorted_index[0:8]:
-            print('{:+11.5f}'.format(abs(coefficients[index])),
-                  '      ' + get_better_ket(states[index]))
+    def visualize_wft(self, index=0, wft: Typing.Union[bool, List] = False, cutoff=0.005, atomic_orbitals=False):
+        """
+        Print the decomposition of a given input wave function in a many-body basis.
 
+       Parameters
+        ----------
+        index            : If wft is False then it plots calculated wave functions (self.ei_vec) with given index.
+                           If wft is an iterable variable then this argument is ignored.
+        wft              : If kept False then precalculated wave function is calculated.
+                           Otherwise put a list of coefficients.
+        cutoff           : Cut off for the amplitudes retained (default is 0.005)
+        atomic_orbitals  : Boolean; If True then instead of 0/1 for spin orbitals we get 0/alpha/beta/2 for atomic
+                           orbitals
+
+        Returns
+        -------
+        Same string that was printed to the terminal (the wave function)
+        """
+        if isinstance(wft, bool) and not wft:
+            wf = self.ei_vec[:, index]
+        else:
+            if len(self.nbody_basis != wft):
+                raise IndexError(f"Length of wft is not correct ({len(wft)} vs {len(self.nbody_basis)}) ")
+            wf = wft
+        return Quant_NBody.visualize_wft(wf, self.nbody_basis, cutoff, atomic_orbitals)
 
     def calculate_v_hxc(self, starting_approximation, silent=False,
                         solution_classification_tolerance=1e-3) -> typing.Union[bool, np.array]:
@@ -331,7 +339,6 @@ class QuantNBody:
         v_hxc = model.x
         h_ks = self.h + np.diag(v_hxc)
         ei_val, ei_vec = np.linalg.eigh(h_ks)
-        one_rdm = generate_1rdm(self.n_mo, self.n_electron, ei_vec)
         energy2 = 0
         for i in range(self.n_electron):
             # i goes over 0 to N_electron - 1
@@ -360,22 +367,3 @@ def cost_function_v_hxc(v_hxc, correct_values, h, Ne):
     one_rdm = generate_1rdm(ei_vec.shape[0], Ne, ei_vec)
     n_ks = one_rdm.diagonal()
     return n_ks - correct_values
-
-
-def get_better_ket(state, bra=False):
-    ret_string = ""
-    for i in range(len(state) // 2):
-        if state[i * 2] == 1:
-            if state[i * 2 + 1] == 1:
-                ret_string += '2'
-            else:
-                ret_string += 'a'
-        elif state[i * 2 + 1] == 1:
-            ret_string += 'b'
-        else:
-            ret_string += '0'
-    if bra:
-        ret_string = '⟨' + ret_string + '|'
-    else:
-        ret_string = '|' + ret_string + '⟩'
-    return ret_string

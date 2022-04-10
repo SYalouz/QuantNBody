@@ -254,11 +254,13 @@ def my_state(slater_determinant, nbody_basis):
 import_fast_functions = False
 try:
     from .pybind import Quant_NBody_accelerate as fast
+
     import_fast_functions = True
 except ImportError:
     pass
 try:
     from pybind import Quant_NBody_accelerate as fast
+
     import_fast_functions = True
 except ImportError:
     pass
@@ -700,9 +702,10 @@ def build_2rdm_fh_on_site_repulsion(WFT, a_dagger_a, mask=None):
             for r in range(n_mo):
                 for s in range(n_mo):
                     if mask is None or mask[p, q, r, s] != 0:
-                        two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1]\
+                        two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] \
                                                   @ WFT
     return two_rdm_fh
+
 
 def build_2rdm_fh_dipolar_interactions(WFT, a_dagger_a, mask=None):
     """
@@ -825,17 +828,20 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
 # =============================================================================
 
-def visualize_wft(WFT, nbody_basis, cutoff=0.005):
+def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
     """
     Print the decomposition of a given input wave function in a many-body basis.
+
+   Parameters
     ----------
-    WFT            : Reference wave function
-    nbody_basis    : List of many-body states (occupation number states)
-    cutoff         : Cut off for the amplitudes retained (default is 0.005)
+    WFT              : Reference wave function
+    nbody_basis      : List of many-body states (occupation number states)
+    cutoff           : Cut off for the amplitudes retained (default is 0.005)
+    atomic_orbitals  : Boolean; If True then instead of 0/1 for spin orabitals we get 0/alpha/beta/2 for atomic orbitals
 
     Returns
     -------
-    Printing in the terminal the wave function
+    Same string that was printed to the terminal (the wave function)
 
     """
     list_index = np.where(abs(WFT) > cutoff)[0]
@@ -848,18 +854,36 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005):
 
     list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
 
-    print()
-    print('\t ----------- ')
-    print('\t Coeff.      N-body state')
-    print('\t -------     -------------')
+    return_string = f'\n\t{"-"*11}\n\t Coeff.      N-body state\n\t{"-"*7}     {"-"*13}\n'
     for index in list_sorted_index[0:8]:
-        sign_ = '+'
-        if abs(coefficients[index]) != coefficients[index]:
-            sign_ = '-'
-        print('\t', sign_, '{:1.5f}'.format(abs(coefficients[index])),
-              '\t|{}⟩'.format(' '.join([str(elem) for elem in states[index]]).replace(" ", "")))
+        state = states[index]
 
-    return
+        if atomic_orbitals:
+            ket = get_ket_in_atomic_orbitals(state, bra=False)
+        else:
+            ket = "".join([str(elem) for elem in state])
+        return_string += f'\t{coefficients[index]:+1.5f}\t|{ket}⟩\n'
+    print(return_string)
+    return return_string
+
+
+def get_ket_in_atomic_orbitals(state, bra=False):
+    ret_string = ""
+    for i in range(len(state) // 2):
+        if state[i * 2] == 1:
+            if state[i * 2 + 1] == 1:
+                ret_string += '2'
+            else:
+                ret_string += '\u03B1'
+        elif state[i * 2 + 1] == 1:
+            ret_string += '\u03B2'
+        else:
+            ret_string += '0'
+    if bra:
+        ret_string = '⟨' + ret_string + '|'
+    else:
+        ret_string = '|' + ret_string + '⟩'
+    return ret_string
 
 
 # =============================================================================
@@ -921,7 +945,7 @@ def householder_transformation(M):
     n = np.shape(M)[0]
     if np.count_nonzero(M - np.diag(np.diagonal(M))) == 0:
         print('\tinput was diagonal matrix')
-        return np.diag(np.zeros(n)+1), np.zeros((n, 1))
+        return np.diag(np.zeros(n) + 1), np.zeros((n, 1))
     # Build the Householder vector "H_vector" 
     alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, n)) ** 0.5
     r = (0.5 * (alpha ** 2. - alpha * M[1, 0])) ** 0.5
@@ -940,7 +964,7 @@ def householder_transformation(M):
 
 def block_householder_transformation(M, size):
     """
-    Block Householder transformation transforming a squarred matrix ” M ” into a
+    Block Householder transformation transforming a square matrix ” M ” into a
     block-diagonal matrix ” M_BD ” such that
                            M_BD = H(V) M H(V)
     where ” H(V) ” represents the Householder transformation built from the
@@ -954,12 +978,14 @@ def block_householder_transformation(M, size):
 
     Parameters
     ----------
-    M :  Squarred matrix to be transformed
+    M :  Square matrix to be transformed
     size : size of the block ( must be > 1)
+
     Returns
     -------
-    P :  Transformation matrix
-    V :  Householder matrix
+    m_transformed     : Transformed input matrix M
+    P                 : Transformation matrix
+    moore_penrose_inv : Moore Penrose inverse of Householder matrix
     """
     n = np.shape(M)[0]
     a1 = M[size:2 * size, :size]
@@ -981,55 +1007,8 @@ def block_householder_transformation(M, size):
     v_tr_v_inv = np.linalg.inv(v_tr_v)
     moore_penrose_inv = v_tr_v_inv @ v_tr
     P = np.eye(n) - 2. * v @ v_tr_v_inv @ v_tr
-    gamma0_bl = P @ M @ P
-    return gamma0_bl, P, moore_penrose_inv
-
-def block_householder_transformation_old(M, block_size):
-    """
-    Block Householder transformation transforming a squared matrix ” M ” into a
-    block-diagonal matrix ” M_BD ” such that
-                           M_BD = P M P
-    where ” P ” represents the Householder transformation built from the
-    vector “v” such that
-                         !!!!!!P = Id - 2 * v.v^T                                TO BE CHANGED !!!
-    NB : This returns a 2x2 block on left top corner
-    Parameters
-    ----------
-    M :  Squared matrix to be transformed
-    block_size : Size of a block
-    Returns
-    -------
-    P :  Transformation matrix
-    v :  Householder vector
-    """
-    block_size = block_size // 2
-    n = np.shape(M)[0]
-
-    """ WILL BE WITH THE INVERSE SIGN OF x """
-    a1 = M[:block_size, block_size:2 * block_size]
-    a1_inv = np.linalg.inv(a1)
-    a2 = M[:block_size, 2 * block_size:]
-    a2_a1_inv_tr = np.zeros((block_size, n - 2 * block_size))
-    for i in range(n - 2 * block_size):
-        for j in range(block_size):
-            for k in range(block_size):
-                a2_a1_inv_tr[j, i] = a2_a1_inv_tr[j, i] + a2[k, i] * a1_inv[j, k]
-
-    # A2A1_inv = np.transpose(a2_a1_inv_tr)
-    a3 = np.eye(block_size) + a2_a1_inv_tr @ a2_a1_inv_tr.T
-    w, v = np.linalg.eig(a3)
-    eigval = np.diag(w)
-    x_d = v.T @ eigval ** 0.5 @ v
-
-    x = a1 @ x_d
-    y = a1 + x
-    v_tr = np.block([np.zeros((block_size, block_size)), y, M[:block_size, 2 * block_size:]])
-
-    v_tr_v = v_tr @ v_tr.T
-    v_tr_v_inv = np.linalg.inv(v_tr_v)
-    bh = np.eye(n) - 2. * v_tr.T @ v_tr_v_inv @ v_tr
-
-    return bh
+    m_transformed = P @ M @ P
+    return m_transformed, P, moore_penrose_inv
 
 
 # =============================================================================
