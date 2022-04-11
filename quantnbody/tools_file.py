@@ -1,10 +1,8 @@
 import scipy
-from scipy import sparse
 import numpy as np
-import math as m
 from itertools import combinations
-import scipy.special
 from numba import njit
+import math as m
 
 E_ = False
 e_ = False
@@ -46,7 +44,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
                 nbody_basis_cleaned.remove(nbody_basis[i])
         nbody_basis = nbody_basis_cleaned
 
-    return np.array(nbody_basis, dtype=np.int8)
+    return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
 
 
 def check_sz(ref_state):
@@ -227,27 +225,6 @@ def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     return kappa_, p1, p2
 
 
-def my_state(slater_determinant, nbody_basis):
-    """
-    Translate a Slater determinant (occupation number list) into a many-body
-    state referenced into a given Many-body basis.
-
-    Parameters
-    ----------
-    slater_determinant  : occupation number list
-    nbody_basis   : List of many-body states (occupation number states)
-
-    Returns
-    -------
-    state :  The slater determinant referenced in the many-body basis
-    """
-    kappa = np.flatnonzero((nbody_basis == slater_determinant).all(1))[0]  # nbody_basis.index(slater_determinant)
-    state = np.zeros(np.shape(nbody_basis)[0])
-    state[kappa] = 1.
-
-    return state
-
-
 # =============================================================================
 #  MANY-BODY HAMILTONIANS (FERMI HUBBARD AND QUANTUM CHEMISTRY)
 # =============================================================================
@@ -370,122 +347,6 @@ def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S
         H_fermi_hubbard += s_2_minus_target @ s_2_minus_target * penalty
 
     return H_fermi_hubbard
-
-
-def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
-    """
-    Restricts a Fermi-Hubbard at a spatial orbital level to an active space
-    This active space may be defined by a list of active indices and
-    doubly occupied indices. Note that one_body_integrals and
-    two_body_integrals must be defined in an orthonormal basis set (MO like).
-    Args:
-         - occupied_indices: A list of spatial orbital indices
-           indicating which orbitals should be considered doubly occupied.
-         - active_indices: A list of spatial orbital indices indicating
-           which orbitals should be considered active.
-         - 1 and 2 body integrals.
-    Returns:
-        tuple: Tuple with the following entries:
-        **core_constant**: Adjustment to constant shift in Hamiltonian
-        from integrating out core orbitals
-        **one_body_integrals_new**: one-electron integrals over active space.
-        **two_body_integrals_new**: two-electron integrals over active space.
-    """
-    # Determine core Energy from frozen MOs
-    core_energy = 0
-    for i in frozen_indices:
-        core_energy += 2 * h_[i, i]
-        for j in frozen_indices:
-            core_energy += U_[i, i, j, j]
-
-            # Modified one-electron integrals
-    h_act = h_.copy()
-    for t in active_indices:
-        for u in active_indices:
-            for i in frozen_indices:
-                h_act[t, u] += U_[i, i, t, u]
-
-    return (core_energy,
-            h_act[np.ix_(active_indices, active_indices)],
-            U_[np.ix_(active_indices, active_indices, active_indices, active_indices)])
-
-
-def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupied_indices=None, active_indices=None):
-    """
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        Restricts a Quantum chemistry Hamiltonian at a spatial orbital level 
-        to an active space. This active space may be defined by a list of 
-        active indices and doubly occupied indices. Note that one_body_integrals and
-        two_body_integrals must be defined in an orthonormal basis set (MO like).
-        Args:
-             - occupied_indices: A list of spatial orbital indices
-               indicating which orbitals should be considered doubly occupied.
-             - active_indices: A list of spatial orbital indices indicating
-               which orbitals should be considered active.
-             - 1 and 2 body integrals.
-        Returns:
-            tuple: Tuple with the following entries:
-            **core_constant**: Adjustment to constant shift in Hamiltonian
-            from integrating out core orbitals
-            one_body_integrals_new : one-electron integrals over active space.
-            two_body_integrals_new : two-electron integrals over active space.
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        """
-    # Fix data type for a few edge cases
-    occupied_indices = [] if occupied_indices is None else occupied_indices
-    if len(active_indices) < 1:
-        raise ValueError('Some active indices required for reduction.')
-
-    # Determine core constant
-    core_constant = 0.0
-    for i in occupied_indices:
-        core_constant += 2 * one_body_integrals[i, i]
-        for j in occupied_indices:
-            core_constant += (2 * two_body_integrals[i, j, i, j] - two_body_integrals[i, j, j, i])
-
-    # Modified one electron integrals
-    one_body_integrals_new = np.copy(one_body_integrals)
-    for u in active_indices:
-        for v in active_indices:
-            for i in occupied_indices:
-                one_body_integrals_new[u, v] += (2 * two_body_integrals[i, i, u, v]
-                                                 - two_body_integrals[i, u, v, i])
-
-    # Restrict integral ranges and change M appropriately
-    return (core_constant,
-            one_body_integrals_new[np.ix_(active_indices, active_indices)],
-            two_body_integrals[np.ix_(active_indices, active_indices, active_indices, active_indices)])
-
-
-# =============================================================================
-#  DIFFERENT TYPES OF SPIN OPERATORS
-# =============================================================================
-
-def build_s2_sz_splus_operator(a_dagger_a):
-    """
-    Create a matrix representation of the spin operators s_2, s_z and s_plus
-    in the many-body basis.
-
-    Parameters
-    ----------
-    a_dagger_a : matrix representation of the a_dagger_a operator in the many-body basis.
-
-    Returns
-    -------
-    s_2, s_plus, s_z :  matrix representation of the s_2, s_plus and s_z operators
-                        in the many-body basis.
-    """
-    n_mo = np.shape(a_dagger_a)[0] // 2
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
-    s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
-    s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in range(n_mo):
-        s_plus += a_dagger_a[2 * p, 2 * p + 1]
-        s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
-
-    s_2 = s_plus @ s_plus.T + s_z @ s_z - s_z
-
-    return s_2, s_plus, s_z
 
 
 # =============================================================================
@@ -709,6 +570,144 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     return one_rdm, two_rdm
 
 
+def my_state(slater_determinant, nbody_basis):
+    """
+    Translate a Slater determinant (occupation number list) into a many-body
+    state referenced into a given Many-body basis.
+
+    Parameters
+    ----------
+    slater_determinant  : occupation number list
+    nbody_basis   : List of many-body states (occupation number states)
+
+    Returns
+    -------
+    state :  The slater determinant referenced in the many-body basis
+    """
+    kappa = np.flatnonzero((nbody_basis == slater_determinant).all(1))[0]  # nbody_basis.index(slater_determinant)
+    state = np.zeros(np.shape(nbody_basis)[0])
+    state[kappa] = 1.
+
+    return state
+
+
+# =============================================================================
+#  DIFFERENT TYPES OF SPIN OPERATORS
+# =============================================================================
+
+
+def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
+    """
+    Restricts a Fermi-Hubbard at a spatial orbital level to an active space
+    This active space may be defined by a list of active indices and
+    doubly occupied indices. Note that one_body_integrals and
+    two_body_integrals must be defined in an orthonormal basis set (MO like).
+    Args:
+         - occupied_indices: A list of spatial orbital indices
+           indicating which orbitals should be considered doubly occupied.
+         - active_indices: A list of spatial orbital indices indicating
+           which orbitals should be considered active.
+         - 1 and 2 body integrals.
+    Returns:
+        tuple: Tuple with the following entries:
+        **core_constant**: Adjustment to constant shift in Hamiltonian
+        from integrating out core orbitals
+        **one_body_integrals_new**: one-electron integrals over active space.
+        **two_body_integrals_new**: two-electron integrals over active space.
+    """
+    # Determine core Energy from frozen MOs
+    core_energy = 0
+    for i in frozen_indices:
+        core_energy += 2 * h_[i, i]
+        for j in frozen_indices:
+            core_energy += U_[i, i, j, j]
+
+            # Modified one-electron integrals
+    h_act = h_.copy()
+    for t in active_indices:
+        for u in active_indices:
+            for i in frozen_indices:
+                h_act[t, u] += U_[i, i, t, u]
+
+    return (core_energy,
+            h_act[np.ix_(active_indices, active_indices)],
+            U_[np.ix_(active_indices, active_indices, active_indices, active_indices)])
+
+
+def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupied_indices=None, active_indices=None):
+    """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        Restricts a Quantum chemistry Hamiltonian at a spatial orbital level
+        to an active space. This active space may be defined by a list of
+        active indices and doubly occupied indices. Note that one_body_integrals and
+        two_body_integrals must be defined in an orthonormal basis set (MO like).
+        Args:
+             - occupied_indices: A list of spatial orbital indices
+               indicating which orbitals should be considered doubly occupied.
+             - active_indices: A list of spatial orbital indices indicating
+               which orbitals should be considered active.
+             - 1 and 2 body integrals.
+        Returns:
+            tuple: Tuple with the following entries:
+            **core_constant**: Adjustment to constant shift in Hamiltonian
+            from integrating out core orbitals
+            one_body_integrals_new : one-electron integrals over active space.
+            two_body_integrals_new : two-electron integrals over active space.
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """
+    # Fix data type for a few edge cases
+    occupied_indices = [] if occupied_indices is None else occupied_indices
+    if len(active_indices) < 1:
+        raise ValueError('Some active indices required for reduction.')
+
+    # Determine core constant
+    core_constant = 0.0
+    for i in occupied_indices:
+        core_constant += 2 * one_body_integrals[i, i]
+        for j in occupied_indices:
+            core_constant += (2 * two_body_integrals[i, j, i, j] - two_body_integrals[i, j, j, i])
+
+    # Modified one electron integrals
+    one_body_integrals_new = np.copy(one_body_integrals)
+    for u in active_indices:
+        for v in active_indices:
+            for i in occupied_indices:
+                one_body_integrals_new[u, v] += (2 * two_body_integrals[i, i, u, v]
+                                                 - two_body_integrals[i, u, v, i])
+
+    # Restrict integral ranges and change M appropriately
+    return (core_constant,
+            one_body_integrals_new[np.ix_(active_indices, active_indices)],
+            two_body_integrals[np.ix_(active_indices, active_indices, active_indices, active_indices)])
+
+
+def build_s2_sz_splus_operator(a_dagger_a):
+    """
+    Create a matrix representation of the spin operators s_2, s_z and s_plus
+    in the many-body basis.
+
+    Parameters
+    ----------
+    a_dagger_a : matrix representation of the a_dagger_a operator in the many-body basis.
+
+    Returns
+    -------
+    s_2, s_plus, s_z :  matrix representation of the s_2, s_plus and s_z operators
+                        in the many-body basis.
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
+    s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
+    for p in range(n_mo):
+        s_plus += a_dagger_a[2 * p, 2 * p + 1]
+        s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
+
+    s_2 = s_plus @ s_plus.T + s_z @ s_z - s_z
+
+    return s_2, s_plus, s_z
+
+
 # =============================================================================
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
 # =============================================================================
@@ -739,15 +738,15 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
 
     list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
 
-    return_string = f'\n\t{"-"*11}\n\t Coeff.      N-body state\n\t{"-"*7}     {"-"*13}\n'
+    return_string = f'\n\t{"-" * 11}\n\t Coeff.      N-body state\n\t{"-" * 7}     {"-" * 13}\n'
     for index in list_sorted_index[0:8]:
         state = states[index]
 
         if atomic_orbitals:
             ket = get_ket_in_atomic_orbitals(state, bra=False)
         else:
-            ket = "".join([str(elem) for elem in state])
-        return_string += f'\t{coefficients[index]:+1.5f}\t|{ket}⟩\n'
+            ket = '|' + "".join([str(elem) for elem in state]) + '⟩'
+        return_string += f'\t{coefficients[index]:+1.5f}\t{ket}\n'
     print(return_string)
     return return_string
 
@@ -772,7 +771,7 @@ def get_ket_in_atomic_orbitals(state, bra=False):
 
 
 # =============================================================================
-# USEFUL TRANSFORMATIONS 
+# USEFUL TRANSFORMATIONS
 # =============================================================================
 
 
@@ -831,7 +830,7 @@ def householder_transformation(M):
     if np.count_nonzero(M - np.diag(np.diagonal(M))) == 0:
         print('\tinput was diagonal matrix')
         return np.diag(np.zeros(n) + 1), np.zeros((n, 1))
-    # Build the Householder vector "H_vector" 
+    # Build the Householder vector "H_vector"
     alpha = - np.sign(M[1, 0]) * sum(M[j, 0] ** 2. for j in range(1, n)) ** 0.5
     r = (0.5 * (alpha ** 2. - alpha * M[1, 0])) ** 0.5
 
@@ -840,7 +839,7 @@ def householder_transformation(M):
     for j in range(2, n):
         vector[j] = M[j, 0] / (2.0 * r)
 
-    # Building the transformation matrix "P" 
+    # Building the transformation matrix "P"
     P = np.eye(n) - 2 * vector @ vector.T
 
     return P, vector
@@ -867,7 +866,6 @@ def block_householder_transformation(M, size):
 
     Returns
     -------
-    m_transformed     : Transformed input matrix M
     P                 : Transformation matrix
     moore_penrose_inv : Moore Penrose inverse of Householder matrix
     """
@@ -891,8 +889,7 @@ def block_householder_transformation(M, size):
     v_tr_v_inv = np.linalg.inv(v_tr_v)
     moore_penrose_inv = v_tr_v_inv @ v_tr
     P = np.eye(n) - 2. * v @ v_tr_v_inv @ v_tr
-    m_transformed = P @ M @ P
-    return m_transformed, P, moore_penrose_inv
+    return P, moore_penrose_inv
 
 
 # =============================================================================
@@ -902,7 +899,7 @@ def block_householder_transformation(M, size):
 def build_mo_1rdm_and_2rdm(Psi_A, active_indices, n_mo, E_precomputed, e_precomputed):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a 
+    Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a
     reference wavefunction expressed in the computational basis
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     """

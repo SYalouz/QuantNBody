@@ -1,25 +1,24 @@
-from quant_nbody import Quant_NBody
-import pybind.Quant_NBody_fast as Quant_NBody_fast
-import testing_folder.Quant_NBody_main_branch as Quant_NBody_old  # This is the original library that I compare with.
+import quantnbody as qnb
+import quantnbody_old as qnb_old  # This is the original library that I compare with.
 
 from datetime import datetime
 
 
 def build_a_dagger_a_nbasis_new(n_mo, n_electrons):
-    nbody_basis_new = Quant_NBody.build_nbody_basis(n_mo, n_electrons)
-    a_dagger_a_new = Quant_NBody.build_operator_a_dagger_a(nbody_basis_new, True)
+    nbody_basis_new = qnb.tools.build_nbody_basis(n_mo, n_electrons)
+    a_dagger_a_new = qnb.tools.build_operator_a_dagger_a(nbody_basis_new, True)
     return a_dagger_a_new
 
 
 def build_a_dagger_a_nbasis_fast(n_mo, n_electrons):
-    nbody_basis_fast = Quant_NBody_fast.build_nbody_basis(n_mo, n_electrons)
-    a_dagger_a_fast = Quant_NBody_fast.build_operator_a_dagger_a_v3(nbody_basis_fast, True)
+    nbody_basis_fast = qnb.tools.build_nbody_basis(n_mo, n_electrons)
+    a_dagger_a_fast = qnb.tools.build_operator_a_dagger_a_fast(nbody_basis_fast, True)
     return a_dagger_a_fast
 
 
 def build_a_dagger_a_nbasis_old(n_mo, n_electrons):
-    nbody_basis_old = Quant_NBody_old.Build_NBody_Basis(n_mo, n_electrons)
-    a_dagger_a_old = Quant_NBody_old.Build_operator_a_dagger_a(nbody_basis_old)
+    nbody_basis_old = qnb_old.Build_NBody_Basis(n_mo, n_electrons)
+    a_dagger_a_old = qnb_old.Build_operator_a_dagger_a(nbody_basis_old)
     return a_dagger_a_old
 
 
@@ -48,7 +47,7 @@ def compare_time1(n_mo, n_electrons, iternum=10):
     print(f'For fast version it took {datetime.now() - a}')
     time_fast = datetime.now() - a
 
-    return time_old, time_new, time_fast
+    return time_fast, time_old, time_new
 
 
 if __name__ == '__main__':
@@ -65,6 +64,6 @@ if __name__ == '__main__':
     # # [[1, datetime.timedelta(seconds=4, microseconds=800825), datetime.timedelta(microseconds=91214)], [2, datetime.timedelta(seconds=4, microseconds=965682), datetime.timedelta(seconds=1, microseconds=68377)], [3, datetime.timedelta(seconds=7, microseconds=648410), datetime.timedelta(seconds=5, microseconds=472493)], [4, datetime.timedelta(seconds=12, microseconds=855377), datetime.timedelta(seconds=20, microseconds=641449)], [5, datetime.timedelta(seconds=23, microseconds=163650), datetime.timedelta(seconds=50, microseconds=602793)], [6, datetime.timedelta(seconds=38, microseconds=455900), datetime.timedelta(seconds=99, microseconds=615821)]]
     # We see that njit is useful when we have more than 4 electrons njit takes around 4 seconds to start
 
-    # compare_time1(8, 8, 1)
+    compare_time1(8, 8, 10)
 
-    build_a_dagger_a_nbasis_fast(8, 8)
+    # build_a_dagger_a_nbasis_fast(8, 8)

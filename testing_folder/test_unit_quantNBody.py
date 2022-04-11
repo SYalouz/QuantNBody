@@ -1,7 +1,7 @@
 import random
 import unittest
-from quant_nbody import Quant_NBody
-import testing_folder.Quant_NBody_main_branch as Quant_NBody_old  # This is the original library that I compare with.
+import quantnbody as qnb
+import quantnbody_old as qnb_old  # This is the original library that I compare with.
 import numpy as np
 import parameterized  # conda install -c conda-forge parameterized
 import datetime
@@ -92,7 +92,7 @@ def generate_from_graph(sites, connections):
 
 # Parameters setting:
 PARAM_TEST_FIRST = []
-for fast1 in [True, False]:
+for fast1 in [False]:  # [True, False]
     for n_mo1 in [2, 4, 6, 8]:
         for n_electrons1 in range(1, min(9, n_mo1 * 2)):
             PARAM_TEST_FIRST.append([f'N-MO={n_mo1}_N-e={n_electrons1}_{"fast" * fast1}', n_mo1, n_electrons1, fast1])
@@ -113,15 +113,15 @@ class TestQuantNBody(unittest.TestCase):
         print(name)
         with self.subTest(i=f"{n_mo}, {n_electrons}"):
             print(f'N_mo: {n_mo}, N_electrons: {n_electrons}')
-            nbody_basis_new = Quant_NBody.build_nbody_basis(n_mo, n_electrons)
-            nbody_basis_old = Quant_NBody_old.Build_NBody_Basis(n_mo, n_electrons)
+            nbody_basis_new = qnb.tools.build_nbody_basis(n_mo, n_electrons)
+            nbody_basis_old = qnb_old.Build_NBody_Basis(n_mo, n_electrons)
             self.assertEqual(nbody_basis_new.tolist(), nbody_basis_old)
             if fast:
-                build_a_dagger_a = Quant_NBody.build_operator_a_dagger_a_fast
+                build_a_dagger_a = qnb.improved.build_operator_a_dagger_a
             else:
-                build_a_dagger_a = Quant_NBody.build_operator_a_dagger_a
+                build_a_dagger_a = qnb.improved.build_operator_a_dagger_a
             a_dagger_a_new = build_a_dagger_a(nbody_basis_new)
-            a_dagger_a_old = Quant_NBody_old.Build_operator_a_dagger_a(nbody_basis_old)
+            a_dagger_a_old = qnb_old.Build_operator_a_dagger_a(nbody_basis_old)
             shape1 = a_dagger_a_new.shape
             shape2 = a_dagger_a_old.shape
             print(shape1)
@@ -136,8 +136,8 @@ class TestQuantNBody(unittest.TestCase):
         # have any symmetry.
         n_mo = 3
         n_electron = 4
-        nbody_basis = Quant_NBody.build_nbody_basis(n_mo, n_electron)
-        a_dagger_a = Quant_NBody.build_operator_a_dagger_a(nbody_basis)
+        nbody_basis = qnb.tools.build_nbody_basis(n_mo, n_electron)
+        a_dagger_a = qnb.improved.build_operator_a_dagger_a(nbody_basis)
 
         for seed in np.arange(5, 20, 4):
             heh2 = generate_random_xyz_he_h2(seed)
@@ -145,9 +145,9 @@ class TestQuantNBody(unittest.TestCase):
             if n_mo != N_MO or n_electron != N_elec:
                 raise Exception('Problem112233')
             time0_new = datetime.datetime.now()
-            H_new = Quant_NBody.build_hamiltonian_quantum_chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
+            H_new = qnb.tools.build_hamiltonian_quantum_chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
             time0_old = time1_new = datetime.datetime.now()
-            H_old = Quant_NBody_old.Build_Hamiltonian_Quantum_Chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
+            H_old = qnb_old.Build_Hamiltonian_Quantum_Chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
             time1_old = datetime.datetime.now()
             self.assertEqual((H_new != H_old).nnz, 0)
             print(f'old time: {time1_old - time0_old}\nnew time: {time1_new - time0_new}')
@@ -175,12 +175,12 @@ class TestQuantNBody(unittest.TestCase):
         n_mo = site_number
         n_electron = site_number
         print('building nbody_basis')
-        nbody_basis = Quant_NBody.build_nbody_basis(n_mo, n_electron)
+        nbody_basis = qnb.tools.build_nbody_basis(n_mo, n_electron)
         print('building a_dagger_a')
-        a_dagger_a = Quant_NBody.build_operator_a_dagger_a(nbody_basis)
+        a_dagger_a = qnb.improved.build_operator_a_dagger_a(nbody_basis)
         print('finished building a_dagger_a')
 
-        for i in range(5):
+        for i in range(2):
             """Checks build of Fermi Hubbard Hamiltonian and corresponding 2rdm"""
             random.seed(seed)
             sites = {}
@@ -198,9 +198,9 @@ class TestQuantNBody(unittest.TestCase):
             u = np.zeros((site_number, site_number, site_number, site_number))
             u[np.diag_indices(site_number, ndim=4)] = u1d
             time0_new = datetime.datetime.now()
-            H_new = Quant_NBody.build_hamiltonian_fermi_hubbard(t + v, u, nbody_basis, a_dagger_a)
+            H_new = qnb.tools.build_hamiltonian_fermi_hubbard(t + v, u, nbody_basis, a_dagger_a)
             time0_old = time1_new = datetime.datetime.now()
-            H_old = Quant_NBody_old.Build_Hamiltonian_Fermi_Hubbard(t + v, u, nbody_basis, a_dagger_a)
+            H_old = qnb_old.Build_Hamiltonian_Fermi_Hubbard(t + v, u, nbody_basis, a_dagger_a)
             time1_old = datetime.datetime.now()
             print(f'old time: {time1_old - time0_old}\nnew time: {time1_new - time0_new}')
 
@@ -215,34 +215,34 @@ class TestQuantNBody(unittest.TestCase):
             eig_energies_old, eig_vectors_old = np.linalg.eigh(H_old.A)
             WFT_old = eig_vectors_old[:, 0]
             print('Finished')
-            self.assertTrue(np.allclose(Quant_NBody.build_2rdm_fh(WFT_new, a_dagger_a),
-                                        Quant_NBody_old.Build_two_RDM_FH(WFT_old, a_dagger_a)))
+            self.assertTrue(np.allclose(qnb.tools.build_2rdm_fh_on_site_repulsion(WFT_new, a_dagger_a),
+                                        qnb_old.Build_two_RDM_FH(WFT_old, a_dagger_a)))
 
     def test_rdms(self):
         # I will generate molecule of water in STO-3G basis set and compare all generated 1RDMS
         atom_list = generate_atom_list_from_pubchem(962)
         h_MO, g_MO, N_elec, N_MO, E_rep_nuc = generate_molecule(atom_list)
 
-        nbody_basis = Quant_NBody.build_nbody_basis(N_MO, N_elec)
-        a_dagger_a = Quant_NBody.build_operator_a_dagger_a(nbody_basis)
-        H = Quant_NBody.build_hamiltonian_quantum_chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
+        nbody_basis = qnb.tools.build_nbody_basis(N_MO, N_elec)
+        a_dagger_a = qnb.improved.build_operator_a_dagger_a(nbody_basis)
+        H = qnb.tools.build_hamiltonian_quantum_chemistry(h_MO, g_MO, nbody_basis, a_dagger_a)
         eig_energies, eig_vectors = np.linalg.eigh(H.A)
         WFT = eig_vectors[:, 0]
 
-        self.assertTrue(np.allclose(Quant_NBody.build_1rdm_beta(WFT, a_dagger_a),
-                                    Quant_NBody_old.Build_One_RDM_beta(WFT, a_dagger_a)))
+        self.assertTrue(np.allclose(qnb.tools.build_1rdm_beta(WFT, a_dagger_a),
+                                    qnb_old.Build_One_RDM_beta(WFT, a_dagger_a)))
 
-        self.assertTrue(np.allclose(Quant_NBody.build_1rdm_alpha(WFT, a_dagger_a),
-                                    Quant_NBody_old.Build_One_RDM_alpha(WFT, a_dagger_a)))
+        self.assertTrue(np.allclose(qnb.tools.build_1rdm_alpha(WFT, a_dagger_a),
+                                    qnb_old.Build_One_RDM_alpha(WFT, a_dagger_a)))
 
-        self.assertTrue(np.allclose(Quant_NBody.build_1rdm_spin_free(WFT, a_dagger_a),
-                                    Quant_NBody_old.Build_One_RDM_spin_free(WFT, a_dagger_a)))
+        self.assertTrue(np.allclose(qnb.tools.build_1rdm_spin_free(WFT, a_dagger_a),
+                                    qnb_old.Build_One_RDM_spin_free(WFT, a_dagger_a)))
 
-        self.assertTrue(np.allclose(Quant_NBody.build_2rdm_spin_free(WFT, a_dagger_a),
-                                    Quant_NBody_old.Build_two_RDM_spin_free(WFT, a_dagger_a)))
+        self.assertTrue(np.allclose(qnb.tools.build_2rdm_spin_free(WFT, a_dagger_a),
+                                    qnb_old.Build_two_RDM_spin_free(WFT, a_dagger_a)))
 
-        ret_new = Quant_NBody.build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a)
-        ret_old = Quant_NBody_old.Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a)
+        ret_new = qnb.tools.build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a)
+        ret_old = qnb_old.Build_One_and_Two_RDM_spin_free(WFT, a_dagger_a)
         self.assertTrue(np.allclose(ret_new[0], ret_old[0]))
         self.assertTrue(np.allclose(ret_new[1], ret_old[1]))
 
@@ -253,16 +253,16 @@ class TestQuantNBody(unittest.TestCase):
         matrix1 = np.random.random((size, size))
         matrix1 = matrix1 + matrix1.T
 
-        mat_hh_new = Quant_NBody.householder_transformation(matrix1)
-        mat_hh_old = Quant_NBody_old.Householder_transformation(matrix1)
+        mat_hh_new = qnb.tools.householder_transformation(matrix1)
+        mat_hh_old = qnb_old.Householder_transformation(matrix1)
         self.assertTrue(np.allclose(mat_hh_new[0], mat_hh_old[0]))
         self.assertTrue(np.allclose(mat_hh_new[1], mat_hh_old[1]))
         if ref_result_hh:
             # maybe reference should be the function and not matrix!
             self.assertTrue(np.allclose(mat_hh_new[0], ref_result_hh))
 
-        mat_block_hh_new = Quant_NBody.block_householder_transformation(matrix1, size_cluster)
-        mat_block_hh_old = Quant_NBody_old.Block_householder_transformation(matrix1, size_cluster)
+        mat_block_hh_new = qnb.tools.block_householder_transformation(matrix1, size_cluster)
+        mat_block_hh_old = qnb_old.Block_householder_transformation(matrix1, size_cluster)
         self.assertTrue(np.allclose(mat_block_hh_new[0], mat_block_hh_old[0]))
         self.assertTrue(np.allclose(mat_block_hh_new[1], mat_block_hh_old[1]))
         if ref_result_block_hh:
