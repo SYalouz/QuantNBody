@@ -17,7 +17,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=['scipy', 'numpy', 'numba', 'matplotlib', 'typing'],
+    install_requires=['scipy', 'numpy', 'numba'],
     keywords=['python', 'quantum chemistry', 'second quantization', 'Ab-initio Hamiltonian', 'Hubbard model', 
               'Householder transformation', 'block Householder transformation'],
     classifiers=[
