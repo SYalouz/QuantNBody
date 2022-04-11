@@ -18,7 +18,7 @@ class Hamiltonian:
         self.n_mo = n_mo
         self.n_electron = n_electron
         if not override_NBody_basis:
-            self.nbody_basis = function_file.build_nbody_basis(n_mo, n_electron, S_z_cleaning)
+            self.nbody_basis = tools_file.build_nbody_basis(n_mo, n_electron, S_z_cleaning)
         else:
             self.nbody_basis = override_NBody_basis
         self.a_dagger_a = []
@@ -42,7 +42,7 @@ class Hamiltonian:
         -------
         None, a_dagger_a gets saved to the object_name.a_dagger_a
         """
-        self.a_dagger_a = function_file.build_operator_a_dagger_a(self.nbody_basis, silent)
+        self.a_dagger_a = tools_file.build_operator_a_dagger_a(self.nbody_basis, silent)
 
     def build_hamiltonian_quantum_chemistry(self, h_, g_, S_2=None, S_2_target=None, penalty=100):
         """
@@ -64,10 +64,10 @@ class Hamiltonian:
         """
         self.h = h_
         self.g = g_
-        self.H = function_file.build_hamiltonian_quantum_chemistry(h_, g_, self.nbody_basis, self.a_dagger_a, S_2,
+        self.H = tools_file.build_hamiltonian_quantum_chemistry(h_, g_, self.nbody_basis, self.a_dagger_a, S_2,
                                                                  S_2_target, penalty)
-        self.E_ex = function_file.E_
-        self.e_ex = function_file.e_
+        self.E_ex = tools_file.E_
+        self.e_ex = tools_file.e_
 
     def build_hamiltonian_fermi_hubbard(self, h_, U_, S_2=None, S_2_target=None, penalty=100, v_term=None):
         """
@@ -91,10 +91,10 @@ class Hamiltonian:
             """
         self.h = h_
         self.U = U_
-        self.H = function_file.build_hamiltonian_fermi_hubbard(h_, U_, self.nbody_basis, self.a_dagger_a, S_2,
+        self.H = tools_file.build_hamiltonian_fermi_hubbard(h_, U_, self.nbody_basis, self.a_dagger_a, S_2,
                                                                S_2_target, penalty, v_term)
-        self.E_ex = function_file.E_
-        self.e_ex = function_file.e_
+        self.E_ex = tools_file.E_
+        self.e_ex = tools_file.e_
 
     def diagonalize_hamiltonian(self, full: bool = False, number_of_states: int = 3) -> None:
         """
