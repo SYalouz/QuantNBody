@@ -1,4 +1,4 @@
-import Quant_NBody
+from . import Quant_NBody
 import numpy as np
 import scipy.sparse
 import matplotlib.pyplot as plt
@@ -23,11 +23,11 @@ def print_matrix(matrix, plot_heatmap='', ret=False, output_formatting_number="+
 
 
 class QuantNBody:
-    def __init__(self, N_MO, N_electron, S_z_cleaning=False, override_NBody_basis=tuple()):
-        self.n_mo = N_MO
-        self.n_electron = N_electron
+    def __init__(self, n_mo, n_electron, S_z_cleaning=False, override_NBody_basis=tuple()):
+        self.n_mo = n_mo
+        self.n_electron = n_electron
         if not override_NBody_basis:
-            self.nbody_basis = Quant_NBody.build_nbody_basis(N_MO, N_elec, S_z_cleaning)
+            self.nbody_basis = Quant_NBody.build_nbody_basis(n_mo, n_electron, S_z_cleaning)
         else:
             self.nbody_basis = override_NBody_basis
         self.a_dagger_a = []
@@ -340,7 +340,7 @@ class QuantNBody:
         ei_val, ei_vec = np.linalg.eigh(h_ks)
         energy2 = 0
         for i in range(self.n_electron):
-            # i goes over 0 to N_electron - 1
+            # i goes over 0 to n_electron - 1
             energy2 += ei_val[i // 2]
         v_hxc_2 = v_hxc + (energy_fci - energy2) / self.n_electron
         if not silent:
