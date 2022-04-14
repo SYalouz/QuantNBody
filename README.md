@@ -1,4 +1,5 @@
-# Quant_N_Body : an exact diagonalization python package for quantum chemistry and many-body Hamiltonians.
+
+# QuantNBody : a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
 
 The goal of the package is to provide a quick and easy way to build many-body operators and get access
 (in a few python lines) to important quantities/objects such as :
@@ -11,7 +12,7 @@ The goal of the package is to provide a quick and easy way to build many-body op
  
 Hamiltonians already implemented:
 
-- Ab initio electronic strucutre Hamiltonian (needs psi4 or PySCf to provide the electronic integrals)
+- Ab initio electronic structure Hamiltonian (needs psi4 or PySCf to provide the electronic integrals)
 - Fermi-Hubbard molecules Hamiltonians ( parameters given by the user )
 
 
