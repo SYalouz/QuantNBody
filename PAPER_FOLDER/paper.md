@@ -21,7 +21,7 @@ bibliography: paper.bib
  
 ---
 
-# Summary
+# Summary 
 
 'QuantNBody' is a Python package providing numerical tools for quantum chemists/physicists interested in the development of methodologies to study quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way to build matrix representations of quantum many-body operators (e.g. hamiltonians, spin operators) and get access to quantities/objects of interest (e.g. energies, reduced density matrices, many-body wave functions). The code provides various native tools and is flexible enough to help users in building new types of many-body operators or quantum states. 
 
