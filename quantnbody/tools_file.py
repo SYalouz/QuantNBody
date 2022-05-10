@@ -2,12 +2,11 @@ import scipy
 import numpy as np
 from itertools import combinations
 from numba import njit, prange
-import math as m
+import math as m 
 
 E_ = False
 e_ = False
-
-
+ 
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
@@ -381,16 +380,16 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target ):
 # =============================================================================
 
 
-def build_full_mo_1rdm_and_2rdm( WFT, a_dagger_a, active_indices ):
+def build_full_mo_1rdm_and_2rdm( WFT, a_dagger_a, active_indices, n_mo_total ):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a
     reference wavefunction expressed in the computational basis
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    """
-    n_mo = np.shape(a_dagger_a)[0] // 2
-    one_rdm_a = np.zeros((n_mo, n_mo))
-    two_rdm_a = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    """ 
+    n_mo = len( active_indices )
+    one_rdm_a = np.zeros((n_mo_total, n_mo_total))
+    two_rdm_a = np.zeros((n_mo_total, n_mo_total, n_mo_total, n_mo_total))
     first_act_index = active_indices[0]
     
     global E_
@@ -420,7 +419,7 @@ def build_full_mo_1rdm_and_2rdm( WFT, a_dagger_a, active_indices ):
                         # State A
                         two_rdm_a[i, j, k, l] = 4. * delta(i, j) * delta(k, l) - 2. * delta(i, l) * delta(j, k)
 
-                        # Creating RDMs elements in the the active/frozen spaces
+    # Creating RDMs elements in the the active/frozen spaces
     for p in active_indices:
         for q in active_indices:
             # Shifting the indices
@@ -731,7 +730,10 @@ def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=No
             U_[np.ix_(active_indices, active_indices, active_indices, active_indices)])
 
 
-def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupied_indices=None, active_indices=None):
+def qc_get_active_space_integrals(one_body_integrals,
+                                  two_body_integrals,
+                                  occupied_indices=None,
+                                  active_indices=None):
     """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Restricts a Quantum chemistry Hamiltonian at a spatial orbital level
@@ -739,11 +741,11 @@ def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupi
         active indices and doubly occupied indices. Note that one_body_integrals and
         two_body_integrals must be defined in an orthonormal basis set (MO like).
         Args:
-             - occupied_indices: A list of spatial orbital indices
-               indicating which orbitals should be considered doubly occupied.
-             - active_indices: A list of spatial orbital indices indicating
-               which orbitals should be considered active.
-             - 1 and 2 body integrals.
+              - occupied_indices: A list of spatial orbital indices
+                indicating which orbitals should be considered doubly occupied.
+              - active_indices: A list of spatial orbital indices indicating
+                which orbitals should be considered active.
+              - 1 and 2 body integrals.
         Returns:
             tuple: Tuple with the following entries:
             **core_constant**: Adjustment to constant shift in Hamiltonian
@@ -762,7 +764,10 @@ def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupi
     for i in occupied_indices:
         core_constant += 2 * one_body_integrals[i, i]
         for j in occupied_indices:
-            core_constant += (2 * two_body_integrals[i, j, i, j] - two_body_integrals[i, j, j, i])
+            core_constant += (2 * two_body_integrals[i, i, j, j]
+                              - two_body_integrals[i, j, j, i])
+            # core_constant += (2 * two_body_integrals[i, j, i, j]
+            #                   - two_body_integrals[i, j, j, i])
 
     # Modified one electron integrals
     one_body_integrals_new = np.copy(one_body_integrals)
@@ -777,7 +782,7 @@ def qc_get_active_space_integrals(one_body_integrals, two_body_integrals, occupi
             one_body_integrals_new[np.ix_(active_indices, active_indices)],
             two_body_integrals[np.ix_(active_indices, active_indices, active_indices, active_indices)])
 
-
+ 
 
 # =============================================================================
 #  DIFFERENT TYPES OF SPIN OPERATORS
@@ -973,8 +978,8 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
     h_b2 : 1-electron integral given in basis B2
     g_b2 : 2-electron integral given in basis B2
     """
-    h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1)
-    g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1)
+    h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1, optimize=True)
+    g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
 
     return h_b2, g_b2
 
@@ -1072,7 +1077,6 @@ def block_householder_transformation(M, size):
 # =============================================================================
 # ORBITAL OPTIMIZATION
 # =============================================================================
- 
 
 @njit
 def compute_energy_with_rdm(ONE_RDM,
@@ -1096,76 +1100,6 @@ def compute_energy_with_rdm(ONE_RDM,
                 for s in range(max_):
                     energy += 0.5 * TWO_RDM[p, q, r, s] * g_MO[p, q, r, s]
     return energy
-
-
-def filter_hess_and_grad_orb(Hess_OrbOrb,
-                             Hess_CirOrb,
-                             Grad_Orb,
-                             frozen_indices,
-                             active_indices,
-                             virtual_indices,
-                             n_mo_optimized,
-                             Num_UCC_param):
-
-    # Counting the number of non-redundant rotation parameters
-    Num_nonredundant_par = 0
-    for q in (range(n_mo_optimized-1)):
-        for p in range(q+1, n_mo_optimized):
-            if not((p in frozen_indices and q in frozen_indices) or
-                   (p in virtual_indices and q in virtual_indices) or
-                   (p in active_indices and q in active_indices)):
-                Num_nonredundant_par += 1
-
-    # print('Number of non-redundnant rotations ', Num_nonredundant_par)
-    Grad_Orb_filtered = np.zeros((Num_nonredundant_par, 1))
-    Hess_OrbOrb_filtered = np.zeros(
-        (Num_nonredundant_par, Num_nonredundant_par))
-    Hess_CirOrb_filtered = np.zeros((Num_UCC_param, Num_nonredundant_par))
-
-    ind_pq_filtered = 0
-    for q in (range(n_mo_optimized-1)):
-        for p in range(q+1, n_mo_optimized):
-
-            if not((p in frozen_indices and q in frozen_indices) or
-                   (p in virtual_indices and q in virtual_indices) or
-                   (p in active_indices and q in active_indices)):
-
-                ind_pq = get_super_index(p, q, n_mo_optimized)
-                # Orbital Gradient
-                Grad_Orb_filtered[ind_pq_filtered] = Grad_Orb[ind_pq]
-
-                ind_rs_filtered = 0
-                for s in range(n_mo_optimized-1):
-                    for r in range(s+1, n_mo_optimized):
-
-                        if not((r in frozen_indices and s in frozen_indices) or
-                               (r in virtual_indices and s in virtual_indices) or
-                               (r in active_indices and s in active_indices)):
-
-                            ind_rs = get_super_index(r, s, n_mo_optimized)
-
-                            # Orbital Hessian
-                            Hess_OrbOrb_filtered[ind_pq_filtered,
-                                                 ind_rs_filtered] = Hess_OrbOrb[ind_pq, ind_rs]
-                            ind_rs_filtered += 1
-
-                ind_pq_filtered += 1
-
-    for i in range(Num_UCC_param):
-        ind_pq_filtered = 0
-        for q in range(n_mo_optimized-1):
-            for p in range(q+1, n_mo_optimized):
-                if not ((p in frozen_indices and q in frozen_indices) or
-                        (p in virtual_indices and q in virtual_indices) or
-                        (p in active_indices and q in active_indices)):
-
-                    ind_pq = get_super_index(p, q, n_mo_optimized)
-                    # Orbital Hessian
-                    Hess_CirOrb_filtered[i,
-                                         ind_pq_filtered] = Hess_CirOrb[i, ind_pq]
-                    ind_pq_filtered += 1
-
-    return Hess_OrbOrb_filtered, Hess_CirOrb_filtered, Grad_Orb_filtered
 
 
 def filter_h_g_orb(Hess_OrbOrb,
@@ -1271,10 +1205,11 @@ def sa_build_mo_hessian_and_gradient(n_mo_OPTIMIZED,
                     for u in join_indices:
                         for v in join_indices:
                             hessian_SA[ind_pq,ind_rs] += (
-                               (2. * g_MO[p,u,r,v] * (two_rdm_SA[q,u,s,v] + two_rdm_SA[q,u,v,s]) + 2. * g_MO[p,r,u,v] * two_rdm_SA[q,s,u,v])
-                             - (2. * g_MO[q,u,r,v] * (two_rdm_SA[p,u,s,v] + two_rdm_SA[p,u,v,s]) + 2. * g_MO[q,r,u,v] * two_rdm_SA[p,s,u,v])
-                             - (2. * g_MO[p,u,s,v] * (two_rdm_SA[q,u,r,v] + two_rdm_SA[q,u,v,r]) + 2. * g_MO[p,s,u,v] * two_rdm_SA[q,r,u,v])
-                             + (2. * g_MO[q,u,s,v] * (two_rdm_SA[p,u,r,v] + two_rdm_SA[p,u,v,r]) + 2. * g_MO[q,s,u,v] * two_rdm_SA[p,r,u,v]))
+                               (2. * g_MO[p,u,r,v] * (two_rdm_SA[q,u,s,v] + two_rdm_SA[q,u,v,s])  + 2. * g_MO[p,r,u,v] * two_rdm_SA[q,s,u,v])
+                             - (2. * g_MO[q,u,r,v] * (two_rdm_SA[p,u,s,v] + two_rdm_SA[p,u,v,s])  + 2. * g_MO[q,r,u,v] * two_rdm_SA[p,s,u,v])
+                             - (2. * g_MO[p,u,s,v] * (two_rdm_SA[q,u,r,v] + two_rdm_SA[q,u,v,r])  + 2. * g_MO[p,s,u,v] * two_rdm_SA[q,r,u,v])
+                             + (2. * g_MO[q,u,s,v] * (two_rdm_SA[p,u,r,v] + two_rdm_SA[p,u,v,r])  + 2. * g_MO[q,s,u,v] * two_rdm_SA[p,r,u,v])
+                             )
 
     return gradient_SA, hessian_SA
 
@@ -1316,11 +1251,8 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
                                        two_rdm_SA,
                                        active_indices,
                                        frozen_indices,
-                                       virtual_indices,
-                                       ham_matrix,
-                                       C_transf,
-                                       h_MO,
-                                       g_MO,
+                                       virtual_indices, 
+                                       C_transf, 
                                        E_rep_nuc,
                                        h_AO,
                                        g_AO,
@@ -1333,6 +1265,8 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
     Function to realize an Orbital Optimization process
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     """
+     
+    h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_transf )
     n_mo = np.shape(h_MO)[0]
     E_old_OO = compute_energy_with_rdm(one_rdm_SA,
                                         two_rdm_SA,
@@ -1347,9 +1281,11 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
     g_best = g_MO
     k_vec = np.zeros((n_mo_optimized * (n_mo_optimized - 1) // 2, 1))
     C_ref = C_transf 
-
+    
+    # Printing the evolution of the Orb Opt process
     if TELL_ME:
         print("ENERGY    |    ORBITAL GRADIENT  | RATIO PREDICTION  | ITERATION")
+        
     for iteration in range(OPT_OO_MAX_ITER):
 
         # Building the state-averaged generalized Fock matrix
@@ -1372,7 +1308,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
                                                             one_rdm_SA,
                                                             two_rdm_SA)
 
-        Grad_norm = np.linalg.norm(SA_Grad)
+        Grad_norm = np.linalg.norm( SA_Grad )
 
         SA_Hess_filtered, SA_Grad_filtered = filter_h_g_orb(SA_Hess,
                                                             SA_Grad,
@@ -1395,15 +1331,14 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
         if (np.max(np.abs(step_k)) > 0.05):
             step_k = 0.05 * step_k / np.max(np.abs(step_k))
 
-        step_k_reshaped = np.zeros(
-            (n_mo_optimized * (n_mo_optimized - 1) // 2, 1))
+        step_k_reshaped = np.zeros(( n_mo_optimized * (n_mo_optimized - 1) // 2, 1 ))
         ind_pq_filtered = 0
         for q in range(n_mo_optimized - 1):
             for p in range(q + 1, n_mo_optimized):
                 ind_pq = get_super_index(p, q, n_mo_optimized)
-                if not((p in frozen_indices and q in frozen_indices) or
-                        (p in virtual_indices and q in virtual_indices) or
-                        (p in active_indices and q in active_indices)):
+                if not((p in frozen_indices  and q in frozen_indices) or
+                       (p in virtual_indices and q in virtual_indices) or
+                       (p in active_indices  and q in active_indices)):
                     step_k_reshaped[ind_pq] = step_k[ind_pq_filtered]
                     ind_pq_filtered += 1
 
@@ -1412,10 +1347,12 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
         # Building the Rotation operator with a Netwon-Raphson Step
         # Updating the rotation vector "k"
         k_vec = k_vec + step_k
+        
         # Generator of the rotation : the kew-matrix K = skew(k)
         K_mat = transform_vec_to_skewmatrix(k_vec, n_mo_optimized)
+        
         # Rotation operator in the MO basis : U = exp(-K)
-        U_OO = (scipy.linalg.expm(- K_mat)).real
+        U_OO = ( scipy.linalg.expm( - K_mat ) ).real
 
         # Completing the transformation operator : in case not all the MOs are considered
         # in the OO process, we extend the operator with an identity block
@@ -1426,8 +1363,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
         # Transforming the MO coeff matrix to encode the optimized MOs
         C_transf = C_ref @ U_OO
 
-        # Building the resulting modified MO integrals for the next cycle of
-        # calculation
+        # Building the resulting modified MO integrals for the next cycle of  calculation
         h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_transf )
 
         # Computing the resulting orbital-Optimized energy
@@ -1443,7 +1379,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
                                          step_k + 0.5 * step_k.T @ SA_Hess @ step_k)
 
         # Storing the best data obtained during the optimization
-        if (E_new_OO < E_best_OO):
+        if ( E_new_OO < E_best_OO ):
             E_best_OO = E_new_OO
             C_transf_best_OO = C_transf
             h_best = h_MO
@@ -1461,7 +1397,23 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
 
     return C_transf_best_OO, E_best_OO, h_best, g_best
 
- 
+
+def transform_vec_to_skewmatrix(Vec_k, n_mo):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
+    the orbital rotations from a vector k.
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
+    Skew_Matrix_K = np.zeros((n_mo, n_mo))
+    ind_ij = 0
+    for j in range(n_mo-1):
+        for i in range(j+1, n_mo):
+            Skew_Matrix_K[i, j] = Vec_k[ind_ij]
+            Skew_Matrix_K[j, i] = - Vec_k[ind_ij]
+            ind_ij += 1
+    return Skew_Matrix_K
+
 
 @njit
 def build_generalized_fock_matrix(Num_MO,
@@ -1546,6 +1498,18 @@ def q_aux(Num_MO, g_MO, two_rdm, active_indices):
     return Q_aux
 
 
+@njit
+def get_super_index(p, q, n_mo):
+    """
+    Function to obtain a "super index" pq 
+    useful for orbital gradients and hessians
+    """
+    ini_int = n_mo-1 - q
+    fin_int = n_mo-1
+    counter = (fin_int-ini_int+1)*(ini_int+fin_int)//2
+    ind_pq = counter + p - n_mo
+    return ind_pq
+
 
 # =============================================================================
 #  MISCELLANEOUS
@@ -1589,24 +1553,6 @@ def generate_h_ring_geometry(N_atoms, radius):
     return h_ring_geometry
 
 
-
-def transform_vec_to_skewmatrix(Vec_k, n_mo):
-    """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
-    the orbital rotations from a vector k.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    """
-    Skew_Matrix_K = np.zeros((n_mo, n_mo))
-    ind_ij = 0
-    for j in range(n_mo-1):
-        for i in range(j+1, n_mo):
-            Skew_Matrix_K[i, j] = Vec_k[ind_ij]
-            Skew_Matrix_K[j, i] = - Vec_k[ind_ij]
-            ind_ij += 1
-    return Skew_Matrix_K
-
-
 @njit
 def delta(index_1, index_2):
     """
@@ -1616,17 +1562,4 @@ def delta(index_1, index_2):
     if index_1 == index_2:
         d = 1.0
     return d
-
-
-@njit
-def get_super_index(p, q, n_mo):
-    """
-    Function to obtain a "super index" pq 
-    useful for orbital gradients and hessians
-    """
-    ini_int = n_mo-1 - q
-    fin_int = n_mo-1
-    counter = (fin_int-ini_int+1)*(ini_int+fin_int)//2
-    ind_pq = counter + p - n_mo
-    return ind_pq
 
