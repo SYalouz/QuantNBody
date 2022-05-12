@@ -1,6 +1,6 @@
 import scipy
 import numpy as np
-from itertools import combinations
+from itertools import combinations_with_replacement
 from numba import njit, prange 
 
 E_ = False
@@ -10,62 +10,33 @@ e_ = False
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
 
-def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
+def build_nbody_basis(n_mode, N_boson, S_z_cleaning=False):
     """
-    Create a many-body basis formed by a list of slater-determinants
-    (i.e. their occupation number)
+    Create a many-body basis formed by a list of fock-state with a conserved total
+    number of bosons 
 
     Parameters
     ----------
-    n_mo         :  Number of molecular orbitals
-    N_electron   :  Number of electrons
-    S_z_cleaning :  Option if we want to get read of the s_z != 0 states (default is False)
+    n_mode    :  Number of modes in total 
+    N_boson   :  Number of bosons in total 
 
     Returns
     -------
-    nbody_basis :  List of many-body states (occupation number states) in the basis (occupation number vectors)
+    nbody_basis :  List of many-body states (occupation number states)  
     """
     # Building the N-electron many-body basis
     nbody_basis = []
-    for combination in combinations(range(2 * n_mo), N_electron):
-        fock_state = [0] * (2 * n_mo)
+    for combination in combinations_with_replacement( range(n_mode), N_boson ):
+        fock_state = [ 0 for i in range(n_mode) ]
         for index in list(combination):
-            fock_state[index] += 1
-        nbody_basis += [fock_state]
-
-        # In case we want to get rid of states with s_z != 0
-    if S_z_cleaning:
-        nbody_basis_cleaned = nbody_basis.copy()
-        for i in range(np.shape(nbody_basis)[0]):
-            s_z = check_sz(nbody_basis[i])
-            if s_z != 0:
-                nbody_basis_cleaned.remove(nbody_basis[i])
-        nbody_basis = nbody_basis_cleaned
-
+            fock_state[ index ] += 1
+        nbody_basis += [ fock_state ]
+        
     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
 
-
-def check_sz(ref_state):
-    """
-    Return the value fo the S_z operator for a unique slater determinant
-
-    Parameters
-    ----------
-    ref_state :  Slater determinant (list of occupation numbers)
-
-    Returns
-    -------
-    s_z_slater_determinant : value of S_z for the given slater determinant
-    """
-    s_z_slater_determinant = 0
-    for elem in range(len(ref_state)):
-        if elem % 2 == 0:
-            s_z_slater_determinant += + 1 * ref_state[elem] / 2
-        else:
-            s_z_slater_determinant += - 1 * ref_state[elem] / 2
-
-    return s_z_slater_determinant
-
+# =====
+# DONE UP HERE !!!
+# =====
 
 # numba -> njit version of build_operator_a_dagger_a
 def build_operator_a_dagger_a(nbody_basis, silent=True):
