@@ -26,8 +26,6 @@ def RUN_SACASSCF_PSI4( string_geo,
     '''
     A function to run a SA-CASSCF method with the Psi4 package
     '''
-    
-    frozen_UOCC     = virtual_indices[-1] - N_MO_Optimized
     restricted_UOCC =  N_MO_Optimized - ( len(frozen_indices) + len(active_indices) )
     
     psi4.geometry( string_geo )
@@ -74,7 +72,7 @@ N_MO_total       = ( len(frozen_indices)
 # Definition of the states weights : EQUI-ENSEMBLE 
 w_A = w_B = 0.5
 
-# Energy convergence criterium for the global optimization ( VQE + OO ) ====
+# Energy convergence criterium for the global optimization 
 E_thresh        = 1e-4
 OPT_OO_MAX_ITER = 25
 Grad_threshold  = 1e-4
