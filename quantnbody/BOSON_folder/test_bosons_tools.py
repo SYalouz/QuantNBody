@@ -58,46 +58,37 @@ import scipy.sparse
 # n_mode  = 2
 # N_boson = 1
 
-# nbodybasis = tools_file_bosons.build_nbody_basis(n_mode, N_boson)
+n_mode  = 4
+n_boson = 20
 
-# print( nbodybasis )
+nbodybasis = tools_file_bosons.build_nbody_basis(n_mode, n_boson)
 
-# mapping = tools_file_bosons.build_mapping( nbodybasis )
+# print( nbodybasis[115], nbodybasis[120] )
 
-# print( mapping ) 
+mapping = tools_file_bosons.build_mapping( nbodybasis )
 
-# dim_H = np.shape(nbodybasis)[0]
-# kappa = 0
+print( mapping ) 
 
-# ref_state = nbodybasis[ kappa ]
-# print("refstate", ref_state)
+dim_H = np.shape(nbodybasis)[0]
+kappa = 0
 
-# number = 0
-# for index_mode in range(n_mode): 
-#     number += ref_state[index_mode] * 10**(n_mode - index_mode - 1)
+ref_state = nbodybasis[ kappa ]
+print("refstate", ref_state)
 
-# print(number)
+number = 0
+for index_mode in range(n_mode): 
+    number += ref_state[index_mode] * 10**(n_mode - index_mode - 1)
 
-#%%
+print(number)
 
-# type_of_op = 'a'
-# index_mode = 1
-
-# new_state = tools_file_bosons.new_state_after_sq_boson_op(type_of_op, index_mode, ref_state)
-
-# print( "refstate", ref_state )
-# print( "newstate", new_state[0], new_state[1] )
-
-n_mode  = 2
-n_boson = 50
-
+ 
 nbodybasis = tools_file_bosons.build_nbody_basis(n_mode, n_boson)
 a_dagger_a = tools_file_bosons.build_operator_a_dagger_a(nbodybasis)
 
-U  = - 0.5 * 10. / n_boson  #PARAM_INI + PARAM_iter * ( PARAM_FIN - PARAM_INI) / N_points
+U  = - 0.5 * 100. / n_boson  #PARAM_INI + PARAM_iter * ( PARAM_FIN - PARAM_INI) / N_points
 J  = 1.
-Mu = 0 #1.e-10 * J
- 
+Mu = 0. #1.e-10 * J
+
 h_ = np.zeros(( n_mode, n_mode ))
 for site in range(n_mode-1):
     h_[site,site+1] = h_[site+1,site] = -J
@@ -106,30 +97,53 @@ h_[0,-1] = h_[-1,0] = -J
 U_  = np.zeros(( n_mode, n_mode, n_mode, n_mode )) 
 for site in range(n_mode):
     U_[ site, site, site, site ]  = U
-    if site==0:
-        h_[ site, site ] += - Mu # <=== For Left site 
-    else:
-        h_[ site, site ] += Mu   # <=== For Right site 
 
 print()
 print()
 
 H = tools_file_bosons.build_hamiltonian_bose_hubbard( h_, U_, nbodybasis, a_dagger_a )
-eig_en, eig_vec = scipy.linalg.eigh( H.A )
-print( eig_en )
+eig_en, eig_vec = scipy.linalg.eigh( H.A ) 
+print( eig_en[:20] )
 
 #%%
 
+# H_full = H.A
 
-ref_state = eig_vec[:,1]
-print("refstate", ref_state)
+# ref_state =  eig_vec[:,0]
+# print("refstate", ref_state)
 
 # state = tools_file_bosons.my_state(ref_state, nbodybasis)
 
 # print(state)
+# 
 
+# tools_file_bosons.visualize_wft( ref_state, nbodybasis )
 
-tools_file_bosons.visualize_wft(ref_state**2, nbodybasis)
+# # print()
+# # print(H.A)
+
+# print(np.max(H_full))
+# print(np.min(H_full))
+
+# print(np.where( H_full == np.min(H_full) ))
+
+# print(np.allclose(H_full, H_full.T))
+# op = a_dagger_a + a_dagger_a.T
+# print(np.allclose(op, op.T))
+
+#%%
+
+# ref_state = nbodybasis[120]
+
+# mapping_kappa = tools_file_bosons.build_mapping( nbodybasis )
+# result = tools_file_bosons.build_final_state_ad_a(ref_state, 1, 1, mapping_kappa)
+# print(result)
+
+# p = 1
+
+# print(  - 0.5 * 100. / n_boson * 
+#       state.T @ a_dagger_a[ p , p ] @ ( a_dagger_a[ p , p ] - scipy.sparse.identity(dim_H) ) @  state )
+
 
 
 

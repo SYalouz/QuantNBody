@@ -917,10 +917,12 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
 #  FUNCTION TO GIVE ACCESS TO BASIC QUANTUM CHEMISTRY DATA FROM PSI4
 # =============================================================================
 
-def build_spin_subspace( string_geometry, basisset, molecular_charge=0 ):
+def get_infor_from_psi4( string_geometry, basisset, molecular_charge=0, TELL_ME=False ):
     '''
-    Build a given many-body subspace associated to a given spin S2 multiplicity.
-
+    Function to realise an Hartree-Fock calculation on a given molecule and to 
+    return all the associated information for futhrer correlated wavefunction
+    calculation for QuantNBody.
+    
     Parameters
     ----------
     S2 : matrix representation of the S2 operator in the many-body basis.
@@ -929,33 +931,52 @@ def build_spin_subspace( string_geometry, basisset, molecular_charge=0 ):
     -------
     Projector_spin_subspace :  Projector on the targeted spin-subspace.
     '''
-     
+    if not TELL_ME: 
+        # To prevent psi4 from printing the output in the terminal
+        psi4.core.set_output_file("output_Psi4.txt", False)
     
-    # Li-H geometry  
+    # Clean all previous options for psi4
+    psi4.core.clean()
+    psi4.core.clean_variables()
+    psi4.core.clean_options() 
+    
+    # Adding a 'no symmetry' info to the geometry string
     string_geometry += '\n' + 'symmetry c1' 
-                    
-    molecule = psi4.geometry( string_geometry ) 
-    psi4.set_options({'basis'      : basisset,
-                      'charge'     : molecular_charge,
-                      'reference'  : 'rhf',
-                      'SCF_TYPE'   : 'DIRECT' })
+    
+    # Adding a 'no symmetry' info to the geometry string
+    molecule = psi4.geometry( string_geometry  ) 
+    
+    # Setting the charge of the moelcule 
+    molecule.set_molecular_charge( molecular_charge )
+    
+    # Setting the bassiset for the calculation
+    psi4.set_options({'basis' : basisset})
     
     # Realizing a generic HF calculation ======
-    scf_e, scf_wfn = psi4.energy( 'scf', molecule=molecule, return_wfn=True, verbose=0 )
+    E_HF, scf_wfn = psi4.energy( 'scf', molecule=molecule, return_wfn=True )
+    
     # Nuclear repulsion energy
     E_rep_nuc = molecule.nuclear_repulsion_energy()
+    
     # MO coeff matrix from the initial RHF calculation
-    C_RHF     = np.asarray(scf_wfn.Ca()).copy()         
+    C_RHF     = np.asarray(scf_wfn.Ca()).copy()      
+    
     # Get AOs integrals using MintsHelper
     mints     = psi4.core.MintsHelper(scf_wfn.basisset())  
+    
     # Storing the AO overlap matrix
     overlap_AO = np.asarray(mints.ao_overlap())
+    
     # 1-electron integrals in the original AO basis
     h_AO   = np.asarray(mints.ao_kinetic()) + np.asarray(mints.ao_potential()) 
-    # 2-electron integrals in the original AO basis
-    g_AO   = np.asarray(mints.ao_eri()).reshape(( np.shape( h_AO )[0], np.shape( h_AO )[0], np.shape( h_AO )[0], np.shape( h_AO )[0] )) 
     
-    return overlap_AO, h_AO, g_AO, C_RHF, E_rep_nuc
+    # 2-electron integrals in the original AO basis
+    g_AO   = np.asarray(mints.ao_eri()).reshape(( np.shape( h_AO )[0],
+                                                 np.shape( h_AO )[0],
+                                                 np.shape( h_AO )[0],
+                                                 np.shape( h_AO )[0] )) 
+    
+    return overlap_AO, h_AO, g_AO, C_RHF, E_HF, E_rep_nuc
     
 
 # =============================================================================
