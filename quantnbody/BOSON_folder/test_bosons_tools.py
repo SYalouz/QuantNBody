@@ -89,12 +89,12 @@ import scipy.sparse
 # print( "newstate", new_state[0], new_state[1] )
 
 n_mode  = 2
-n_boson = 8
+n_boson = 50
 
 nbodybasis = tools_file_bosons.build_nbody_basis(n_mode, n_boson)
 a_dagger_a = tools_file_bosons.build_operator_a_dagger_a(nbodybasis)
 
-U  = - 0.5 * 100. / n_boson  #PARAM_INI + PARAM_iter * ( PARAM_FIN - PARAM_INI) / N_points
+U  = - 0.5 * 10. / n_boson  #PARAM_INI + PARAM_iter * ( PARAM_FIN - PARAM_INI) / N_points
 J  = 1.
 Mu = 0 #1.e-10 * J
  
@@ -121,15 +121,15 @@ print( eig_en )
 #%%
 
 
-# ref_state = eig_vec[:,0]
-# print("refstate", ref_state)
+ref_state = eig_vec[:,1]
+print("refstate", ref_state)
 
-# # state = tools_file_bosons.my_state(ref_state, nbodybasis)
+# state = tools_file_bosons.my_state(ref_state, nbodybasis)
 
-# # print(state)
+# print(state)
 
 
-# tools_file_bosons.visualize_wft(ref_state, nbodybasis)
+tools_file_bosons.visualize_wft(ref_state**2, nbodybasis)
 
 
 

@@ -1,8 +1,8 @@
 import scipy
 import numpy as np
 from itertools import combinations
-from numba import njit, prange
-import math as m 
+from numba import njit, prange 
+import psi4 
 
 E_ = False
 e_ = False
@@ -228,7 +228,13 @@ def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
 #  MANY-BODY HAMILTONIANS (FERMI HUBBARD AND QUANTUM CHEMISTRY)
 # =============================================================================
 
-def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100):
+def build_hamiltonian_quantum_chemistry(h_,
+                                        g_,
+                                        nbody_basis,
+                                        a_dagger_a,
+                                        S_2=None,
+                                        S_2_target=None,
+                                        penalty=100):
     """
     Create a matrix representation of the electronic structure Hamiltonian in any
     extended many-body basis
@@ -288,7 +294,13 @@ def build_hamiltonian_quantum_chemistry(h_, g_, nbody_basis, a_dagger_a, S_2=Non
     return H_chemistry
 
 
-def build_hamiltonian_fermi_hubbard(h_, U_, nbody_basis, a_dagger_a, S_2=None, S_2_target=None, penalty=100,
+def build_hamiltonian_fermi_hubbard(h_,
+                                    U_,
+                                    nbody_basis,
+                                    a_dagger_a,
+                                    S_2=None,
+                                    S_2_target=None,
+                                    penalty=100,
                                     v_term=None):
     """
     Create a matrix representation of the Fermi-Hubbard Hamiltonian in any
@@ -374,7 +386,37 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target ):
     list_indices_bad_states  = np.where( np.diag( occupancy_penalty.A ) > 0.1 )[0]
     
     return  occupancy_penalty, list_indices_good_states, list_indices_bad_states
+
+
+def build_E_and_e_operators( a_dagger_a, n_mo ):
+    """
+    Build the spin-free E_pq and e_pqrs many-body operators for quantum chemistry 
+
+    Parameters
+    ----------
+    a_dagger_a       : Matrix representation of the a_dagger_a operator
+    n_mo             : Number of molecular orbitals considered
+    Returns
+    -------
+    E_, e_           : The spin-free E_pq and e_pqrs many-body operators
+    """
+    E_ = np.empty((n_mo, n_mo), dtype=object)
+    e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object) 
     
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+    
+    for p in range(n_mo):
+        for q in range(n_mo): 
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    e_[p, q, r, s] = E_[p, q] @ E_[r, s]
+                    if q == r:
+                        e_[p, q, r, s] += - E_[p, s]
+    return E_, e_
+
+
 # =============================================================================
 #  DIFFERENT TYPES OF REDUCED DENSITY-MATRICES
 # =============================================================================
@@ -870,8 +912,12 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
     
     return sAsB_coupling
 
+    
+# =============================================================================
+#  FUNCTION TO GIVE ACCESS TO BASIC QUANTUM CHEMISTRY DATA FROM PSI4
+# =============================================================================
 
-def build_spin_subspace( S2, S2_target ):
+def build_spin_subspace( string_geometry, basisset, molecular_charge=0 ):
     '''
     Build a given many-body subspace associated to a given spin S2 multiplicity.
 
@@ -883,13 +929,34 @@ def build_spin_subspace( S2, S2_target ):
     -------
     Projector_spin_subspace :  Projector on the targeted spin-subspace.
     '''
-    S2_eigval, S2_eigvec = scipy.linalg.eigh( S2.A )
-    Set_vectors = S2_eigvec[ :,   (S2_eigval >= S2_target-1.e-3) 
-                                & (S2_eigval <= S2_target+1.e-3)   ] 
-    Projector_spin_subspace  =  Set_vectors @ Set_vectors.T
+     
     
-    return Projector_spin_subspace
-
+    # Li-H geometry  
+    string_geometry += '\n' + 'symmetry c1' 
+                    
+    molecule = psi4.geometry( string_geometry ) 
+    psi4.set_options({'basis'      : basisset,
+                      'charge'     : molecular_charge,
+                      'reference'  : 'rhf',
+                      'SCF_TYPE'   : 'DIRECT' })
+    
+    # Realizing a generic HF calculation ======
+    scf_e, scf_wfn = psi4.energy( 'scf', molecule=molecule, return_wfn=True, verbose=0 )
+    # Nuclear repulsion energy
+    E_rep_nuc = molecule.nuclear_repulsion_energy()
+    # MO coeff matrix from the initial RHF calculation
+    C_RHF     = np.asarray(scf_wfn.Ca()).copy()         
+    # Get AOs integrals using MintsHelper
+    mints     = psi4.core.MintsHelper(scf_wfn.basisset())  
+    # Storing the AO overlap matrix
+    overlap_AO = np.asarray(mints.ao_overlap())
+    # 1-electron integrals in the original AO basis
+    h_AO   = np.asarray(mints.ao_kinetic()) + np.asarray(mints.ao_potential()) 
+    # 2-electron integrals in the original AO basis
+    g_AO   = np.asarray(mints.ao_eri()).reshape(( np.shape( h_AO )[0], np.shape( h_AO )[0], np.shape( h_AO )[0], np.shape( h_AO )[0] )) 
+    
+    return overlap_AO, h_AO, g_AO, C_RHF, E_rep_nuc
+    
 
 # =============================================================================
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
@@ -1108,7 +1175,11 @@ def filter_h_g_orb(Hess_OrbOrb,
                    active_indices,
                    virtual_indices,
                    n_mo_optimized):
-
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to filter the redundant terms in the Orbital gradient and Hessian
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
     # Counting the number of non-redundant rotation parameters
     Num_nonredundant_par = 0
     for q in range(n_mo_optimized-1):
@@ -1259,7 +1330,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
                                        n_mo_optimized,
                                        OPT_OO_MAX_ITER,
                                        Grad_threshold,
-                                       TELL_ME):
+                                       TELL_ME=True):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Function to realize an Orbital Optimization process
@@ -1322,11 +1393,9 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
         # AUGMENTED HESSIAN APPROACH =====
         Aug_Hess = np.block([[0., SA_Grad_filtered.T],
                              [SA_Grad_filtered, SA_Hess_filtered]])
-
-        # scipy.sparse.linalg.eigsh( Aug_Hess, return_eigenvectors = True )
+        
         Eig_val_Aug_Hess, Eig_vec_Aug_Hess = np.linalg.eigh(Aug_Hess)
-        step_k = np.reshape(
-            Eig_vec_Aug_Hess[1:, 0] / Eig_vec_Aug_Hess[0, 0], np.shape(SA_Grad_filtered))
+        step_k = np.reshape( Eig_vec_Aug_Hess[1:, 0] / Eig_vec_Aug_Hess[0, 0], np.shape(SA_Grad_filtered) )
 
         if (np.max(np.abs(step_k)) > 0.05):
             step_k = 0.05 * step_k / np.max(np.abs(step_k))
@@ -1511,6 +1580,16 @@ def get_super_index(p, q, n_mo):
     return ind_pq
 
 
+@njit
+def delta(index_1, index_2):
+    """
+    Function delta kronecker
+    """
+    d = 0.0
+    if index_1 == index_2:
+        d = 1.0
+    return d
+
 # =============================================================================
 #  MISCELLANEOUS
 # =============================================================================
@@ -1542,24 +1621,12 @@ def generate_h_ring_geometry(N_atoms, radius):
     N_atoms  :: Total number of Hydrogen atoms
     radius   :: Radius of the ring
     """
-    theta_hh = 2 * m.pi / N_atoms  # Angle separating two consecutive H atoms (homogeneous distribution)
+    theta_hh = 2 * np.pi / N_atoms  # Angle separating two consecutive H atoms (homogeneous distribution)
     theta_ini = 0.0
-    h_ring_geometry = '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(theta_ini), radius * m.sin(
+    h_ring_geometry = '\nH {:.16f} {:.16f} 0.'.format(radius * np.cos(theta_ini), radius * np.sin(
         theta_ini))  # 'H {:.16f} 0. 0.'.format( radius )  # Define the position of the first atom
     for n in range(1, N_atoms):
         angle_h = theta_ini + theta_hh * n
-        h_ring_geometry += '\nH {:.16f} {:.16f} 0.'.format(radius * m.cos(angle_h), radius * m.sin(angle_h))
+        h_ring_geometry += '\nH {:.16f} {:.16f} 0.'.format(radius * np.cos(angle_h), radius * np.sin(angle_h))
 
     return h_ring_geometry
-
-
-@njit
-def delta(index_1, index_2):
-    """
-    Function delta kronecker
-    """
-    d = 0.0
-    if index_1 == index_2:
-        d = 1.0
-    return d
-

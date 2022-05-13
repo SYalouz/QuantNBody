@@ -3,9 +3,6 @@ import numpy as np
 from itertools import combinations_with_replacement
 from numba import njit, prange 
 import scipy.sparse
-
-E_ = False
-e_ = False
  
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
@@ -34,10 +31,7 @@ def build_nbody_basis(n_mode, n_boson, S_z_cleaning=False):
         nbody_basis += [ fock_state ]
         
     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
-
-# =====
-# OK  !!!!
-# =====
+ 
 
 @njit
 def build_mapping( nbodybasis ):
@@ -66,11 +60,7 @@ def build_mapping( nbodybasis ):
         mapping_kappa[number] = kappa
         
     return mapping_kappa
-
-# =====
-# OK  !!!!
-# =====
-
+ 
 
 @njit
 def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
@@ -79,10 +69,7 @@ def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     kappa_ = mapping_kappa[make_number_out_of_vector(state_two)]
  
     return kappa_, coeff1,  coeff2
-
-# =====
-# OK  !!!!
-# =====
+ 
 
 @njit
 def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
@@ -109,10 +96,7 @@ def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
         coeff = np.sqrt( num_boson_in_mode + 1)
 
     return new_fock_state, coeff
-
-# =====
-# OK  !!!!
-# =====
+ 
 
 # numba -> njit version of build_operator_a_dagger_a
 def build_operator_a_dagger_a(nbodybasis, silent=True):
@@ -158,10 +142,7 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
         print('\t ===========================================')
 
     return a_dagger_a
-
-# =====
-# OK  !!!!
-# =====
+ 
 
 @njit
 def make_number_out_of_vector(ref_state):
@@ -181,10 +162,6 @@ def make_number_out_of_vector(ref_state):
     for index_mode in range(n_mode):
         number += ref_state[index_mode] * 10**(n_mode - index_mode - 1)
     return number
-
-# =====
-# OK  !!!!
-# =====
 
 
 def my_state(fockstate, nbodybasis):
@@ -206,12 +183,7 @@ def my_state(fockstate, nbodybasis):
     state[kappa] = 1.
 
     return state
-
-# =====
-# OK  !!!!
-# =====
-
-
+ 
 # =============================================================================
 #  MANY-BODY HAMILTONIAN : BOSE-HUBBARD 
 # =============================================================================
@@ -227,31 +199,27 @@ def build_hamiltonian_bose_hubbard(h_, U_, nbodybasis, a_dagger_a ):
     h_          :  One-body integrals
     U_          :  Two-body integrals
     nbody_basis :  List of many-body states (occupation number states)
-    a_dagger_a  :  Matrix representation of the a_dagger_a operator
-    S_2         :  Matrix representation of the S_2 operator (default is None)
-    S_2_target  :  Value of the S_2 mean value we want to target (default is None)
-    penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
+    a_dagger_a  :  Matrix representation of the a_dagger_a operator  
     v_term      :  4D matrix that is already transformed into correct representation.
 
     Returns
     -------
-    H_bose_hubbard :  Matrix representation of the Fermi-Hubbard Hamiltonian
-
+    H_bose_hubbard :  Matrix representation of the Bose-Hubbard Hamiltonian
     """
     # # Dimension of the problem 
     dim_H = len(nbodybasis)
-    n_mo = np.shape(h_)[0]
+    n_mode = np.shape(h_)[0]
 
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
     H_bose_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in range(n_mo):
-        for q in range(n_mo): 
+    for p in range(n_mode):
+        for q in range(n_mode): 
             H_bose_hubbard += a_dagger_a[p, q] * h_[p, q]
-            for r in range(n_mo):
-                for s in range(n_mo):
+            for r in range(n_mode):
+                for s in range(n_mode):
                     if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
                         H_bose_hubbard += (a_dagger_a[ p, q] @ 
-                                           (a_dagger_a[ r , s ] - scipy.sparse.identity(dim_H)) ) * U_[p, q, r, s]
+                                          (a_dagger_a[ r , s ] - scipy.sparse.identity(dim_H)) ) * U_[p, q, r, s]
                         
     # if v_term is not None:
     #     for p in range(n_mo):
@@ -262,15 +230,9 @@ def build_hamiltonian_bose_hubbard(h_, U_, nbodybasis, a_dagger_a ):
     #                         H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
                             
     return H_bose_hubbard
-
-
-
-
-# =====
-# OK  !!!!
-# =====
-
-
+ 
+    
+ 
 # =============================================================================
 #  DIFFERENT TYPES OF REDUCED DENSITY-MATRICES
 # =============================================================================
