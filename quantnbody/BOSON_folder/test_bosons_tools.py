@@ -85,7 +85,7 @@ print(number)
 nbodybasis = tools_file_bosons.build_nbody_basis(n_mode, n_boson)
 a_dagger_a = tools_file_bosons.build_operator_a_dagger_a(nbodybasis)
 
-U  = - 0.5 * 100. / n_boson  #PARAM_INI + PARAM_iter * ( PARAM_FIN - PARAM_INI) / N_points
+U  = - 0.5 * 10. / n_boson  #PARAM_INI + PARAM_iter * ( PARAM_FIN - PARAM_INI) / N_points
 J  = 1.
 Mu = 0. #1.e-10 * J
 
@@ -98,8 +98,7 @@ U_  = np.zeros(( n_mode, n_mode, n_mode, n_mode ))
 for site in range(n_mode):
     U_[ site, site, site, site ]  = U
 
-print()
-print()
+print() 
 
 H = tools_file_bosons.build_hamiltonian_bose_hubbard( h_, U_, nbodybasis, a_dagger_a )
 eig_en, eig_vec = scipy.linalg.eigh( H.A ) 
@@ -109,7 +108,7 @@ print( eig_en[:20] )
 
 # H_full = H.A
 
-# ref_state =  eig_vec[:,0]
+ref_state =  eig_vec[:,0]
 # print("refstate", ref_state)
 
 # state = tools_file_bosons.my_state(ref_state, nbodybasis)
@@ -144,6 +143,22 @@ print( eig_en[:20] )
 # print(  - 0.5 * 100. / n_boson * 
 #       state.T @ a_dagger_a[ p , p ] @ ( a_dagger_a[ p , p ] - scipy.sparse.identity(dim_H) ) @  state )
 
+# ref_state = np.zeros((dim_H)) #eig_vec[:,0] # 
+# ref_state[0] = 1
+# tools_file_bosons.visualize_wft( ref_state, nbodybasis )
+# print( tools_file_bosons.make_number_out_of_vector(ref_state) )
 
+
+
+# ref_state = [ 2, 2, 11]
+# print( ref_state )
+# print( len(ref_state) ) 
+# print(  np.sum(ref_state) )
+# print(  len(str(n_boson)) )
+
+# number = 0
+# for index_mode in range(n_mode):
+#     number += ref_state[index_mode] * 10**(( n_mode - index_mode - 1 )*2)
+# print(number)
 
 

@@ -8,7 +8,7 @@ import scipy.sparse
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
 
-def build_nbody_basis(n_mode, n_boson, S_z_cleaning=False):
+def build_nbody_basis( n_mode, n_boson ):
     """
     Create a many-body basis formed by a list of fock-state with a conserved total
     number of bosons 
@@ -49,35 +49,36 @@ def build_mapping( nbodybasis ):
     """
     n_mode  = np.shape(nbodybasis)[1]
     n_boson = np.sum(nbodybasis[0])
-    max_number = n_boson * 10**(n_mode-1)
+    max_number = n_boson * 10**(( n_mode - 1 )*2) + 1
     dim_H = np.shape(nbodybasis)[0] 
     mapping_kappa = np.zeros( max_number, dtype=np.int32 )
     for kappa in range(dim_H):
         ref_state = nbodybasis[ kappa ]
         number = 0 
         for index_mode in range(n_mode):  
-            number += ref_state[index_mode] * 10**(n_mode - index_mode - 1) 
+            number += ref_state[index_mode] * 10**(( n_mode - index_mode - 1 )*2)
         mapping_kappa[ int(np.round(number)) ] = kappa
         
     return mapping_kappa
 
 
-# @njit
-# def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
-#     state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
-#     state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
-#     kappa_ = mapping_kappa[make_number_out_of_vector(state_two)]  
- 
-#     return kappa_, coeff1, coeff2
- 
-
-# @njit
-def build_final_state_ad_a(ref_state, p, q, nbodybasis):
+@njit
+def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
-    state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one) 
-    kappa_ = nbodybasis.tolist().index( state_two.tolist() )
+    state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
+    kappa_ = mapping_kappa[make_number_out_of_vector(state_two)]  
  
     return kappa_, coeff1, coeff2
+ 
+
+#  OLDER and MORE "BRUTE FORCE" FUNCTION KEPT FOR DEBUGGING 
+# # @njit
+# def build_final_state_ad_a(ref_state, p, q, nbodybasis):
+#     state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
+#     state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one) 
+#     kappa_ = nbodybasis.index( state_two.tolist() )
+ 
+#     return kappa_, coeff1, coeff2
 
 
 @njit
@@ -140,10 +141,10 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
             for kappa in range(dim_H):
                 ref_state = nbodybasis[kappa]
                 if p != q and (ref_state[q] == 0 or ref_state[p] == n_boson): 
-                    pass
+                    pass 
                 else :
-                    # kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, nbodybasis)
+                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
+                    # kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, nbodybasis.tolist()) # #  OLDER FUNCTION KEPT FOR DEBUGGING 
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] =  coeff1 * coeff2
                     
     if not silent:
@@ -156,7 +157,7 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
  
 
 @njit
-def make_number_out_of_vector(ref_state):
+def make_number_out_of_vector( ref_state ):
     """
     Function to translate a slater determinant into an unique integer
 
@@ -167,12 +168,22 @@ def make_number_out_of_vector(ref_state):
     Returns
     -------
     number : unique integer referring to the Fock state
-    """
+    """ 
+    # print( ref_state )
     n_mode  = len(ref_state) 
+    n_boson = np.sum(ref_state)  
+    num_digits = 0 
+    while n_boson != 0:
+        n_boson //= 10
+        num_digits += 1
+    # print('numdigit',num_digits )
     number = 0
     for index_mode in range(n_mode):
-        number += ref_state[index_mode] * 10**(n_mode - index_mode - 1)
-    return number
+        number += ref_state[index_mode] * 10**(( n_mode - index_mode - 1 )*2) #<= New type of counting for boson
+    # print('number',number )    
+    
+    return number 
+
 
 
 def my_state(fockstate, nbodybasis):
