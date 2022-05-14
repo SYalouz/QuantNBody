@@ -86,14 +86,14 @@ def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
     """
     Parameters
     ----------
-    type_of_op    :  type of operator to apply (creation of annihilation)
-    index_mode    :  index of the second quantized mode to occupy/empty
+    type_of_op     :  type of bosonic operator to apply (creation of annihilation)
+    index_mode     :  index of the second quantized mode to occupy/empty
     ref_fock_state :  initial state to be transformed
 
     Returns
     -------
     new_fock_state :  Resulting occupation number form of the transformed state
-    coeff_phase   :  Phase attached to the resulting state
+    coeff_phase    :  coefficient attached to the resulting state
 
     """
     new_fock_state    = ref_fock_state.copy()
@@ -159,7 +159,7 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
 @njit
 def make_number_out_of_vector( ref_state ):
     """
-    Function to translate a slater determinant into an unique integer
+    Function to translate a single many-body configuration into an unique integer
 
     Parameters
     ----------
@@ -183,8 +183,6 @@ def make_number_out_of_vector( ref_state ):
     # print('number',number )    
     
     return number 
-
-
 
 def my_state(fockstate, nbodybasis):
     """
@@ -263,7 +261,7 @@ def build_hamiltonian_bose_hubbard(h_, U_, nbodybasis, a_dagger_a ):
 
 def build_1rdm(WFT, a_dagger_a):
     """
-    Create a spin-alpha 1 RDM out of a given wave function
+    Create a 1 RDM out of a given wave function
 
     Parameters
     ----------
@@ -285,10 +283,10 @@ def build_1rdm(WFT, a_dagger_a):
 
     
 # =============================================================================
-#  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
+#  FUNCTION TO HELP THE VISUALIZATION OF MANY-BOSON WAVE FUNCTIONS
 # =============================================================================
 
-def visualize_wft(WFT, nbodybasis, cutoff=0.005, atomic_orbitals=False):
+def visualize_wft(WFT, nbodybasis, cutoff=0.005 ):
     """
     Print the decomposition of a given input wave function in a many-body basis.
 
@@ -296,8 +294,7 @@ def visualize_wft(WFT, nbodybasis, cutoff=0.005, atomic_orbitals=False):
     ----------
     WFT              : Reference wave function
     nbody_basis      : List of many-body states (occupation number states)
-    cutoff           : Cut off for the amplitudes retained (default is 0.005)
-    atomic_orbitals  : Boolean; If True then instead of 0/1 for spin orbitals we get 0/alpha/beta/2 for atomic orbitals
+    cutoff           : Cut off for the amplitudes retained (default is 0.005) 
 
     Returns
     -------
