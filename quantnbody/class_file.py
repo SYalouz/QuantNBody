@@ -116,4 +116,8 @@ class Hamiltonian:
         if full:
             self.eig_values, self.eig_vectors = np.linalg.eigh(self.H.A)
         else:
-            self.eig_values, self.eig_vectors = scipy.sparse.linalg.eigsh(self.H, k=number_of_states, which='SA')
+            try:
+                self.eig_values, self.eig_vectors = scipy.sparse.linalg.eigsh(self.H, k=number_of_states, which='SA')
+            except scipy.sparse.linalg.eigen.arpack.ArpackNoConvergence as e:
+                print("Didn't manage to solve with sparse solver -> Now trying with np.linalg.eigh")
+                self.eig_values, self.eig_vectors = np.linalg.eigh(self.H.A)
