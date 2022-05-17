@@ -59,7 +59,7 @@ basisset         = 'sto-3g'
 nelec_active     = 2   #   Number of active electrons in the Active-Space  
 frozen_indices   = [ i for i in range(1) ]
 active_indices   = [ i for i in range(1,3) ]
-virtual_indices  = [ i for i in range(3,6) ]  
+virtual_indices  = [ i for i in range(3,4) ]  
 
 # Dimension of the many-body space 
 dim_H  = math.comb( 2*len(active_indices) , nelec_active ) 
@@ -75,19 +75,17 @@ S_2, S_p, S_Z = qnb.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
   
-list_r = np.linspace(0.25, 2.2, 15) 
+list_angle = np.linspace(0.25, 3., 18) 
 
 E_0_qnb = []
 E_1_qnb = []
 
-for r in tqdm( list_r ): 
+for angle in tqdm( list_angle ):
     
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations 
     # Li-H geometry  
-    string_geo = """Li 0 0 0
-                    H  0 0 {}
-                    symmetry c1 """.format( r )
+    string_geo = qnb.tools_file.generate_h4_geometry( 1., angle )
                     
     molecule = psi4.geometry(string_geo) 
     psi4.set_options({'basis'      : basisset,
@@ -133,15 +131,13 @@ for r in tqdm( list_r ):
 #========================================================|
 E_0_psi4 = [ ]
 E_1_psi4 = [ ]
-for r in tqdm( list_r ): 
+for angle in tqdm( list_angle ):
     
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations
     # Clean all previous options for psi4
      
-    string_geo = """Li 0 0 0
-                    H  0 0 {}
-                    symmetry c1 """.format( r )
+    string_geo = qnb.tools_file.generate_h4_geometry( 1., angle )
                     
     E0_casci, E1_casci  =  RUN_CASCI_PSI4( string_geo,
                                             basisset,  
@@ -161,10 +157,10 @@ plt.rc('ytick', labelsize='xx-large')
 plt.rc('lines', linewidth='2')
 
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(8, 6)) 
-ax1.plot( list_r,  E_0_psi4, color='red',  label='$E_0^{psi4}$')
-ax1.plot( list_r,  E_1_psi4, color='red',   label='$E_1^{psi4}$')
-ax1.plot( list_r,  E_0_qnb, color='blue', ls='', marker='o', label='$E_0^{qnb}$')
-ax1.plot( list_r,  E_1_qnb, color='blue', ls='', marker='o', label='$E_1^{qnb}$')
+ax1.plot( list_angle,  E_0_psi4, color='red',  label='$E_0^{psi4}$')
+ax1.plot( list_angle,  E_1_psi4, color='red',   label='$E_1^{psi4}$')
+ax1.plot( list_angle,  E_0_qnb, color='blue', ls='', marker='o', label='$E_0^{qnb}$')
+ax1.plot( list_angle,  E_1_qnb, color='blue', ls='', marker='o', label='$E_1^{qnb}$')
 ax1.set_xlabel('Intertatomic distance $r_{Li-H}$ ($\AA$) ', size=22)
 ax1.set_ylabel('Energy (Ha)', size=22)
 ax1.autoscale(enable=True, axis='y', tight=None)

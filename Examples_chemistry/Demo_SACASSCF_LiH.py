@@ -102,7 +102,6 @@ S_2, S_p, S_Z = qnb.tools.build_s2_sz_splus_operator( a_dagger_a )
   
 list_r = np.linspace(0.25, 2.2, 10) 
 
-
 E_0_qnb = []
 E_1_qnb = []
 for r in ( list_r ): 
