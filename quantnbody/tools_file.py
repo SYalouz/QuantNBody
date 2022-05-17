@@ -339,6 +339,7 @@ def build_hamiltonian_fermi_hubbard(h_,
                 for s in range(n_mo):
                     if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
                         H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
+                        
     if v_term is not None:
         for p in range(n_mo):
             for q in range(n_mo):
@@ -734,7 +735,7 @@ def my_state(slater_determinant, nbody_basis):
 #   INTEGRALS BUILDER FOR ACTIVE SPACE CALCULATION
 # =============================================================================
 
-def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=None):
+def fh_get_active_space_integrals(h_MO, U_MO, frozen_indices=None, active_indices=None):
     """
     Restricts a Fermi-Hubbard at a spatial orbital level to an active space
     This active space may be defined by a list of active indices and
@@ -756,20 +757,20 @@ def fh_get_active_space_integrals(h_, U_, frozen_indices=None, active_indices=No
     # Determine core Energy from frozen MOs
     core_energy = 0
     for i in frozen_indices:
-        core_energy += 2 * h_[i, i]
+        core_energy += 2 * h_MO[i, i]
         for j in frozen_indices:
-            core_energy += U_[i, i, j, j]
+            core_energy += U_MO[i, i, j, j]
 
     # Modified one-electron integrals
-    h_act = h_.copy()
+    h_act = h_MO.copy()
     for t in active_indices:
         for u in active_indices:
             for i in frozen_indices:
-                h_act[t, u] += U_[i, i, t, u]
+                h_act[t, u] += U_MO[i, i, t, u]
 
     return (core_energy,
             h_act[np.ix_(active_indices, active_indices)],
-            U_[np.ix_(active_indices, active_indices, active_indices, active_indices)])
+            U_MO[np.ix_(active_indices, active_indices, active_indices, active_indices)])
 
 
 def qc_get_active_space_integrals(one_body_integrals,
@@ -917,7 +918,10 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
 #  FUNCTION TO GIVE ACCESS TO BASIC QUANTUM CHEMISTRY DATA FROM PSI4
 # =============================================================================
 
-def get_infor_from_psi4( string_geometry, basisset, molecular_charge=0, TELL_ME=False ):
+def get_info_from_psi4( string_geometry,
+                        basisset,
+                        molecular_charge=0,
+                        TELL_ME=False ):
     '''
     Function to realise an Hartree-Fock calculation on a given molecule and to 
     return all the associated information for futhrer correlated wavefunction
@@ -1651,3 +1655,18 @@ def generate_h_ring_geometry(N_atoms, radius):
         h_ring_geometry += '\nH {:.16f} {:.16f} 0.'.format(radius * np.cos(angle_h), radius * np.sin(angle_h))
 
     return h_ring_geometry
+
+
+def generate_h4_geometry( radius, angle ):
+    """
+    A function to build a Hydrogen ring geometry (in the x-y plane)
+                         H - H )
+                         H - H ) theta 
+    radius   :: Radius of the ring
+    """
+    h4_geometry = """ H   {0}   {1}  0.
+                      H   {0}  -{1}  0. 
+                      H  -{0}   {1}  0.
+                      H  -{0}  -{1}  0.
+                      symmetry c1""".format( radius*np.cos(angle/2.), radius*np.sin(angle/2.) ) 
+    return h4_geometry
