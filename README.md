@@ -18,7 +18,7 @@ Hamiltonians already implemented:
 - Fermi-Hubbard molecules Hamiltonians ( parameters given by the user )
 - Bose-Hubbard Hamiltonians ( parameters given by the user )
 
-Method already implemented (for N-electorn systems):
+Example of methods a user can implement here with our tools (for N-electron systems):
 - FCI : Full Configuration Interaction
 - CAS-CI : Complete Active Space CI  
 - SA-CASSCF : State-Averaged  CAS Self-Consistent Field (with orbital optimization)
