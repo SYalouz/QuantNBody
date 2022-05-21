@@ -3,7 +3,7 @@
 
 # QuantNBody : a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
  
-Please, if you are using this code, cite the following : [![DOI](https://zenodo.org/badge/451551016.svg)](https://zenodo.org/badge/latestdoi/451551016)
+Please, if you are using this code, cite the following : [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6565736.svg)](https://doi.org/10.5281/zenodo.6565736)
 
 QuantNBody is dedicated to the manipulation of quantum N-body systems ranging from many-electron to many-bosons hamiltonians.
 It provides a quick and easy way to build many-body operators and get access
