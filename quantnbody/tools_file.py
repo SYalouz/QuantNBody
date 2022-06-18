@@ -1,4 +1,5 @@
 import scipy
+from scipy.optimize import minimize
 import numpy as np
 from itertools import combinations
 from numba import njit, prange 
@@ -423,71 +424,78 @@ def build_E_and_e_operators( a_dagger_a, n_mo ):
 # =============================================================================
 
 
-def build_full_mo_1rdm_and_2rdm( WFT, a_dagger_a, active_indices, n_mo_total ):
+def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
+                                         a_dagger_a,
+                                         frozen_indices, 
+                                         active_indices,
+                                         n_mo_total ):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a
     reference wavefunction expressed in the computational basis
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     """ 
-    n_mo = len( active_indices )
+    if active_indices is not None:
+        first_act_index = active_indices[0] 
+        n_active_mo = len( active_indices )
+        print("THATS A TEST",first_act_index)
+    
     one_rdm_a = np.zeros((n_mo_total, n_mo_total))
     two_rdm_a = np.zeros((n_mo_total, n_mo_total, n_mo_total, n_mo_total))
-    first_act_index = active_indices[0]
     
     global E_
     global e_
-    E_ = np.empty((n_mo, n_mo), dtype=object)
-    e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object) 
 
-    for p in range(n_mo):
-        for q in range(n_mo):
-            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
-
-    for p in range(n_mo):
-        for q in range(n_mo): 
-            for r in range(n_mo):
-                for s in range(n_mo):
-                    e_[p, q, r, s] = E_[p, q] @ E_[r, s]
-                    if q == r:
-                        e_[p, q, r, s] += - E_[p, s]
-                        
+    if active_indices is not None:
+        for p in range(n_active_mo):
+            for q in range(n_active_mo):
+                E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+    
+        for p in range(n_active_mo):
+            for q in range(n_active_mo): 
+                for r in range(n_active_mo):
+                    for s in range(n_active_mo):
+                        e_[p, q, r, s] = E_[p, q] @ E_[r, s]
+                        if q == r:
+                            e_[p, q, r, s] += - E_[p, s]
+                            
     # Creating RDMs elements only within the frozen space
-    if first_act_index > 0:
-        for i in range(first_act_index):
-            for j in range(first_act_index):
+    if frozen_indices is not None:
+        for i in frozen_indices:
+            for j in frozen_indices:
                 one_rdm_a[i, j] = 2. * delta(i, j)
-                for k in range(first_act_index):
-                    for l in range(first_act_index):
+                for k in frozen_indices:
+                    for l in frozen_indices:
                         # State A
                         two_rdm_a[i, j, k, l] = 4. * delta(i, j) * delta(k, l) - 2. * delta(i, l) * delta(j, k)
-
-    # Creating RDMs elements in the the active/frozen spaces
-    for p in active_indices:
-        for q in active_indices:
-            # Shifting the indices
-            p_ = p - first_act_index
-            q_ = q - first_act_index 
-            # 1-RDM elements only within the active space
-            # State A
-            one_rdm_a[p, q] = WFT.T @ E_[p_, q_] @ WFT 
-
-            # 2-RDM elements only within the active space
-            for r in active_indices:
-                for s in active_indices:
-                    # Shifting the indices
-                    r_ = r - first_act_index
-                    s_ = s - first_act_index 
-                    # State A
-                    two_rdm_a[p, q, r, s] = WFT.T @ e_[p_, q_, r_, s_] @ WFT 
-
-            if first_act_index > 0:
-                # 2-RDM elements between the active and frozen spaces
-                for i in range(first_act_index):
-                    for j in range(first_act_index):
+    
+    if active_indices is not None:
+        # Creating RDMs elements in the the active/frozen spaces
+        for p in active_indices:
+            for q in active_indices:
+                # Shifting the indices
+                p_ = p - first_act_index
+                q_ = q - first_act_index 
+                # 1-RDM elements only within the active space
+                # State A
+                one_rdm_a[p, q] = WFT.T @ E_[p_, q_] @ WFT 
+    
+                # 2-RDM elements only within the active space
+                for r in active_indices:
+                    for s in active_indices:
+                        # Shifting the indices
+                        r_ = r - first_act_index
+                        s_ = s - first_act_index 
                         # State A
-                        two_rdm_a[i, j, p, q] = two_rdm_a[p, q, i, j] = 2. * delta(i, j) * one_rdm_a[p, q]
-                        two_rdm_a[p, i, j, q] = two_rdm_a[j, q, p, i] = - delta(i, j) * one_rdm_a[p, q]
+                        two_rdm_a[p, q, r, s] = WFT.T @ e_[p_, q_, r_, s_] @ WFT 
+    
+                if frozen_indices is not None:
+                    # 2-RDM elements between the active and frozen spaces
+                    for i in frozen_indices:
+                        for j in frozen_indices:
+                            # State A
+                            two_rdm_a[i, j, p, q] = two_rdm_a[p, q, i, j] = 2. * delta(i, j) * one_rdm_a[p, q]
+                            two_rdm_a[p, i, j, q] = two_rdm_a[j, q, p, i] = - delta(i, j) * one_rdm_a[p, q]
 
     return one_rdm_a, two_rdm_a
 
@@ -981,7 +989,99 @@ def get_info_from_psi4( string_geometry,
                                                  np.shape( h_AO )[0] )) 
     
     return overlap_AO, h_AO, g_AO, C_RHF, E_HF, E_rep_nuc
+
+# =============================================================================
+#  FUNCTION TO GENERATE AN OVERLPA BETWEEN TWO WAVEFUNCTION EXPRESSED 
+#  IN TWO DIFFERENT MOLECULAR ORBITAL BASIS
+# =============================================================================
+
+def weight_det( C_B2_B1, occ_spinorb_Det1, occ_spinorb_Det2 ):
     
+    # Number of electron = number of occupied spin-orbitals
+    n_elec = len(occ_spinorb_Det1)
+    # Matrix containing the final spin-orbital overlaps
+    M      = np.zeros(( n_elec, n_elec ))
+    
+    ind_row = 0
+    for i in occ_spinorb_Det1:
+        ind_col = 0
+        for j in occ_spinorb_Det2:
+            if ( i%2==0 and j%2==0 ):
+                M[ ind_row, ind_col ] = C_B2_B1[ i//2, j//2 ]
+            elif ( (i+1)%2==0 and (j+1)%2==0 ) :
+                M[ ind_row, ind_col ] = C_B2_B1[ i//2, j//2 ]
+            ind_col += 1 
+        ind_row += 1 
+    
+    return scipy.linalg.det( M ) 
+ 
+
+def scalar_product_different_MO_basis( Psi_A_MOB1,
+                                       Psi_B_MOB2,
+                                       C_MOB1,
+                                       C_MOB2,
+                                       nbody_basis ):
+    
+    dim_H = len(nbody_basis)
+    
+    # Overlap matrix in the common basis
+    S = scipy.linalg.inv( C_MOB1 @ C_MOB1.T )  
+    # Building the matrix expressing the MO from B1 in the B2 basis
+    C_B2_B1 = C_MOB1.T @ S @ C_MOB2
+    
+    scalar_product = 0  
+    for I in range(dim_H): 
+        if abs(Psi_A_MOB1[I]) > 1e-8: 
+            # Finding the indices of the spinorbitals which are occupied in the Det_I
+            occ_spinorb_Det_I = np.nonzero( nbody_basis[I] )[0].tolist()
+            for J in range(dim_H): 
+                if abs(Psi_B_MOB2[J]) > 1e-8:  
+                    # Finding the indices of the spinorbitals which are occupied in the Det_J
+                    occ_spinorb_Det_J = np.nonzero( nbody_basis[J] )[0].tolist()  
+                    D  = weight_det( C_B2_B1, occ_spinorb_Det_I, occ_spinorb_Det_J )
+                    scalar_product += D * np.conj(Psi_A_MOB1[I]) * Psi_B_MOB2[J]
+    
+    return scalar_product
+
+
+def prepare_vector_k_orital_rotation_fwith_active_space( Vec_k,
+                                                         n_mo,
+                                                         frozen_indices,
+                                                         active_indices,
+                                                         virtual_indices):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to build tprepare the .....
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """ 
+    Vec_k = []
+    for p in range(n_mo-1):
+        for q in range(p+1, n_mo):
+            if not( ( p in active_indices and q in active_indices) 
+                 or ( p in frozen_indices and q in frozen_indices) 
+                 or ( p in virtual_indices and q in virtual_indices)):
+                Vec_k += [ 0 ]  
+            
+    return Vec_k
+
+def transform_vec_to_skewmatrix_with_active_space( Vec_k,
+                                                   n_mo,
+                                                   frozen_indices,
+                                                   active_indices ):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
+    the orbital rotations from a vector k.
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
+    Skew_Matrix_K = np.zeros((n_mo, n_mo))
+    ind_ij = 0
+    for j in range(n_mo-1):
+        for i in range(j+1, n_mo):
+            Skew_Matrix_K[i, j] = Vec_k[ind_ij]
+            Skew_Matrix_K[j, i] = - Vec_k[ind_ij]
+            ind_ij += 1
+    return Skew_Matrix_K
 
 # =============================================================================
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
@@ -1194,6 +1294,141 @@ def compute_energy_with_rdm(ONE_RDM,
     return energy
 
 
+
+def prepare_vector_k_orbital_rotation_fwith_active_space(n_mo,
+                                                         frozen_indices,
+                                                         active_indices,
+                                                         virtual_indices):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to build tprepare the .....
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """ 
+    Vec_k = []
+    for p in range(n_mo-1):
+        for q in range(p+1, n_mo):
+            if not( ( p in active_indices and q in active_indices) 
+                 or ( p in frozen_indices and q in frozen_indices) 
+                 or ( p in virtual_indices and q in virtual_indices)):
+                Vec_k += [ 1e-2 ]  
+            
+    return Vec_k
+
+
+def transform_vec_to_skewmatrix_with_active_space( Vec_k,
+                                                   n_mo,
+                                                   frozen_indices,
+                                                   active_indices,
+                                                   virtual_indices):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
+    the orbital rotations from a vector k.
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
+    Skew_Matrix_K = np.zeros((n_mo, n_mo))
+    ind_pq = 0
+    for q in range(n_mo-1):
+        for p in range(q+1, n_mo): 
+            if not( ( p in active_indices and q in active_indices) 
+                 or ( p in frozen_indices and q in frozen_indices) 
+                 or ( p in virtual_indices and q in virtual_indices)):
+                Skew_Matrix_K[p, q] = Vec_k[ind_pq]
+                Skew_Matrix_K[q, p] = - Vec_k[ind_pq]
+                ind_pq += 1
+    return Skew_Matrix_K
+
+ 
+
+def energy_cost_function_orbital_optimization( Vec_k, 
+                                                one_rdm,
+                                                two_rdm,
+                                                h,
+                                                g,
+                                                E_rep_nuc,
+                                                frozen_indices,
+                                                active_indices,
+                                                virtual_indices ):
+    '''
+    
+    ''' 
+    n_mo = np.shape(h)[0]
+    K_mat = transform_vec_to_skewmatrix_with_active_space(Vec_k,
+                                                          n_mo,
+                                                          frozen_indices,
+                                                          active_indices,
+                                                          virtual_indices)
+    U_OO =  scipy.linalg.expm( - K_mat )  
+    h_new, g_new = transform_1_2_body_tensors_in_new_basis( h, g, U_OO )
+    
+    E_new = compute_energy_with_rdm( one_rdm,
+                                    two_rdm,
+                                    active_indices, 
+                                    h_new,
+                                    g_new,
+                                    E_rep_nuc )
+    return E_new 
+
+def brute_force_orbital_optimization( one_rdm,
+                                      two_rdm,
+                                      h,
+                                      g,
+                                      E_rep_nuc,
+                                      C_ref,
+                                      frozen_indices,
+                                      active_indices,
+                                      virtual_indices,
+                                      max_iteration=1000,
+                                      method_name='BFGS',
+                                      tolerance=1e-6,
+                                      show_me=False,
+                                      SAD_guess = True):
+    '''
+    
+    ''' 
+    n_mo = np.shape(h)[0]
+    Vec_k = prepare_vector_k_orbital_rotation_fwith_active_space( n_mo,
+                                                                    frozen_indices,
+                                                                    active_indices,
+                                                                    virtual_indices)
+    
+    if SAD_guess:
+        MO_guess_energy, C_guess = np.linalg.eigh( h ) 
+        h, g = transform_1_2_body_tensors_in_new_basis( h, g, C_guess )
+    
+    f_min_OO = minimize( energy_cost_function_orbital_optimization,
+                              x0      = Vec_k,
+                              args    = ( one_rdm,
+                                          two_rdm,
+                                          h,
+                                          g,
+                                          E_rep_nuc,
+                                          frozen_indices,
+                                          active_indices,
+                                          virtual_indices),
+                              # constraints=cons,
+                              method  = method_name,
+                              options = {'maxiter': max_iteration,
+                                        'gtol'     : tolerance,
+                                        'disp': show_me}  )
+    Vec_k = f_min_OO['x']
+    K_mat = transform_vec_to_skewmatrix_with_active_space(Vec_k,
+                                                          n_mo,
+                                                          frozen_indices,
+                                                          active_indices,
+                                                          virtual_indices)
+    U_OO =  scipy.linalg.expm( - K_mat )  
+    C_OO = C_ref @ U_OO 
+    h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h, g, U_OO )
+    E_new = compute_energy_with_rdm( one_rdm,
+                                    two_rdm,
+                                    active_indices, 
+                                    h_MO,
+                                    g_MO,
+                                    E_rep_nuc )
+    return C_OO, E_new, h_MO, g_MO
+
+
 def filter_h_g_orb(Hess_OrbOrb,
                    Grad_Orb,
                    frozen_indices,
@@ -1366,7 +1601,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
     n_mo = np.shape(h_MO)[0]
     E_old_OO = compute_energy_with_rdm(one_rdm_SA,
                                         two_rdm_SA,
-                                        active_indices,
+                                        active_indices, 
                                         h_MO,
                                         g_MO,
                                         E_rep_nuc)
@@ -1381,18 +1616,24 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
     # Printing the evolution of the Orb Opt process
     if TELL_ME:
         print("ENERGY    |    ORBITAL GRADIENT  | RATIO PREDICTION  | ITERATION")
-        
+        print(E_best_OO)
     for iteration in range(OPT_OO_MAX_ITER):
 
         # Building the state-averaged generalized Fock matrix
+        # F_SA = build_generalized_fock_matrix_active_space_adapted(n_mo,
+        #                                     h_MO,
+        #                                     g_MO,
+        #                                     one_rdm_SA,
+        #                                     two_rdm_SA,
+        #                                     active_indices,
+        #                                     frozen_indices)
+        
         F_SA = build_generalized_fock_matrix(n_mo,
-                                            h_MO,
-                                            g_MO,
-                                            one_rdm_SA,
-                                            two_rdm_SA,
-                                            active_indices,
-                                            frozen_indices)
-
+                                             h_MO,
+                                             g_MO,
+                                             one_rdm_SA,
+                                             two_rdm_SA )
+        
         # Building the State-Averaged Gradient and Hessian for the two states
         SA_Grad, SA_Hess = sa_build_mo_hessian_and_gradient(n_mo_optimized,
                                                             active_indices,
@@ -1411,8 +1652,8 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
                                                             frozen_indices,
                                                             active_indices,
                                                             virtual_indices,
-                                                            n_mo_optimized)
-
+                                                            n_mo_optimized) 
+        
         Grad_norm = np.linalg.norm(SA_Grad_filtered)
 
         # AUGMENTED HESSIAN APPROACH =====
@@ -1463,11 +1704,11 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
         # Computing the resulting orbital-Optimized energy
         E_new_OO = compute_energy_with_rdm(one_rdm_SA,
                                             two_rdm_SA,
-                                            active_indices,
+                                            active_indices, 
                                             h_MO,
                                             g_MO,
                                             E_rep_nuc)
-
+        # print("wTF ", E_new_OO)
         # Checking the accuracy of the energy prediction
         Ratio = (E_new_OO - E_old_OO) / (SA_Grad.T @
                                          step_k + 0.5 * step_k.T @ SA_Hess @ step_k)
@@ -1514,9 +1755,31 @@ def build_generalized_fock_matrix(Num_MO,
                                   h_MO,
                                   g_MO,
                                   one_rdm,
-                                  two_rdm,
-                                  active_indices,
-                                  frozen_indices):
+                                  two_rdm ):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to build the generalized Fock matrix.
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """ 
+    F = np.zeros((Num_MO, Num_MO))
+    for m in range(Num_MO):
+        for n in range(Num_MO):
+            for q in range(Num_MO):
+                 F[m,n] += one_rdm[m, q] * h_MO[n,q]
+                 for r in range(Num_MO):
+                     for s in range(Num_MO):
+                         F[m,n] += two_rdm[m,q,r,s] * g_MO[n,q,r,s] 
+    return F
+
+
+@njit
+def build_generalized_fock_matrix_active_space_adapted(Num_MO,
+                                                      h_MO,
+                                                      g_MO,
+                                                      one_rdm,
+                                                      two_rdm,
+                                                      active_indices,
+                                                      frozen_indices):
     """
     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Function to build the generalized Fock matrix.
@@ -1529,9 +1792,10 @@ def build_generalized_fock_matrix(Num_MO,
     F = np.zeros((Num_MO, Num_MO))
     for m in range(Num_MO):
         for n in range(Num_MO):
-
-            if m in frozen_indices:
-                F[m, n] = 2. * (F_I[n, m] + F_A[n, m])
+            
+            if (frozen_indices is not None):
+                if m in frozen_indices:
+                    F[m, n] = 2. * (F_I[n, m] + F_A[n, m])
 
             elif m in active_indices:
                 F[m, n] = Q[m, n]
@@ -1553,8 +1817,7 @@ def f_inactive(Num_MO, h_MO, g_MO, frozen_indices):
             F_inactive[m, n] = h_MO[m, n]
             if (frozen_indices is not None):
                 for i in frozen_indices:
-                    F_inactive[m, n] += 2. * \
-                        g_MO[m, n, i, i] - g_MO[m, i, i, n]
+                    F_inactive[m, n] += 2. * g_MO[m, n, i, i] - g_MO[m, i, i, n]
     return F_inactive
 
 
