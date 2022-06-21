@@ -1307,10 +1307,9 @@ def prepare_vector_k_orbital_rotation_fwith_active_space(n_mo,
     Vec_k = []
     for p in range(n_mo-1):
         for q in range(p+1, n_mo):
-            if not( ( p in active_indices and q in active_indices) 
-                 or ( p in frozen_indices and q in frozen_indices) 
+            if not( ( p in frozen_indices and q in frozen_indices) 
                  or ( p in virtual_indices and q in virtual_indices)):
-                Vec_k += [ 1e-2 ]  
+                Vec_k += [ 1e-4 ]  
             
     return Vec_k
 
@@ -1330,9 +1329,8 @@ def transform_vec_to_skewmatrix_with_active_space( Vec_k,
     ind_pq = 0
     for q in range(n_mo-1):
         for p in range(q+1, n_mo): 
-            if not( ( p in active_indices and q in active_indices) 
-                 or ( p in frozen_indices and q in frozen_indices) 
-                 or ( p in virtual_indices and q in virtual_indices)):
+            if not(  ( p in frozen_indices and q in frozen_indices) 
+                  or ( p in virtual_indices and q in virtual_indices)):
                 Skew_Matrix_K[p, q] = Vec_k[ind_pq]
                 Skew_Matrix_K[q, p] = - Vec_k[ind_pq]
                 ind_pq += 1
@@ -1368,6 +1366,9 @@ def energy_cost_function_orbital_optimization( Vec_k,
                                     g_new,
                                     E_rep_nuc )
     return E_new 
+
+
+
 
 def brute_force_orbital_optimization( one_rdm,
                                       two_rdm,
