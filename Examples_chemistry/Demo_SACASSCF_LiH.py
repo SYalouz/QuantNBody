@@ -74,9 +74,9 @@ psi4.core.set_output_file("output_Psi4.txt", False)
 # General Quantum chemistry parameters  =======
 basisset = 'sto-3g'
 nelec_active = 2  # Number of active electrons in the Active-Space
-frozen_indices = [i for i in range(1)]
-active_indices = [i for i in range(1, 5)]
-virtual_indices = [i for i in range(5, 6)]
+frozen_indices = tuple(range(1))
+active_indices = tuple(range(1, 5))
+virtual_indices = tuple(range(5, 6))
 N_MO_total = (len(frozen_indices)
               + len(active_indices)
               + len(virtual_indices))  # Total number of MOs
