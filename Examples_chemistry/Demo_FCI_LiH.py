@@ -57,13 +57,13 @@ n_mo         = 6
 dim_H  = math.comb( 2*n_mo, nelec_active ) 
 
 # Building the Many-body basis            
-nbody_basis = qnb.tools.build_nbody_basis( n_mo, nelec_active )     
+nbody_basis = qnb.fermionic.tools.build_nbody_basis( n_mo, nelec_active )
 
 # Building the matrix representation of the adagger_a operator in the many-body basis                       
-a_dagger_a  = qnb.tools.build_operator_a_dagger_a( nbody_basis )   
+a_dagger_a  = qnb.fermionic.tools.build_operator_a_dagger_a( nbody_basis )
 
 # Building the matrix representation of several interesting spin operators in the many-body basis  
-S_2, S_p, S_Z = qnb.tools.build_s2_sz_splus_operator( a_dagger_a ) 
+S_2, S_p, S_Z = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
   
@@ -100,11 +100,11 @@ for r in tqdm( list_r ):
     h_AO = np.asarray(mints.ao_kinetic()) + np.asarray(mints.ao_potential()) 
     g_AO = np.asarray(mints.ao_eri()).reshape(( Num_AO, Num_AO, Num_AO, Num_AO )) 
      
-    h_MO, g_MO  = qnb.tools.transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_ref ) 
+    h_MO, g_MO  = qnb.fermionic.tools.transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_ref )
    
     #%%
     # Building the matrix representation of the Hamiltonian operators 
-    H  = qnb.tools.build_hamiltonian_quantum_chemistry(h_MO,
+    H  = qnb.fermionic.tools.build_hamiltonian_quantum_chemistry(h_MO,
                                                        g_MO,
                                                        nbody_basis,
                                                        a_dagger_a,

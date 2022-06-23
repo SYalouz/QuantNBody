@@ -28,13 +28,13 @@ n_mo         =  4   #   Number of molecular orbital
 dim_H  = math.comb( 2*n_mo, nelec_active ) 
 
 # Building the Many-body basis            
-nbody_basis = qnb.tools.build_nbody_basis( n_mo, nelec_active )     
+nbody_basis = qnb.fermionic.tools.build_nbody_basis( n_mo, nelec_active )
 
 # Building the matrix representation of the adagger_a operator in the many-body basis                       
-a_dagger_a  = qnb.tools.build_operator_a_dagger_a( nbody_basis )   
+a_dagger_a  = qnb.fermionic.tools.build_operator_a_dagger_a( nbody_basis )
 
 # Building the matrix representation of several interesting spin operators in the many-body basis  
-S_2, s_z, s_plus = qnb.tools.build_s2_sz_splus_operator( a_dagger_a ) 
+S_2, s_z, s_plus = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
   
@@ -59,7 +59,7 @@ for U in  list_U :
         U_MO[site,site,site,site] = U
     
     # Building the matrix representation of the Hamiltonian operators 
-    H  = qnb.tools.build_hamiltonian_fermi_hubbard(h_MO, 
+    H  = qnb.fermionic.tools.build_hamiltonian_fermi_hubbard(h_MO,
                                                    U_MO,
                                                    nbody_basis,
                                                    a_dagger_a, 

@@ -32,13 +32,13 @@ n_mo = len(frozen_indices) + len(active_indices) + len(virtual_indices)
 dim_H  = math.comb( 2*len(active_indices), nelec_active ) 
 
 # Building the Many-body basis            
-nbody_basis = qnb.tools.build_nbody_basis( len(active_indices), nelec_active )     
+nbody_basis = qnb.fermionic.tools.build_nbody_basis( len(active_indices), nelec_active )
 
 # Building the matrix representation of the adagger_a operator in the many-body basis                       
-a_dagger_a  = qnb.tools.build_operator_a_dagger_a( nbody_basis )   
+a_dagger_a  = qnb.fermionic.tools.build_operator_a_dagger_a( nbody_basis )
 
 # Building the matrix representation of several interesting spin operators in the many-body basis  
-S_2, s_z, s_plus = qnb.tools.build_s2_sz_splus_operator( a_dagger_a ) 
+S_2, s_z, s_plus = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
 
@@ -63,14 +63,14 @@ for U in  list_U :
         U_MO[site,site,site,site] = U
     
     # Preparing the active space integrals and the associated core contribution
-    E_core, h_, U_  = qnb.tools.fh_get_active_space_integrals(h_MO,
+    E_core, h_, U_  = qnb.fermionic.tools.fh_get_active_space_integrals(h_MO,
                                                               U_MO,
                                                               frozen_indices=frozen_indices,
                                                               active_indices=active_indices )
  
     
     # Building the matrix representation of the Hamiltonian operators 
-    H  = qnb.tools.build_hamiltonian_fermi_hubbard(h_, 
+    H  = qnb.fermionic.tools.build_hamiltonian_fermi_hubbard(h_,
                                                    U_,
                                                    nbody_basis,
                                                    a_dagger_a, 

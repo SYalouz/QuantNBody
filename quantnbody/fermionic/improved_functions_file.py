@@ -2,7 +2,7 @@ import scipy
 import numpy as np
 from itertools import combinations
 from numba import njit
-from .tools_file import build_mapping, build_final_state_ad_a
+from .tools import build_mapping, build_final_state_ad_a
 
 
 def build_operator_a_dagger_a(nbody_basis, silent=False):
