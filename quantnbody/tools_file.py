@@ -1349,7 +1349,34 @@ def energy_cost_function_orbital_optimization( Vec_k,
                                                 virtual_indices ):
     '''
     
-    ''' 
+
+    Parameters
+    ----------
+    Vec_k : TYPE
+        DESCRIPTION.
+    one_rdm : TYPE
+        DESCRIPTION.
+    two_rdm : TYPE
+        DESCRIPTION.
+    h : TYPE
+        DESCRIPTION.
+    g : TYPE
+        DESCRIPTION.
+    E_rep_nuc : TYPE
+        DESCRIPTION.
+    frozen_indices : TYPE
+        DESCRIPTION.
+    active_indices : TYPE
+        DESCRIPTION.
+    virtual_indices : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    E_new : TYPE
+        DESCRIPTION.
+
+    '''
     n_mo = np.shape(h)[0]
     K_mat = transform_vec_to_skewmatrix_with_active_space(Vec_k,
                                                           n_mo,
@@ -1383,16 +1410,60 @@ def brute_force_orbital_optimization( one_rdm,
                                       method_name='BFGS',
                                       tolerance=1e-6,
                                       show_me=False,
-                                      SAD_guess = True):
+                                      SAD_guess = False):
     '''
-    
-    ''' 
+
+
+    Parameters
+    ----------
+    one_rdm : TYPE
+        DESCRIPTION.
+    two_rdm : TYPE
+        DESCRIPTION.
+    h : TYPE
+        DESCRIPTION.
+    g : TYPE
+        DESCRIPTION.
+    E_rep_nuc : TYPE
+        DESCRIPTION.
+    C_ref : TYPE
+        DESCRIPTION.
+    frozen_indices : TYPE
+        DESCRIPTION.
+    active_indices : TYPE
+        DESCRIPTION.
+    virtual_indices : TYPE
+        DESCRIPTION.
+    max_iteration : TYPE, optional
+        DESCRIPTION. The default is 1000.
+    method_name : TYPE, optional
+        DESCRIPTION. The default is 'BFGS'.
+    tolerance : TYPE, optional
+        DESCRIPTION. The default is 1e-6.
+    show_me : TYPE, optional
+        DESCRIPTION. The default is False.
+    SAD_guess : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+    C_OO : TYPE
+        DESCRIPTION.
+    E_new : TYPE
+        DESCRIPTION.
+    h_MO : TYPE
+        DESCRIPTION.
+    g_MO : TYPE
+        DESCRIPTION.
+
+    '''
     n_mo = np.shape(h)[0]
     Vec_k = prepare_vector_k_orbital_rotation_fwith_active_space( n_mo,
                                                                     frozen_indices,
                                                                     active_indices,
                                                                     virtual_indices)
-    
+    # In case we want to do a meanfield Orbital Optimisation, a better guess is
+    # the so-called SAD guess : Superposition of Atomic Densities
     if SAD_guess:
         MO_guess_energy, C_guess = np.linalg.eigh( h ) 
         h, g = transform_1_2_body_tensors_in_new_basis( h, g, C_guess )
@@ -1546,6 +1617,61 @@ def sa_build_mo_hessian_and_gradient(n_mo_OPTIMIZED,
     return gradient_SA, hessian_SA
 
 
+
+@njit(parallel=True)
+def sa_build_mo_hessian_and_gradient_no_active_space(h_MO,
+                                                     g_MO,
+                                                     F_SA,
+                                                     one_rdm_SA,
+                                                     two_rdm_SA):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to build the MO hessian matrix and the MO gradient vector
+    for the orbital Optimization in a STATE-AVERAGED way
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
+    n_mo_OPTIMIZED = np.shape(h_MO)[0]
+    gradient_SA = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) // 2, 1))
+    hessian_SA = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) //
+                           2, n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) // 2))
+    
+    for q in prange(n_mo_OPTIMIZED - 1):
+        for p in range(q + 1, n_mo_OPTIMIZED):
+            ind_pq = get_super_index(p, q, n_mo_OPTIMIZED)
+
+            # Computing the gradient vector elements
+            gradient_SA[ind_pq] = 2. * (F_SA[p, q] - F_SA[q, p])
+
+            # Continue the loop to compute the hessian matrix elements
+            for s in range(n_mo_OPTIMIZED - 1):
+                for r in range(s + 1, n_mo_OPTIMIZED):
+                    ind_rs = get_super_index(r, s, n_mo_OPTIMIZED)
+
+                    hessian_SA[ind_pq,
+                               ind_rs] = (((F_SA[p,s] 
+                                          + F_SA[s,p]) * delta(q,r) 
+                                          - 2. * h_MO[p,s] * one_rdm_SA[q,r]) 
+                                          - ((F_SA[q,s] 
+                                          + F_SA[s,q]) * delta(p,r) 
+                                          - 2. * h_MO[q,s] * one_rdm_SA[p,r])
+                                          - ((F_SA[p,r] 
+                                          + F_SA[r,p]) * delta(q,s)
+                                          - 2. * h_MO[p,r] * one_rdm_SA[q,s])
+                                          + ((F_SA[q,r]
+                                          + F_SA[r,q]) * delta(p,s)
+                                          - 2. * h_MO[q,r] * one_rdm_SA[p,s]))
+
+                    for u in range(n_mo_OPTIMIZED):
+                        for v in range(n_mo_OPTIMIZED):
+                            hessian_SA[ind_pq,ind_rs] += (
+                               (2. * g_MO[p,u,r,v] * (two_rdm_SA[q,u,s,v] + two_rdm_SA[q,u,v,s])  + 2. * g_MO[p,r,u,v] * two_rdm_SA[q,s,u,v])
+                             - (2. * g_MO[q,u,r,v] * (two_rdm_SA[p,u,s,v] + two_rdm_SA[p,u,v,s])  + 2. * g_MO[q,r,u,v] * two_rdm_SA[p,s,u,v])
+                             - (2. * g_MO[p,u,s,v] * (two_rdm_SA[q,u,r,v] + two_rdm_SA[q,u,v,r])  + 2. * g_MO[p,s,u,v] * two_rdm_SA[q,r,u,v])
+                             + (2. * g_MO[q,u,s,v] * (two_rdm_SA[p,u,r,v] + two_rdm_SA[p,u,v,r])  + 2. * g_MO[q,s,u,v] * two_rdm_SA[p,r,u,v])
+                             )
+
+    return gradient_SA, hessian_SA
+
 @njit(parallel=True)
 def build_mo_gradient(n_mo_OPTIMIZED,
                       active_indices,
@@ -1563,12 +1689,12 @@ def build_mo_gradient(n_mo_OPTIMIZED,
     Num_MO = np.shape(h_MO)[0]
     gradient_I = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) // 2, 1))
     F_I = build_generalized_fock_matrix(Num_MO,
-                                              h_MO,
-                                              g_MO,
-                                              one_rdm,
-                                              two_rdm,
-                                              active_indices,
-                                              frozen_indices)
+                                        h_MO,
+                                        g_MO,
+                                        one_rdm,
+                                        two_rdm,
+                                        active_indices,
+                                        frozen_indices)
 
     # join = active_indices + frozen_indices
     for q in prange(n_mo_OPTIMIZED - 1):
@@ -1679,6 +1805,140 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
                     ind_pq_filtered += 1
 
         step_k = step_k_reshaped
+
+        # Building the Rotation operator with a Netwon-Raphson Step
+        # Updating the rotation vector "k"
+        k_vec = k_vec + step_k
+        
+        # Generator of the rotation : the kew-matrix K = skew(k)
+        K_mat = transform_vec_to_skewmatrix(k_vec, n_mo_optimized)
+        
+        # Rotation operator in the MO basis : U = exp(-K)
+        U_OO = ( scipy.linalg.expm( - K_mat ) ).real
+
+        # Completing the transformation operator : in case not all the MOs are considered
+        # in the OO process, we extend the operator with an identity block
+        if (n_mo_optimized < n_mo):
+            U_OO = scipy.linalg.block_diag(
+                U_OO, np.identity(n_mo - n_mo_optimized))
+
+        # Transforming the MO coeff matrix to encode the optimized MOs
+        C_transf = C_ref @ U_OO
+
+        # Building the resulting modified MO integrals for the next cycle of  calculation
+        h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_transf )
+
+        # Computing the resulting orbital-Optimized energy
+        E_new_OO = compute_energy_with_rdm(one_rdm_SA,
+                                            two_rdm_SA,
+                                            active_indices, 
+                                            h_MO,
+                                            g_MO,
+                                            E_rep_nuc)
+        # print("wTF ", E_new_OO)
+        # Checking the accuracy of the energy prediction
+        Ratio = (E_new_OO - E_old_OO) / (SA_Grad.T @
+                                         step_k + 0.5 * step_k.T @ SA_Hess @ step_k)
+
+        # Storing the best data obtained during the optimization
+        if ( E_new_OO < E_best_OO ):
+            E_best_OO = E_new_OO
+            C_transf_best_OO = C_transf
+            h_best = h_MO
+            g_best = g_MO
+            if TELL_ME: 
+                print(E_new_OO, Grad_norm, Ratio, iteration, " +++ ")
+        else:
+            if TELL_ME:
+                print(E_new_OO, Grad_norm, Ratio, iteration)
+
+        E_old_OO = E_new_OO 
+
+        if Grad_norm < Grad_threshold:
+            break
+
+    return C_transf_best_OO, E_best_OO, h_best, g_best
+
+
+
+def orbital_optimisation_newtonraphson_no_active_space(one_rdm_SA,
+                                                       two_rdm_SA, 
+                                                       C_transf, 
+                                                       E_rep_nuc,
+                                                       h_AO,
+                                                       g_AO,
+                                                       n_mo_optimized,
+                                                       OPT_OO_MAX_ITER,
+                                                       Grad_threshold,
+                                                       TELL_ME=True):
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Function to realize an Orbital Optimization process
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
+    
+    h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_transf )
+    
+    SAD_guess = False
+    if SAD_guess:
+        MO_guess_energy, C_guess = np.linalg.eigh( h_MO ) 
+        h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_MO, g_MO, C_guess )
+        
+    n_mo = np.shape(h_MO)[0]
+    frozen_indices  =  np.empty(0, dtype=np.int32)
+    virtual_indices =  np.empty(0, dtype=np.int32)
+    active_indices = [i for i in range(n_mo)]
+    E_old_OO = compute_energy_with_rdm(one_rdm_SA,
+                                        two_rdm_SA,
+                                        active_indices, 
+                                        h_MO,
+                                        g_MO,
+                                        E_rep_nuc)
+    E_new_OO = 1e+99
+    E_best_OO = E_old_OO
+    C_transf_best_OO = C_transf
+    h_best = h_MO
+    g_best = g_MO
+    k_vec = np.zeros((n_mo_optimized * (n_mo_optimized - 1) // 2, 1))
+    C_ref = C_transf 
+    step_k = 0.
+    
+    # Printing the evolution of the Orb Opt process
+    if TELL_ME:
+        print("ENERGY    |    ORBITAL GRADIENT  | RATIO PREDICTION  | ITERATION")
+        print(E_best_OO)
+    
+    for iteration in range(OPT_OO_MAX_ITER):
+
+        # Building the state-averaged generalized Fock matrix  
+        F_SA = build_generalized_fock_matrix(n_mo,
+                                             h_MO,
+                                             g_MO,
+                                             one_rdm_SA,
+                                             two_rdm_SA )
+        
+        # Building the State-Averaged Gradient and Hessian for the two states
+        SA_Grad, SA_Hess = sa_build_mo_hessian_and_gradient_no_active_space(h_MO,
+                                                                            g_MO,
+                                                                            F_SA,
+                                                                            one_rdm_SA,
+                                                                            two_rdm_SA)
+
+        Grad_norm = np.linalg.norm( SA_Grad )
+
+        SA_Grad_filtered = SA_Grad
+        SA_Hess_filtered = SA_Hess 
+        
+        # AUGMENTED HESSIAN APPROACH =====
+        Aug_Hess = np.block([[0., SA_Grad_filtered.T],
+                             [SA_Grad_filtered, SA_Hess_filtered]])
+        
+        Eig_val_Aug_Hess, Eig_vec_Aug_Hess = np.linalg.eigh(Aug_Hess)
+        # step_k = np.reshape( Eig_vec_Aug_Hess[1:, 0] / Eig_vec_Aug_Hess[0, 0], np.shape(SA_Grad_filtered) )
+        
+        step_k =  - np.linalg.inv( SA_Hess_filtered ) @ SA_Grad_filtered
+        # if (np.max(np.abs(step_k)) > 0.05):
+        #     step_k = 0.05 * step_k / np.max(np.abs(step_k))
 
         # Building the Rotation operator with a Netwon-Raphson Step
         # Updating the rotation vector "k"
