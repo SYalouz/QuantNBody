@@ -1,4 +1,4 @@
-from . import tools_file
+from quantnbody.fermionic import tools_file
 import numpy as np
 import scipy.sparse, scipy.sparse.linalg
 
@@ -65,7 +65,7 @@ class Hamiltonian:
         self.h = h_
         self.g = g_
         self.H = tools_file.build_hamiltonian_quantum_chemistry(h_, g_, self.nbody_basis, self.a_dagger_a, S_2,
-                                                                 S_2_target, penalty)
+                                                                S_2_target, penalty)
         self.E_ex = tools_file.E_
         self.e_ex = tools_file.e_
 
@@ -92,7 +92,7 @@ class Hamiltonian:
         self.h = h_
         self.U = U_
         self.H = tools_file.build_hamiltonian_fermi_hubbard(h_, U_, self.nbody_basis, self.a_dagger_a, S_2,
-                                                               S_2_target, penalty, v_term)
+                                                            S_2_target, penalty, v_term)
         self.E_ex = tools_file.E_
         self.e_ex = tools_file.e_
 
