@@ -743,7 +743,10 @@ def my_state(slater_determinant, nbody_basis):
 #   INTEGRALS BUILDER FOR ACTIVE SPACE CALCULATION
 # =============================================================================
 
-def fh_get_active_space_integrals(h_MO, U_MO, frozen_indices=None, active_indices=None):
+def fh_get_active_space_integrals ( h_MO,
+                                    U_MO, 
+                                    frozen_indices=None,
+                                    active_indices=None ):
     """
     Restricts a Fermi-Hubbard at a spatial orbital level to an active space
     This active space may be defined by a list of active indices and
@@ -762,15 +765,18 @@ def fh_get_active_space_integrals(h_MO, U_MO, frozen_indices=None, active_indice
         **one_body_integrals_new**: one-electron integrals over active space.
         **two_body_integrals_new**: two-electron integrals over active space.
     """
-    # Determine core Energy from frozen MOs
-    core_energy = 0
+    
+    # Determine core constant ========              
+    # ==> From the U term
+    core_energy = 0.0  
     for i in frozen_indices:
         core_energy += 2 * h_MO[i, i]
         for j in frozen_indices:
             core_energy += U_MO[i, i, j, j]
-
-    # Modified one-electron integrals
-    h_act = h_MO.copy()
+            
+    # Modified one electron integrals ========
+    # ==> From the U term
+    h_act = np.copy(h_MO)
     for t in active_indices:
         for u in active_indices:
             for i in frozen_indices:
@@ -778,7 +784,67 @@ def fh_get_active_space_integrals(h_MO, U_MO, frozen_indices=None, active_indice
 
     return (core_energy,
             h_act[np.ix_(active_indices, active_indices)],
-            U_MO[np.ix_(active_indices, active_indices, active_indices, active_indices)])
+            U_MO[np.ix_(active_indices, active_indices, active_indices, active_indices)] )
+
+
+def fh_get_active_space_integrals_with_V( h_MO,
+                                          U_MO,
+                                          V_MO,
+                                          frozen_indices=None,
+                                          active_indices=None ):
+    """
+    Restricts a Fermi-Hubbard at a spatial orbital level to an active space
+    This active space may be defined by a list of active indices and
+    doubly occupied indices. Note that one_body_integrals and
+    two_body_integrals must be defined in an orthonormal basis set (MO like).
+    Args:
+         - occupied_indices: A list of spatial orbital indices
+           indicating which orbitals should be considered doubly occupied.
+         - active_indices: A list of spatial orbital indices indicating
+           which orbitals should be considered active.
+         - 1 and 2 body integrals.
+    Returns:
+        tuple: Tuple with the following entries:
+        **core_constant**: Adjustment to constant shift in Hamiltonian
+        from integrating out core orbitals
+        **one_body_integrals_new**: one-electron integrals over active space.
+        **two_body_integrals_new**: two-electron integrals over active space.
+    """
+    
+    # Determine core constant ========
+    # ==> From the V term
+    core_energy = 0.0  
+    for i in frozen_indices:  
+        for t in active_indices:
+            core_energy += 2 * V_MO[i,t,t,i] # New contribution, a bit strange...
+        for j in frozen_indices: 
+                core_energy +=   4 * V_MO[i, i, j, j] 
+                
+    # ==> From the U term
+    for i in frozen_indices:
+        core_energy += 2 * h_MO[i, i]
+        for j in frozen_indices:
+            core_energy += U_MO[i, i, j, j]
+            
+    # Modified one electron integrals ========
+    # ==> From the V term
+    h_act = h_MO.copy()
+    for i in frozen_indices:
+        for t in active_indices:
+            for u in active_indices:    
+                h_act[t, u] +=  4 * V_MO[i, i, t, u]    -  V_MO[u, i, i, t]  
+ 
+    # ==> From the U term
+    for t in active_indices:
+        for u in active_indices:
+            for i in frozen_indices:
+                h_act[t, u] += U_MO[i, i, t, u]
+
+    return (core_energy,
+            h_act[np.ix_(active_indices, active_indices)],
+            U_MO[np.ix_(active_indices, active_indices, active_indices, active_indices)], 
+            V_MO[np.ix_(active_indices, active_indices, active_indices, active_indices)] )
+
 
 
 def qc_get_active_space_integrals(one_body_integrals,
