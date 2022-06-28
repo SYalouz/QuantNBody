@@ -19,7 +19,7 @@ setup(
     packages=find_packages(),
     url='https://github.com/SYalouz/QuantNBody',
     license='',
-    install_requires=['scipy', 'numpy', 'numba', 'psi4'],
+    install_requires=['scipy', 'numpy', 'numba' ],
     keywords=['quantum physics and chemistry', 'quantum many-body systems', 'exact diagonalization'],
     classifiers=[
         "Programming Language :: Python :: 3", 
