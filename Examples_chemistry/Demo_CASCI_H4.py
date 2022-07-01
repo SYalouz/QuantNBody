@@ -75,7 +75,7 @@ S_2, S_p, S_Z = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
 
-list_angle = np.linspace(0.25, 3., 18)
+list_angle = np.linspace(0.15, 3., 18)
 
 E_0_qnb = []
 E_1_qnb = []
@@ -161,7 +161,7 @@ ax1.plot( list_angle,  E_0_psi4, color='red',  label='$E_0^{psi4}$')
 ax1.plot( list_angle,  E_1_psi4, color='red',   label='$E_1^{psi4}$')
 ax1.plot( list_angle,  E_0_qnb, color='blue', ls='', marker='o', label='$E_0^{qnb}$')
 ax1.plot( list_angle,  E_1_qnb, color='blue', ls='', marker='o', label='$E_1^{qnb}$')
-ax1.set_xlabel('Intertatomic distance $r_{Li-H}$ ($\AA$) ', size=22)
+ax1.set_xlabel('H-H angle (rad.) ', size=22)
 ax1.set_ylabel('Energy (Ha)', size=22)
 ax1.autoscale(enable=True, axis='y', tight=None)
 ax1.legend(fontsize='x-large')
