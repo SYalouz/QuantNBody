@@ -146,7 +146,7 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
 @njit
 def build_mapping(nbody_basis):
     """
-    Function to create a unique mapping between a kappa vector and an occupation
+    Create a unique mapping between a kappa vector and an occupation
     number state. This is important to speedup the building of the a_dagger_a operator.
 
     Parameters
@@ -173,7 +173,7 @@ def build_mapping(nbody_basis):
 @njit
 def make_integer_out_of_bit_vector(ref_state):
     """
-    Function to translate a slater determinant written as a list of occupation number
+    Translate a slater determinant written as a list of occupation number
     into an unique integer via a reversed bitstring transformation
 
     Parameters
@@ -222,14 +222,15 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
 @njit
 def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     '''
-    Create the final state generated after the consecutive applicaiton of the
+    Create the final state generated after the consecutive application of the
     a_dagger_a operators on an initial state.
+    
     Parameters
     ----------
-    ref_state :  
-    p :  index of the mode where a fermion is created
-    q :  index of the mode where a fermion is killed
-    mapping_kappa :  
+    ref_state       :  Initial stater to be modified
+    p               :  index of the mode where a fermion is created
+    q               :  index of the mode where a fermion is killed
+    mapping_kappa   :  Fuction creating the unique mapping
 
     Returns
     -------
@@ -390,6 +391,7 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target ):
     ----------
     a_dagger_a       : Matrix representation of the a_dagger_a operator
     occupancy_target : Target number of electrons in a given molecular orbital
+    
     Returns
     -------
     occupancy_penalty        : penalty operator
@@ -419,6 +421,7 @@ def build_E_and_e_operators( a_dagger_a, n_mo ):
     Returns
     -------
     E_, e_           : The spin-free E_pq and e_pqrs many-body operators
+    
     """
     E_ = np.empty((n_mo, n_mo), dtype=object)
     e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object) 
@@ -448,18 +451,30 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
                                          active_indices,
                                          n_mo_total ):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the MO 1/2-ELECTRON DENSITY MATRICES from a
-    reference wavefunction 
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    """ 
+    Create a full representation of 1- amd 2-electorn reduced density matrix 
+    (with  a spin-free form) for a system with an active space 
+
+    Parameters
+    ----------
+    WFT             : Reference wavefunction
+    a_dagger_a      : Matrix representaiton of the a_dagger_a operator
+    frozen_indices  : List of frozen indices
+    active_indices  : List of active indices
+    n_mo_total      : Total number of molecular orbitals
+
+    Returns
+    -------
+    one_rdm :  1-electron reduced density matrix of the wavefunction
+    two_rdm :  2-electron reduced density matrix of the wavefunction
+
+    """
     if active_indices is not None:
         first_act_index = active_indices[0] 
         n_active_mo = len( active_indices )
         print("THATS A TEST",first_act_index)
     
-    one_rdm_a = np.zeros((n_mo_total, n_mo_total))
-    two_rdm_a = np.zeros((n_mo_total, n_mo_total, n_mo_total, n_mo_total))
+    one_rdm = np.zeros((n_mo_total, n_mo_total))
+    two_rdm = np.zeros((n_mo_total, n_mo_total, n_mo_total, n_mo_total))
     
     global E_
     global e_
@@ -481,11 +496,11 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
     if frozen_indices is not None:
         for i in frozen_indices:
             for j in frozen_indices:
-                one_rdm_a[i, j] = 2. * delta(i, j)
+                one_rdm[i, j] = 2. * delta(i, j)
                 for k in frozen_indices:
                     for l in frozen_indices:
                         # State A
-                        two_rdm_a[i, j, k, l] = 4. * delta(i, j) * delta(k, l) - 2. * delta(i, l) * delta(j, k)
+                        two_rdm[i, j, k, l] = 4. * delta(i, j) * delta(k, l) - 2. * delta(i, l) * delta(j, k)
     
     if active_indices is not None:
         # Creating RDMs elements in the the active/frozen spaces
@@ -496,7 +511,7 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
                 q_ = q - first_act_index 
                 # 1-RDM elements only within the active space
                 # State A
-                one_rdm_a[p, q] = WFT.T @ E_[p_, q_] @ WFT 
+                one_rdm[p, q] = WFT.T @ E_[p_, q_] @ WFT 
     
                 # 2-RDM elements only within the active space
                 for r in active_indices:
@@ -505,17 +520,17 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
                         r_ = r - first_act_index
                         s_ = s - first_act_index 
                         # State A
-                        two_rdm_a[p, q, r, s] = WFT.T @ e_[p_, q_, r_, s_] @ WFT 
+                        two_rdm[p, q, r, s] = WFT.T @ e_[p_, q_, r_, s_] @ WFT 
     
                 if frozen_indices is not None:
                     # 2-RDM elements between the active and frozen spaces
                     for i in frozen_indices:
                         for j in frozen_indices:
                             # State A
-                            two_rdm_a[i, j, p, q] = two_rdm_a[p, q, i, j] = 2. * delta(i, j) * one_rdm_a[p, q]
-                            two_rdm_a[p, i, j, q] = two_rdm_a[j, q, p, i] = - delta(i, j) * one_rdm_a[p, q]
+                            two_rdm[i, j, p, q] = two_rdm[p, q, i, j] = 2. * delta(i, j) * one_rdm[p, q]
+                            two_rdm[p, i, j, q] = two_rdm[j, q, p, i] = - delta(i, j) * one_rdm[p, q]
 
-    return one_rdm_a, two_rdm_a
+    return one_rdm, two_rdm
 
 
 
@@ -591,8 +606,8 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
 
 def build_2rdm_fh_on_site_repulsion(WFT, a_dagger_a, mask=None):
     """
-    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for the on-site repulsion operator.
-    (u[i,j,k,l] corresponds to a^+_i↑ a_j↑ a^+_k↓ a_l↓)
+    Create a spin-free 2 RDM out of a given Fermi Hubbard wave function for
+    the on-site repulsion operator (u[i,j,k,l] corresponds to a^+_i↑ a_j↑ a^+_k↓ a_l↓)
 
     Parameters
     ----------
@@ -606,6 +621,7 @@ def build_2rdm_fh_on_site_repulsion(WFT, a_dagger_a, mask=None):
     Returns
     -------
     two_rdm for the on-site-repulsion operator
+    
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
@@ -873,7 +889,7 @@ def qc_get_active_space_integrals(one_body_integrals,
             one_body_integrals_new : one-electron integrals over active space.
             two_body_integrals_new : two-electron integrals over active space.
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        """
+    """
     # Fix data type for a few edge cases
     occupied_indices = [] if occupied_indices is None else occupied_indices
     if len(active_indices) < 1:
@@ -905,7 +921,7 @@ def qc_get_active_space_integrals(one_body_integrals,
  
 
 # =============================================================================
-#  DIFFERENT TYPES OF SPIN OPERATORS
+#   SPIN OPERATORS
 # =============================================================================
 
 def build_s2_sz_splus_operator(a_dagger_a):
@@ -921,6 +937,7 @@ def build_s2_sz_splus_operator(a_dagger_a):
     -------
     s_2, s_plus, s_z :  matrix representation of the s_2, s_plus and s_z operators
                         in the many-body basis.
+                        
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
@@ -949,6 +966,7 @@ def build_s2_local( a_dagger_a, list_mo_local ):
     -------
     s_2, s_plus, s_z :  matrix representation of the s_2, s_plus and s_z operators
                         in the many-body basis.
+                        
     '''
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -973,6 +991,7 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
     Returns
     -------
     sAsB_coupling :  matrix representation of s_A * s_B in the many-body basis.
+    
     '''
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus_A = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -1000,6 +1019,7 @@ def get_info_from_psi4( string_geometry,
                         molecular_charge=0,
                         TELL_ME=False ):
     '''
+    Simple Psi4 interface to obtain relevant information for a quantum chemistry problem.
     Function to realise an Hartree-Fock calculation on a given molecule and to 
     return all the associated information for futhrer correlated wavefunction
     calculation for QuantNBody.
@@ -1019,6 +1039,7 @@ def get_info_from_psi4( string_geometry,
     C_RHF       : HF Molecular orbital coefficient matrix
     E_HF        : HF energy
     E_rep_nuc   : Energy of the nuclei repulsion
+    
     '''
     if not TELL_ME: 
         # To prevent psi4 from printing the output in the terminal
@@ -1114,7 +1135,23 @@ def scalar_product_different_MO_basis( Psi_A_MOB1,
                                        C_MOB1,
                                        C_MOB2,
                                        nbody_basis ):
-    
+    """
+    Evaluate the non-trivial scalar product of two multi-configurational 
+    wavefunction expressed in two different moelcular orbital basis.
+            
+    Parameters
+    ----------
+    Psi_A_MOB1  : Wavefunction A (will be a Bra) expressed in the first orbital basis
+    Psi_B_MOB2  : Wavefunction B (will be a Ket) expressed in the second orbital basis
+    C_MOB1      : First basis' Molecular orbital coefficient matrix
+    C_MOB2      : Second basis' Molecular orbital coefficient matrix
+    nbody_basis : List of many-body state
+
+    Returns
+    -------
+    scalar_product :  Amplitude of the scalar product
+
+    """
     dim_H = len(nbody_basis)
     
     # Overlap matrix in the common basis
@@ -1181,6 +1218,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
 
 
 def get_ket_in_atomic_orbitals(state, bra=False):
+    
     ret_string = ""
     for i in range(len(state) // 2):
         if state[i * 2] == 1:
@@ -1204,44 +1242,55 @@ def get_ket_in_atomic_orbitals(state, bra=False):
 # ORBITAL OPTIMIZATION
 # =============================================================================
 
-def prepare_vector_k_orbital_rotation_with_active_space( Vec_k,
-                                                         n_mo,
-                                                         frozen_indices,
-                                                         active_indices,
-                                                         virtual_indices):
-    """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build tprepare the .....
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    """ 
-    Vec_k = []
-    for p in range(n_mo-1):
-        for q in range(p+1, n_mo):
-            if not( ( p in active_indices and q in active_indices) 
-                 or ( p in frozen_indices and q in frozen_indices) 
-                 or ( p in virtual_indices and q in virtual_indices)):
-                Vec_k += [ 0 ]  
-            
-    return Vec_k
+# def prepare_vector_k_orbital_rotation_with_active_space( Vec_k,
+#                                                          n_mo,
+#                                                          frozen_indices,
+#                                                          active_indices,
+#                                                          virtual_indices):
+#     """
+#     Create an initial 
 
-def transform_vec_to_skewmatrix_with_active_space( Vec_k,
-                                                   n_mo,
-                                                   frozen_indices,
-                                                   active_indices ):
-    """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
-    the orbital rotations from a vector k.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    """
-    Skew_Matrix_K = np.zeros((n_mo, n_mo))
-    ind_ij = 0
-    for j in range(n_mo-1):
-        for i in range(j+1, n_mo):
-            Skew_Matrix_K[i, j] = Vec_k[ind_ij]
-            Skew_Matrix_K[j, i] = - Vec_k[ind_ij]
-            ind_ij += 1
-    return Skew_Matrix_K
+#     Parameters
+#     ----------
+#     Vec_k           :  
+#     n_mo            :  
+#     frozen_indices  :  
+#     active_indices  :  
+#     virtual_indices :  
+
+#     Returns
+#     -------
+#     Vec_k :  
+
+#     """
+#     Vec_k = []
+#     for p in range(n_mo-1):
+#         for q in range(p+1, n_mo):
+#             if not( ( p in active_indices and q in active_indices) 
+#                  or ( p in frozen_indices and q in frozen_indices) 
+#                  or ( p in virtual_indices and q in virtual_indices)):
+#                 Vec_k += [ 0 ]  
+            
+#     return Vec_k
+
+# def transform_vec_to_skewmatrix_with_active_space( Vec_k,
+#                                                    n_mo,
+#                                                    frozen_indices,
+#                                                    active_indices ):
+#     """
+#     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#     Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
+#     the orbital rotations from a vector k.
+#     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#     """
+#     Skew_Matrix_K = np.zeros((n_mo, n_mo))
+#     ind_ij = 0
+#     for j in range(n_mo-1):
+#         for i in range(j+1, n_mo):
+#             Skew_Matrix_K[i, j] = Vec_k[ind_ij]
+#             Skew_Matrix_K[j, i] = - Vec_k[ind_ij]
+#             ind_ij += 1
+#     return Skew_Matrix_K
 
 
 @njit
@@ -1252,10 +1301,21 @@ def compute_energy_with_rdm(ONE_RDM,
                             g_MO,
                             E_shift):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to compute the energy faster with only the knowledge of RDMs
-    and 1 and 2-electron integrals
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Compute the energy based on the RDMs, the integral and the energy shift (E_CoreMF + E_rep_nuc)
+
+    Parameters
+    ----------
+    ONE_RDM         : 1-electron reduced density matrix
+    TWO_RDM         : 2-electron reduced density matrix
+    active_indices  : list of avtice indices
+    h_MO            : 1-electron integrals
+    g_MO            : 2-electron integrals
+    E_shift         : Energy shift = MeanField energy (occupied space) + Nuclei repulsion energy
+
+    Returns
+    -------
+    energy          : Final energy of the system 
+
     """
     max_ = active_indices[-1] + 1
     energy = E_shift
@@ -1274,16 +1334,27 @@ def prepare_vector_k_orbital_rotation_fwith_active_space(n_mo,
                                                          active_indices,
                                                          virtual_indices):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build tprepare the .....
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    """ 
+    Prepare the initial vector of kappa parameters (size and amplitude) 
+    for orbital optimization use
+
+    Parameters
+    ----------
+    n_mo            :  Number of orbital
+    frozen_indices  :  list of frozen indices
+    active_indices  :  list of active indices
+    virtual_indices :  list of virtual indices
+
+    Returns
+    -------
+    Vec_k :  final vector prepared
+
+    """
     Vec_k = []
     for p in range(n_mo-1):
         for q in range(p+1, n_mo):
             if not( ( p in frozen_indices and q in frozen_indices) 
                  or ( p in virtual_indices and q in virtual_indices)):
-                Vec_k += [ 1e-4 ]  
+                Vec_k += [ 0. ]  
             
     return Vec_k
 
@@ -1294,10 +1365,21 @@ def transform_vec_to_skewmatrix_with_active_space( Vec_k,
                                                    active_indices,
                                                    virtual_indices):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
+    Build the skew-matrix (Anti-Symmetric) generator matrix K for 
     the orbital rotations from a vector k.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    Parameters
+    ----------
+    Vec_k           :  vector containing the kappa amplitude
+    n_mo            :  number of orbital
+    frozen_indices  :  list of frozen indices
+    active_indices  :  list of active indices
+    virtual_indices :  list of virtual indices
+
+    Returns
+    -------
+    Skew_Matrix_K   :  Final matrix K to be exponentiated
+
     """
     Skew_Matrix_K = np.zeros((n_mo, n_mo))
     ind_pq = 0
@@ -1322,33 +1404,23 @@ def energy_cost_function_orbital_optimization( Vec_k,
                                                 active_indices,
                                                 virtual_indices ):
     '''
-    
+    Cost function for a brute force orbital optimization with scipy
 
     Parameters
     ----------
-    Vec_k : TYPE
-        DESCRIPTION.
-    one_rdm : TYPE
-        DESCRIPTION.
-    two_rdm : TYPE
-        DESCRIPTION.
-    h : TYPE
-        DESCRIPTION.
-    g : TYPE
-        DESCRIPTION.
-    E_rep_nuc : TYPE
-        DESCRIPTION.
-    frozen_indices : TYPE
-        DESCRIPTION.
-    active_indices : TYPE
-        DESCRIPTION.
-    virtual_indices : TYPE
-        DESCRIPTION.
+    Vec_k           :  vector k containing all the kappa orbital rotation parameters
+    one_rdm         :  1-electron reduced density matrix
+    two_rdm         :  2-electron reduced density matrix
+    h               :  1-electron integral to be transformed by orbital rotation
+    g               :  2-electron integral to be transformed by orbital rotation
+    E_rep_nuc       :  Energy of repulsion between the nuclei
+    frozen_indices  :  list of frozen indices
+    active_indices  :  list of active indices
+    virtual_indices :  list of virtual indices
 
     Returns
     -------
-    E_new : TYPE
-        DESCRIPTION.
+    E_new :  Final energy after playing with the orbital rotation parameters
 
     '''
     n_mo = np.shape(h)[0]
@@ -1370,7 +1442,6 @@ def energy_cost_function_orbital_optimization( Vec_k,
 
 
 
-
 def brute_force_orbital_optimization( one_rdm,
                                       two_rdm,
                                       h,
@@ -1382,66 +1453,55 @@ def brute_force_orbital_optimization( one_rdm,
                                       virtual_indices,
                                       max_iteration=1000,
                                       method_name='BFGS',
-                                      tolerance=1e-6,
+                                      grad_tolerance=1e-6,
                                       show_me=False,
                                       SAD_guess = False):
     '''
-
+    Method implementing a brute force orbtial ptimzation using scipy optimizer
 
     Parameters
     ----------
-    one_rdm : TYPE
-        DESCRIPTION.
-    two_rdm : TYPE
-        DESCRIPTION.
-    h : TYPE
-        DESCRIPTION.
-    g : TYPE
-        DESCRIPTION.
-    E_rep_nuc : TYPE
-        DESCRIPTION.
-    C_ref : TYPE
-        DESCRIPTION.
-    frozen_indices : TYPE
-        DESCRIPTION.
-    active_indices : TYPE
-        DESCRIPTION.
-    virtual_indices : TYPE
-        DESCRIPTION.
-    max_iteration : TYPE, optional
-        DESCRIPTION. The default is 1000.
-    method_name : TYPE, optional
-        DESCRIPTION. The default is 'BFGS'.
-    tolerance : TYPE, optional
-        DESCRIPTION. The default is 1e-6.
-    show_me : TYPE, optional
-        DESCRIPTION. The default is False.
-    SAD_guess : TYPE, optional
-        DESCRIPTION. The default is False.
+    one_rdm         :  1-electron reduced density matrix
+    two_rdm         :  2-electron reduced density matrix
+    h               :  1-electron integral to be transformed  
+    g               :  2-electron integral to be transformed 
+    E_rep_nuc       :  Energy of repulsion between the nuclei
+    C_ref           :  Inital coefficient matrix for the molecular orbital (to be rotated)
+    frozen_indices  :  List of frozen indices
+    active_indices  :  List of active indices
+    virtual_indices :  List of virtual indices
+    max_iteration   :  Maximum number of iteration for the optimization
+                       The default is 1000.
+    method_name     :  Method name for the orbital optimization 
+                       (The default is 'BFGS')
+    grad_tolerance  :  Gradient threshold for the convergence of the optmization
+                       The default is 1e-6.
+    show_me         :  To show the evolution of the optimizaiton process
+                       The default is False.
+    SAD_guess       :  Important guess  orbital for HF orbital optimization implementing a 
+                       the " Superposition of Atomic Density"(SAD guess).
+                       (The default is False.)
 
     Returns
     -------
-    C_OO : TYPE
-        DESCRIPTION.
-    E_new : TYPE
-        DESCRIPTION.
-    h_MO : TYPE
-        DESCRIPTION.
-    g_MO : TYPE
-        DESCRIPTION.
+    C_OO    :  Orbital-optimized molecular orbital coefficient matrix
+    E_new   :  Final energy after orbital optimizaiton
+    h_OO    :  Orbital-optimized 1-electron integrals 
+    g_OO    :  Orbital-optimized 2-electron integrals 
 
     '''
     n_mo = np.shape(h)[0]
     Vec_k = prepare_vector_k_orbital_rotation_fwith_active_space( n_mo,
-                                                                    frozen_indices,
-                                                                    active_indices,
-                                                                    virtual_indices)
+                                                                  frozen_indices,
+                                                                  active_indices,
+                                                                  virtual_indices)
     # In case we want to do a meanfield Orbital Optimisation, a better guess is
     # the so-called SAD guess : Superposition of Atomic Densities
     if SAD_guess:
         MO_guess_energy, C_guess = np.linalg.eigh( h ) 
         h, g = transform_1_2_body_tensors_in_new_basis( h, g, C_guess )
-    
+        # At this step the integrals are redefined with the new SAD guess
+        
     f_min_OO = minimize( energy_cost_function_orbital_optimization,
                               x0      = Vec_k,
                               args    = ( one_rdm,
@@ -1451,12 +1511,11 @@ def brute_force_orbital_optimization( one_rdm,
                                           E_rep_nuc,
                                           frozen_indices,
                                           active_indices,
-                                          virtual_indices),
-                              # constraints=cons,
+                                          virtual_indices), 
                               method  = method_name,
                               options = {'maxiter': max_iteration,
-                                        'gtol'     : tolerance,
-                                        'disp': show_me}  )
+                                         'gtol'     : grad_tolerance,
+                                         'disp': show_me}  )
     Vec_k = f_min_OO['x']
     K_mat = transform_vec_to_skewmatrix_with_active_space(Vec_k,
                                                           n_mo,
@@ -1465,14 +1524,15 @@ def brute_force_orbital_optimization( one_rdm,
                                                           virtual_indices)
     U_OO =  scipy.linalg.expm( - K_mat )  
     C_OO = C_ref @ U_OO 
-    h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h, g, U_OO )
+    h_OO, g_OO = transform_1_2_body_tensors_in_new_basis( h, g, U_OO )
     E_new = compute_energy_with_rdm( one_rdm,
                                     two_rdm,
                                     active_indices, 
-                                    h_MO,
-                                    g_MO,
+                                    h_OO,
+                                    g_OO,
                                     E_rep_nuc )
-    return C_OO, E_new, h_MO, g_MO
+    return C_OO, E_new, h_OO, g_OO
+
 
 
 def filter_h_g_orb(Hess_OrbOrb,
@@ -1482,9 +1542,22 @@ def filter_h_g_orb(Hess_OrbOrb,
                    virtual_indices,
                    n_mo_optimized):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to filter the redundant terms in the Orbital gradient and Hessian
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    
+
+    Parameters
+    ----------
+    Hess_OrbOrb     :  Hessian for the orbital-orbital block
+    Grad_Orb        :  Gradient for the orbitals
+    frozen_indices  :  List of frozen indices
+    active_indices  :  List of active indices
+    virtual_indices :  List of virtual indices
+    n_mo_optimized  :  number of molecular orbital to be optimized
+
+    Returns
+    -------
+    Hess_OrbOrb_filtered :  Resulting "filtered" Hessian for the orbital-orbital block
+    Grad_Orb_filtered    :  Resulting "filtered" Gradient for the orbital 
+
     """
     # Counting the number of non-redundant rotation parameters
     Num_nonredundant_par = 0
@@ -1543,10 +1616,26 @@ def sa_build_mo_hessian_and_gradient(n_mo_OPTIMIZED,
                                      one_rdm_SA,
                                      two_rdm_SA):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the MO hessian matrix and the MO gradient vector
-    for the orbital Optimization in a STATE-AVERAGED way
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Create the molecular orbital gradient and hessian necessary for orbital 
+    optimization with Newton-Raphson methods
+
+    Parameters
+    ----------
+    n_mo_OPTIMIZED  :  number of molecular orbital to be optimized
+    frozen_indices  :  List of frozen indices
+    active_indices  :  List of active indices
+    virtual_indices :  List of virtual indices 
+    h_MO            :  1-electron integrals
+    g_MO            :  2-electron integrals
+    F_SA            :  State-averaged generalized Fock matrix
+    one_rdm_SA      :  State-averaged 1-electron reduced density matrix
+    two_rdm_SA      :  State-averaged 2-electron reduced density matrix
+
+    Returns
+    -------
+    gradient_SA :  state-averaged molecular orbital gradient
+    hessian_SA  :  state-averaged molecular orbital Hessian
+
     """
     gradient_SA = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) // 2, 1))
     hessian_SA = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) //
@@ -1599,10 +1688,24 @@ def sa_build_mo_hessian_and_gradient_no_active_space(h_MO,
                                                      one_rdm_SA,
                                                      two_rdm_SA):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the MO hessian matrix and the MO gradient vector
-    for the orbital Optimization in a STATE-AVERAGED way
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Similar function as before but for the specific case of full active space !
+    
+    
+    WORK IN PROGRESS ==================
+
+    Parameters
+    ---------- 
+    h_MO            :  1-electron integrals
+    g_MO            :  2-electron integrals
+    F_SA            :  State-averaged generalized Fock matrix
+    one_rdm_SA      :  State-averaged 1-electron reduced density matrix
+    two_rdm_SA      :  State-averaged 2-electron reduced density matrix
+
+    Returns
+    -------
+    gradient_SA :  state-averaged molecular orbital gradient
+    hessian_SA  :  state-averaged molecular orbital Hessian
+
     """
     n_mo_OPTIMIZED = np.shape(h_MO)[0]
     gradient_SA = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) // 2, 1))
@@ -1646,6 +1749,7 @@ def sa_build_mo_hessian_and_gradient_no_active_space(h_MO,
 
     return gradient_SA, hessian_SA
 
+
 @njit(parallel=True)
 def build_mo_gradient(n_mo_OPTIMIZED,
                       active_indices,
@@ -1656,13 +1760,27 @@ def build_mo_gradient(n_mo_OPTIMIZED,
                       one_rdm,
                       two_rdm):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build a state specific MO  MO gradient vector
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Create a molecular orbital gradient for an active space problem.
+
+    Parameters
+    ----------
+    n_mo_OPTIMIZED  :  number of molecular orbital to be optimized
+    frozen_indices  :  List of frozen indices
+    active_indices  :  List of active indices
+    virtual_indices :  List of virtual indices 
+    h_MO            :  1-electron integrals
+    g_MO            :  2-electron integrals
+    one_rdm         :  1-electron reduced density matrix
+    two_rdm         :  2-electron reduced density matrix 
+
+    Returns
+    -------
+    gradient        :  molecular orbital gradient
+
     """
     Num_MO = np.shape(h_MO)[0]
-    gradient_I = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) // 2, 1))
-    F_I = build_generalized_fock_matrix(Num_MO,
+    gradient = np.zeros((n_mo_OPTIMIZED * (n_mo_OPTIMIZED - 1) // 2, 1))
+    F = build_generalized_fock_matrix(Num_MO,
                                         h_MO,
                                         g_MO,
                                         one_rdm,
@@ -1674,9 +1792,9 @@ def build_mo_gradient(n_mo_OPTIMIZED,
     for q in prange(n_mo_OPTIMIZED - 1):
         for p in range(q + 1, n_mo_OPTIMIZED):
             ind_pq = get_super_index(p, q, n_mo_OPTIMIZED)
-            gradient_I[ind_pq] = 2. * (F_I[p, q] - F_I[q, p])
+            gradient[ind_pq] = 2. * (F[p, q] - F[q, p])
 
-    return gradient_I
+    return gradient
 
 
 def orbital_optimisation_newtonraphson(one_rdm_SA,
@@ -1689,13 +1807,41 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
                                        h_AO,
                                        g_AO,
                                        n_mo_optimized,
-                                       OPT_OO_MAX_ITER,
-                                       Grad_threshold,
+                                       OPT_OO_MAX_ITER=100,
+                                       Grad_threshold=1e-6,
                                        TELL_ME=True):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to realize an Orbital Optimization process
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Orbital optimization with a Newton-Raphson method for an active space problem.
+
+
+    ========================= TO BE CLEANED =========================
+
+    Parameters
+    ----------
+    one_rdm_SA      :  State-averaged 1-electron reduced density matrix
+    two_rdm_SA      :  State-averaged 2-electron reduced density matrix
+    frozen_indices  :  List of frozen indices
+    active_indices  :  List of active indices
+    virtual_indices :  List of virtual indices 
+    C_transf        :  
+    E_rep_nuc       :  Energy of the nucleic repulsion
+    h_AO            :  1-electron integrals in the AO basis
+    g_AO            :  2-electron integrals in the AO basis
+    n_mo_optimized  :  Number of molecular orbitaled to be optimized
+    OPT_OO_MAX_ITER :  Maximum number of Newton-Raphson iterations (i.e. steps)
+                       The default is 100.
+    Grad_threshold  :  Thershold of the gradient to define the optimization convergence.
+                       The default is 1e-6.
+    TELL_ME         :  To show or not the evolution of the optimization process.
+                       The default is True.
+
+    Returns
+    -------
+    C_transf_best_OO :  Orbital optimized orbital coefficient matrix 
+    E_best_OO        :  Orbital optimized energy  
+    h_best           :  Orbital optimized 1-electron orbital integral 
+    g_best           :  Orbital optimized 2-electro integral
+
     """
      
     h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_transf )
@@ -1846,9 +1992,31 @@ def orbital_optimisation_newtonraphson_no_active_space(one_rdm_SA,
                                                        Grad_threshold,
                                                        TELL_ME=True):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to realize an Orbital Optimization process
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Similar function as before but for the specific case of full active space !
+    
+    Parameters
+    ----------
+    one_rdm_SA      :  State-averaged 1-electron reduced density matrix
+    two_rdm_SA      :  State-averaged 2-electron reduced density matrix
+    C_transf        :  
+    E_rep_nuc       :  Energy of the nucleic repulsion
+    h_AO            :  1-electron integrals in the AO basis
+    g_AO            :  2-electron integrals in the AO basis
+    n_mo_optimized  :  Number of molecular orbitaled to be optimized
+    OPT_OO_MAX_ITER :  Maximum number of Newton-Raphson iterations (i.e. steps)
+                       The default is 100.
+    Grad_threshold  :  Thershold of the gradient to define the optimization convergence.
+                       The default is 1e-6.
+    TELL_ME         :  To show or not the evolution of the optimization process.
+                       The default is True.
+
+    Returns
+    -------
+    C_transf_best_OO :  Orbital optimized orbital coefficient matrix 
+    E_best_OO        :  Orbital optimized energy  
+    h_best           :  Orbital optimized 1-electron orbital integral 
+    g_best           :  Orbital optimized 2-electro integral 
+
     """
     
     h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_transf )
@@ -1858,9 +2026,7 @@ def orbital_optimisation_newtonraphson_no_active_space(one_rdm_SA,
         MO_guess_energy, C_guess = np.linalg.eigh( h_MO ) 
         h_MO, g_MO = transform_1_2_body_tensors_in_new_basis( h_MO, g_MO, C_guess )
         
-    n_mo = np.shape(h_MO)[0]
-    frozen_indices  =  np.empty(0, dtype=np.int32)
-    virtual_indices =  np.empty(0, dtype=np.int32)
+    n_mo = np.shape(h_MO)[0] 
     active_indices = [i for i in range(n_mo)]
     E_old_OO = compute_energy_with_rdm(one_rdm_SA,
                                         two_rdm_SA,
@@ -1970,10 +2136,18 @@ def orbital_optimisation_newtonraphson_no_active_space(one_rdm_SA,
 
 def transform_vec_to_skewmatrix(Vec_k, n_mo):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the skew-matrix (Anti-Symmetric) generator matrix K for 
-    the orbital rotations from a vector k.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Create the anti-symmetric K matrix necessary fpor the orbital optimization
+    based on a vector k encoding the kappa (i.e. orbital rotation parameters) 
+
+    Parameters
+    ----------
+    Vec_k :  vector k encoding the orbital rotation parameters
+    n_mo  :  number of orbital
+
+    Returns
+    -------
+    Skew_Matrix_K :  Anti-symmetric K matrix for the orbital optimization
+
     """
     Skew_Matrix_K = np.zeros((n_mo, n_mo))
     ind_ij = 0
@@ -1992,10 +2166,24 @@ def build_generalized_fock_matrix(Num_MO,
                                   one_rdm,
                                   two_rdm ):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the generalized Fock matrix.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    """ 
+    Create the generalized fock matrix.
+    
+    
+    ========================= TO BE CHECKED =========================
+    
+    Parameters
+    ----------
+    Num_MO  :  Number of molecular orbital
+    h_MO    :  1-electron integrals
+    g_MO    :  2-electron integrals
+    one_rdm :  1-electron reduced density matrix
+    two_rdm :  2-electron reduced density matrix
+
+    Returns
+    -------
+    F :  Generalized Fock matrix
+
+    """
     F = np.zeros((Num_MO, Num_MO))
     for m in range(Num_MO):
         for n in range(Num_MO):
@@ -2016,9 +2204,23 @@ def build_generalized_fock_matrix_active_space_adapted(Num_MO,
                                                       active_indices,
                                                       frozen_indices):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the generalized Fock matrix.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Create a generalized fock matrix for a system with an active space. 
+    It makes it possible to use lots of simplification in this specific case. 
+
+    Parameters
+    ----------
+    Num_MO          : Number of molecular orbital
+    h_MO            : 1-electron integrals
+    g_MO            : 2-electron integrals
+    one_rdm         : 1-electron redcued density matrix
+    two_rdm         : 2-electron redcued density matrix
+    active_indices  : List of active space indices
+    frozen_indices  : List of frozen space indices 
+
+    Returns
+    -------
+    F : Generalized fock matrix
+
     """
     F_I = f_inactive(Num_MO, h_MO, g_MO, frozen_indices)
     F_A = f_active(Num_MO, g_MO, one_rdm, active_indices)
@@ -2042,10 +2244,21 @@ def build_generalized_fock_matrix_active_space_adapted(Num_MO,
 @njit
 def f_inactive(Num_MO, h_MO, g_MO, frozen_indices):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the inactive Fock matrix
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Create the inactive part Fock matrix contribution
+
+    Parameters
+    ----------
+    Num_MO          : Number of molecular orbitals 
+    h_MO            : 1-electron integral
+    g_MO            : 2-electron integral 
+    frozen_indices  : List of frozen indices
+
+    Returns
+    -------
+    F_inactive      : Inactive Fock matrix 
+
     """
+    
     F_inactive = np.zeros((Num_MO, Num_MO))
     for m in range(Num_MO):
         for n in range(Num_MO):
@@ -2059,9 +2272,19 @@ def f_inactive(Num_MO, h_MO, g_MO, frozen_indices):
 @njit
 def f_active(Num_MO, g_MO, one_rdm, active_indices):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the active Fock matrix.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Create the active part Fock matrix contribution
+
+    Parameters
+    ----------
+    Num_MO          : number of molecular orbitals
+    g_MO            : 2-electron reduced density matrix
+    one_rdm         : 1-electorn reduced density matrix
+    active_indices  : list of active indices
+
+    Returns
+    -------
+    F_active :  Active Fock matrix 
+
     """
     F_active = np.zeros((Num_MO, Num_MO))
     for m in range(Num_MO):
@@ -2076,9 +2299,20 @@ def f_active(Num_MO, g_MO, one_rdm, active_indices):
 @njit
 def q_aux(Num_MO, g_MO, two_rdm, active_indices):
     """
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    Function to build the auxilliarry matrix.
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Auxiliarry matrix for the generalized Fock matrix resolution 
+    (From Helgaker's PINK BOOK)
+
+    Parameters
+    ----------
+    Num_MO          : Number of molecualr orbitals 
+    g_MO            : 2-electron integrals
+    two_rdm         : 2-electorn reduced density matrix 
+    active_indices  : List of active indices
+
+    Returns
+    -------
+    Q_aux           : Auxiliarry matrix
+
     """
     Q_aux = np.zeros((Num_MO, Num_MO))
     for v in active_indices:
@@ -2093,8 +2327,19 @@ def q_aux(Num_MO, g_MO, two_rdm, active_indices):
 @njit
 def get_super_index(p, q, n_mo):
     """
-    Function to obtain a "super index" pq 
-    useful for orbital gradients and hessians
+    Create super index baed on a composition of two indices. Improtant for 
+    orbital optimization methods
+
+    Parameters
+    ----------
+    p    :  Molecular orbital index "p"
+    q    :  Molecular orbital index "q"
+    n_mo :  Number of molecular orbital
+
+    Returns
+    -------
+    ind_pq :  Super index
+
     """
     ini_int = n_mo-1 - q
     fin_int = n_mo-1
@@ -2106,7 +2351,17 @@ def get_super_index(p, q, n_mo):
 @njit
 def delta(index_1, index_2):
     """
-    Function delta kronecker
+    Create a kronecker delta based on two indices
+
+    Parameters
+    ----------
+    index_1 : First index
+    index_2 : Second index
+
+    Returns
+    -------
+    d :  Result of the Konecker's delta
+
     """
     d = 0.0
     if index_1 == index_2:
