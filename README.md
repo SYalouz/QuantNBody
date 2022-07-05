@@ -22,9 +22,7 @@ To install the latest version of QuantNBody:
 
 ```
 git clone https://github.com/SYalouz/QuantNBody.git
-
 cd QuantNBody
-
 python -m pip install -e .
 ```
 
