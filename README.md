@@ -13,9 +13,8 @@ It provides a quick and easy way to build many-body operators and wavefunctions 
 - The decomposition of any wavefunction in a given many-body basis
 - 1-body, 2-body (...) reduced density matrices 
 - Spin operators S^2, S_z (for fermionic system) expressed in a many-body basis
-- Already made Hamiltonians model Hamiltonians e.g. Bose-Hubbard, Fermi-Hubbar
+- Already made model Hamiltonians e.g. Bose-Hubbard, Fermi-Hubbar
 - Already made molecular ab initio Hamiltonians (requires a connexion to Psi4 or PySCF)
-- 
 - ...
 
  # Quick and easy installation (Developement mode)
