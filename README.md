@@ -6,15 +6,25 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6565736.svg)](https://doi.org/10.5281/zenodo.6565736)
 
-QuantNBody is dedicated to the manipulation of quantum N-body systems ranging from many-electron to many-bosons hamiltonians.
-It provides a quick and easy way to build many-body operators and get access
-(in a few python lines) to important quantities/objects such as :
- 
-- The decomposition of a wavefunction in a many-body basis
-- The 1-body, 2-body (...) reduced density matrices (espressed in the Molecular orbital or spinorbital basis)
-- The spin operators S^2, S_z (for fermionic system expressed in a many-body basis)
+QuantNBody is dedicated to the manipulation of quantum many-body systems composed either of electron or bosons.
+It provides a quick and easy way to build many-body operators and wavefunctions and get access
+(in a few python lines) to quantities/objects such as :
+
+- The decomposition of any wavefunction in a given many-body basis
+- 1-body, 2-body (...) reduced density matrices 
+- Spin operators S^2, S_z (for fermionic system) expressed in a many-body basis
+- Already made Hamiltonians model Hamiltonians e.g. Bose-Hubbard, Fermi-Hubbar
+- Already made molecular ab initio Hamiltonians (requires a connexion to Psi4 or PySCF)
+- 
 - ...
- 
+
+ # Quick and easy installation (Developement mode)
+To install the latest version of QuantNBody:
+
+git clone https://github.com/SYalouz/QuantNBody.git
+cd QuantNBody
+python -m pip install -e .
+
 Hamiltonians already implemented:
 
 - Ab initio electronic structure Hamiltonian (needs psi4 or PySCf to provide the electronic integrals)
