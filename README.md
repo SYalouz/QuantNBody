@@ -12,22 +12,25 @@
 QuantNBody is a python package facilitating the implementation and the manipulation of quantum many-body systems
 composed either of electron or bosons.
 It provides a quick and easy way to build many-body operators and wavefunctions and get access
-(in a few python lines) to quantities/objects of interest for research and method developements. We provide below a non-exhaustive list of the various possibilites offered by the package:
+(in a few python lines) to quantities/objects of interest for research and method developements. Our goal here is to focus on resarch and teaching but not on highly efficient code for large simulations. We provide below a non-exhaustive list of the various possibilites offered by the package:
 
 - Visualizing the structure of any wavefunction in a given many-body basis
 - Building 1-body, 2-body (...) reduced density matrices 
-- Building Spin operators $S^2$, $S_z$ (for fermionic system) expressed in a many-body basis
+- Building Spin operators $S^2$, $S_z$, $S_+$ (for fermionic system) expressed in a many-body basis
 - Building model Hamiltonians e.g. Bose-Hubbard, Fermi-Hubbar ( parameters given by the user )
 - Building molecular *ab initio* Hamiltonians (needs psi4 to provide the electronic integrals)
 - ...
 
-For example of the use of this package several tutorials have been implemented to help the new users.
-Particularily, we provide illustrative code showing how to use the tools implemented to build their personal 
-many-body methods such as (see the Example folder):
+To illustrate how to use this package, several example codes and tutorials have been implemented 
+to help the new users (see the ''Examples and Tutorials'' folder).
+Particularily, we show how to employ the tools already implemented to 
+develop and implement famous many-body methods such as :
 - FCI : Full Configuration Interaction (for bosonic and fermionic systems)
 - CAS-CI : Complete Active Space CI  (for fermionic systems)
 - SA-CASSCF : State-Averaged CAS Self-Consistent Field with orbital optimization (fermionic systems)
 - ...
+
+Nota Bene:  
 
 --- 
 
