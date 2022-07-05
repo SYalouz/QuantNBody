@@ -1009,6 +1009,27 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
     
     return sAsB_coupling
 
+def build_spin_subspaces( S2_local, S2_local_target ):
+    '''
+    
+    TO BE DONE MF
+
+    Parameters
+    ----------
+    S2_local :  
+    S2_local_target : 
+
+    Returns
+    -------
+    Projector_spin_subspace :  
+
+    '''
+    S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.A )
+    Set_vectors = S2_local_eigvec[ :,   (S2_local_eigval >= S2_local_target-1.e-3) 
+                                      & (S2_local_eigval <= S2_local_target+1.e-3)   ] 
+    Projector_spin_subspace  =  Set_vectors @ Set_vectors.T
+    
+    return Projector_spin_subspace
     
 # =============================================================================
 #  FUNCTION TO GIVE ACCESS TO BASIC QUANTUM CHEMISTRY DATA FROM PSI4
