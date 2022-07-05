@@ -1,7 +1,5 @@
 
 ![](logo.png)
-
-# QuantNBody : a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
  
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6565736.svg)](https://doi.org/10.5281/zenodo.6565736)
