@@ -23,7 +23,7 @@ We provide below a non-exhaustive list of the various possibilites offered by th
 - ...
 
 To illustrate how to use this package, several example codes and tutorials have been implemented 
-to help the new users (see the ''Examples and Tutorials'' folder).
+to help the new users (see the ''Tutorials'' folder).
 Particularily, we show how to employ the tools already implemented to 
 develop and implement famous many-body methods such as :
 - FCI : Full Configuration Interaction (for bosonic and fermionic systems)
