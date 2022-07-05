@@ -15,9 +15,9 @@ It provides a quick and easy way to build many-body operators and wavefunctions 
 (in a few python lines) to quantities/objects of interest for research, method developements. This tool can be also of a great help for pedagogical purpose and to help illustrating numerical methods for fermionic or bosonic systems. 
 We provide below a non-exhaustive list of the various possibilites offered by the package:
 
-- Visualizing the structure of any wavefunction in a given many-body basis
-- Building 1-body, 2-body (...) reduced density matrices 
-- Building Spin operators $S^2$, $S_z$, $S_+$ (for fermionic system) expressed in a many-body basis
+- Visualizing the structure of any wavefunction in a given many-body basis (for fermionic and bosonic systems)
+- Building 1-body, 2-body (...) reduced density matrices (for fermionic and bosonic systems)
+- Building Spin operators $S^2$, $S_z$, $S_+$  expressed in a many-body basis (for fermionic system)
 - Building model Hamiltonians e.g. Bose-Hubbard, Fermi-Hubbar ( parameters given by the user )
 - Building molecular *ab initio* Hamiltonians (needs psi4 to provide the electronic integrals)
 - ...
@@ -28,7 +28,7 @@ Particularily, we show how to employ the tools already implemented to
 develop and implement famous many-body methods such as :
 - FCI : Full Configuration Interaction (for bosonic and fermionic systems)
 - CAS-CI : Complete Active Space CI  (for fermionic systems)
-- SA-CASSCF : State-Averaged CAS Self-Consistent Field with orbital optimization (fermionic systems)
+- SA-CASSCF : State-Averaged CAS Self-Consistent Field with orbital optimization (for fermionic systems)
 - ...
 
 Nota Bene:  
