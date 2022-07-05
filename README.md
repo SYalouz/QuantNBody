@@ -20,9 +20,13 @@ It provides a quick and easy way to build many-body operators and wavefunctions 
  # Quick and easy installation (Developement mode)
 To install the latest version of QuantNBody:
 
+```
 git clone https://github.com/SYalouz/QuantNBody.git
+
 cd QuantNBody
+
 python -m pip install -e .
+```
 
 Hamiltonians already implemented:
 
