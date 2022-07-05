@@ -6,9 +6,13 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6565736.svg)](https://doi.org/10.5281/zenodo.6565736)
 
-QuantNBody is dedicated to the manipulation of quantum many-body systems composed either of electron or bosons.
+QuantNBody is a python package dedicated to the manipulation of quantum many-body systems composed either of electron or bosons.
 It provides a quick and easy way to build many-body operators and wavefunctions and get access
-(in a few python lines) to quantities/objects such as :
+(in a few python lines) to quantities/objects of interest for research and method developements.
+
+---
+
+such as :
 
 - The decomposition of any wavefunction in a given many-body basis
 - 1-body, 2-body (...) reduced density matrices 
