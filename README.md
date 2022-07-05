@@ -40,4 +40,8 @@ cd QuantNBody
 python -m pip install -e .
 ```
  
+ Note that you'll need to install the Psi4 package before installing QuantNBody. For this we redirect the user to the following link:
+ 
+ Psi4 installations :
+ - [Using conda](https://anaconda.org/psi4/psi4), see also the [following link](https://psicode.org/psi4manual/1.2.1/conda.html)
 
