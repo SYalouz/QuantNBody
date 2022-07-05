@@ -31,8 +31,7 @@ develop and implement famous many-body methods such as :
 - SA-CASSCF : State-Averaged CAS Self-Consistent Field with orbital optimization (for fermionic systems)
 - ...
 
-Nota Bene:  
-
+ 
 --- 
 
  ## How to easily install the package (in developement mode)
@@ -46,6 +45,5 @@ python -m pip install -e .
  
  Note that you'll need to install the Psi4 package before installing QuantNBody. For this we redirect the user to the following link:
  
- Psi4 installations :
- - [Using conda](https://anaconda.org/psi4/psi4), see also the [following link](https://psicode.org/psi4manual/1.2.1/conda.html)
+ - Psi4 installations : [Using conda](https://anaconda.org/psi4/psi4), see also the [following link](https://psicode.org/psi4manual/1.2.1/conda.html)
 
