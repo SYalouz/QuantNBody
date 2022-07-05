@@ -29,7 +29,7 @@ many-body methods such as (see the Example folder):
 - SA-CASSCF : State-Averaged CAS Self-Consistent Field with orbital optimization (fermionic systems)
 - ...
 
----
+--- 
 
  ## How to easily install (in developement mode)
 To install the latest version of QuantNBody in a quick and easy way:
