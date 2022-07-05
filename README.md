@@ -28,7 +28,7 @@ many-body methods such as (see the Example folder):
 
 ---
 
- # How to easily install (in developement mode)
+ ## How to easily install (in developement mode)
 To install the latest version of QuantNBody in a quick and easy way:
 
 ```
