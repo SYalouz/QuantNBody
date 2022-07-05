@@ -12,13 +12,13 @@
 QuantNBody is a python package facilitating the implementation and the manipulation of quantum many-body systems
 composed either of electron or bosons.
 It provides a quick and easy way to build many-body operators and wavefunctions and get access
-(in a few python lines) to quantities/objects of interest for research and method developements. We provide below a non-exhaustive list of the various possibilites offered by the package
+(in a few python lines) to quantities/objects of interest for research and method developements. We provide below a non-exhaustive list of the various possibilites offered by the package:
 
-- Visualizing he decomposition of any wavefunction in a given many-body basis
+- Visualizing the structure of any wavefunction in a given many-body basis
 - Building 1-body, 2-body (...) reduced density matrices 
-- Building Spin operators S^2, S_z (for fermionic system) expressed in a many-body basis
+- Building Spin operators $S^2$, $S_z$ (for fermionic system) expressed in a many-body basis
 - Building model Hamiltonians e.g. Bose-Hubbard, Fermi-Hubbar ( parameters given by the user )
-- Building molecular ab initio Hamiltonians (needs psi4 or PySCf to provide the electronic integrals)
+- Building molecular *ab initio* Hamiltonians (needs psi4 to provide the electronic integrals)
 - ...
 
 For example of the use of this package several tutorials have been implemented to help the new users.
