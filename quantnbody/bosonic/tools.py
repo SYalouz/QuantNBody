@@ -137,7 +137,7 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
             a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
             a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
      
-    for q in tqdm(range(n_mode)): 
+    for q in (range(n_mode)): 
         for p in range(q, n_mode): 
             for kappa in range(dim_H):
                 
@@ -235,24 +235,17 @@ def build_hamiltonian_bose_hubbard(h_, U_, nbodybasis, a_dagger_a ):
     # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
     H_bose_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mode):
-        H_bose_hubbard += a_dagger_a[ p, p] @  ( a_dagger_a[ p , p ] - scipy.sparse.identity(dim_H) ) * U_[p, p, p, p]
+        # H_bose_hubbard += a_dagger_a[ p, p] @  ( a_dagger_a[ p , p ] - scipy.sparse.identity(dim_H) ) * U_[p, p, p, p]
         for q in range(n_mode): 
             H_bose_hubbard += a_dagger_a[p, q] * h_[p, q]
             
-            # for r in range(n_mode):
-            #     for s in range(n_mode):
-            #         if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-            #             H_bose_hubbard += a_dagger_a[ p, q] @  a_dagger_a[ r , s ]   * U_[p, q, r, s]
-            #             H_bose_hubbard += (a_dagger_a[ p, q] @ 
-            #                               (a_dagger_a[ r , s ] - scipy.sparse.identity(dim_H)) ) * U_[p, q, r, s]
-                        
-    # if v_term is not None:
-    #     for p in range(n_mo):
-    #         for q in range(n_mo):
-    #             for r in range(n_mo):
-    #                 for s in range(n_mo):
-    #                     if v_term[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-    #                         H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
+            for r in range(n_mode):
+                for s in range(n_mode):
+                    if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices 
+                        H_bose_hubbard += a_dagger_a[ p, r ] @  a_dagger_a[ q , s ]  * U_[p, q, r, s]
+                        if ( q == r ):
+                           H_bose_hubbard +=  - a_dagger_a[ p , s ]  * U_[p, q, r, s]
+                         
                             
     return H_bose_hubbard
  
@@ -283,7 +276,65 @@ def build_1rdm(WFT, a_dagger_a):
             one_rdm[q, p] = one_rdm[p, q]
     return one_rdm
 
+
+def build_2rdm(WFT, a_dagger_a):
+    """
+    Create a 2 RDM out of a given wave function
+
+    Parameters
+    ----------
+    WFT        :  Wave function for which we want to build the 1-RDM
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    One_Rone_rdmDM : 1-RDM 
+
+    """
+    n_mode = np.shape(a_dagger_a)[0] 
+    two_rdm = np.zeros((n_mode, n_mode, n_mode, n_mode))
+    for p in range(n_mode):
+        for q in range(n_mode): 
+            for r in range(n_mode):
+                for s in range(n_mode):
+                    two_rdm[p, q, r, s] += WFT.T @ a_dagger_a[ p, r ] @ a_dagger_a[ q, s ]   @ WFT 
+                    if ( q == r ):
+                        two_rdm[p, q, r, s] += - WFT.T @  a_dagger_a[ p , s ]  @ WFT    
+    return two_rdm
     
+
+
+# =============================================================================
+# INTEGRAL TRANSFORMATIONS
+# =============================================================================
+
+def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
+    """
+    Transform electronic integrals from an initial basis "B1" to a new basis "B2".
+    The transformation is realized thanks to a passage matrix noted "C" linking
+    both basis like
+
+            | B2_l > = \\sum_{p} | B1_p >  C_{pl}
+
+    with | B2_l > and | B1_p > are vectors of the basis B1 and B2 respectively
+
+    Parameters
+    ----------
+    h_b1 : 1-electron integral given in basis B1
+    g_b1 : 2-electron integral given in basis B1
+    C    : Passage matrix
+
+    Returns
+    -------
+    h_b2 : 1-electron integral given in basis B2
+    g_b2 : 2-electron integral given in basis B2
+    """
+    h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1, optimize=True)
+    g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
+
+    return h_b2, g_b2
+
+
 # =============================================================================
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BOSON WAVE FUNCTIONS
 # =============================================================================
