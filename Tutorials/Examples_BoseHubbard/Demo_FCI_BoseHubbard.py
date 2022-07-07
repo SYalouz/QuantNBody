@@ -21,24 +21,23 @@ import quantnbody as qnb
 n_mode  = 4
 n_boson = 10
 
-nbodybasis = qnb.bosonic.tools.build_nbody_basis(n_mode, n_boson) 
-mapping = qnb.bosonic.tools.build_mapping( nbodybasis ) 
+nbodybasis = qnb.bosonic.tools.build_nbody_basis( n_mode, n_boson ) 
+# mapping = qnb.bosonic.tools.build_mapping( nbodybasis ) 
 dim_H = np.shape(nbodybasis)[0] 
 
-nbodybasis = qnb.bosonic.tools.build_nbody_basis(n_mode, n_boson)
-a_dagger_a = qnb.bosonic.tools.build_operator_a_dagger_a(nbodybasis)
+#%% 
+a_dagger_a = qnb.bosonic.tools.build_operator_a_dagger_a( nbodybasis )
 
  
 #%%
 
-h_ = np.zeros(( n_mode, n_mode ))
-# for site in range(n_mode-1):
+h_ = np.zeros(( n_mode, n_mode )) 
 for site in range(n_mode): 
     for site_ in range(n_mode):
         if (site != site_): 
             h_[site,site_] = h_[site_,site] = -1 
 
-list_U = np.linspace(0, 2, 100) 
+list_U = np.linspace(0, 2, 20) 
 
 E_0_qnb = []
 E_1_qnb = []
@@ -52,8 +51,7 @@ for U in  tqdm(list_U) :
                                                           U_,
                                                           nbodybasis,
                                                           a_dagger_a ) 
-    eig_en, eig_vec = scipy.linalg.eigh( H.A  )
-    
+    eig_en, eig_vec = scipy.linalg.eigh( H.A  ) 
     E_0_qnb += [ eig_en[0] ]
     E_1_qnb += [ eig_en[1] ]
 
