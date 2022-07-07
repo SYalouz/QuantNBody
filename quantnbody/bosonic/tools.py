@@ -3,6 +3,7 @@ import numpy as np
 from itertools import combinations_with_replacement
 from numba import njit, prange 
 import scipy.sparse
+from tqdm import tqdm 
  
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
@@ -62,23 +63,22 @@ def build_mapping( nbodybasis ):
     return mapping_kappa
 
 
-@njit
-def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
-    state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
-    state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
-    kappa_ = mapping_kappa[make_number_out_of_vector(state_two)]  
- 
-    return kappa_, coeff1, coeff2
- 
-
-#  OLDER and MORE "BRUTE FORCE" FUNCTION KEPT FOR DEBUGGING 
-# # @njit
-# def build_final_state_ad_a(ref_state, p, q, nbodybasis):
+# @njit
+# def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
 #     state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
-#     state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one) 
-#     kappa_ = nbodybasis.index( state_two.tolist() )
+#     state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
+#     kappa_ = mapping_kappa[ make_number_out_of_vector(state_two) ]  
  
 #     return kappa_, coeff1, coeff2
+ 
+
+# OLDER and MORE "BRUTE FORCE" FUNCTION KEPT FOR DEBUGGING 
+# @njit
+def build_final_state_ad_a(ref_state, p, q, nbodybasis):
+    state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
+    state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one) 
+    kappa_ = nbodybasis.index( state_two.tolist() ) 
+    return kappa_, coeff1, coeff2
 
 
 @njit
@@ -128,23 +128,25 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
     dim_H  = len(nbodybasis)
     n_mode = len(nbodybasis[0]) 
     n_boson= np.sum(nbodybasis[0])
-    mapping_kappa = build_mapping(nbodybasis)
+    # mapping_kappa = build_mapping(nbodybasis) # <== To be clearly improved
 
     a_dagger_a = np.zeros((n_mode, n_mode), dtype=object)
-    for p in range( n_mode ):
+   
+    for p in range( n_mode ): 
         for q in range(p, n_mode):
             a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
             a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
-
-    for q in (range(n_mode)):
-        for p in range(q, n_mode):
+     
+    for q in tqdm(range(n_mode)): 
+        for p in range(q, n_mode): 
             for kappa in range(dim_H):
+                
                 ref_state = nbodybasis[kappa]
                 if p != q and (ref_state[q] == 0 or ref_state[p] == n_boson): 
                     pass 
                 else :
-                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    # kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, nbodybasis.tolist()) # #  OLDER FUNCTION KEPT FOR DEBUGGING 
+                    # kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
+                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, nbodybasis.tolist()) # #  OLDER FUNCTION KEPT FOR DEBUGGING 
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] =  coeff1 * coeff2
                     
     if not silent:
