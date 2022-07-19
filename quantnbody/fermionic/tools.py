@@ -1200,20 +1200,19 @@ def transform_psi_MO_basis1_in_MO_basis2( Psi_A_MOB1,
                                           C_MOB2,
                                           nbody_basis ):
     """
-    Evaluate the non-trivial scalar product of two multi-configurational 
-    wavefunction expressed in two different moelcular orbital basis.
+    Transform an intial multi-configurational wavefunction expressed with 
+    an intial molecular orbital basis 1 into another molecular orbital basis 2
             
     Parameters
     ----------
-    Psi_A_MOB1  : Wavefunction A (will be a Bra) expressed in the first orbital basis
-    Psi_B_MOB2  : Wavefunction B (will be a Ket) expressed in the second orbital basis
+    Psi_A_MOB1  : Wavefunction A (will be a Bra) expressed in the first orbital basis 
     C_MOB1      : First basis' Molecular orbital coefficient matrix
     C_MOB2      : Second basis' Molecular orbital coefficient matrix
     nbody_basis : List of many-body state
 
     Returns
     -------
-    scalar_product :  Amplitude of the scalar product
+    Psi_A_MOB2 :  Final shape of the multiconfigruation wft in the second MO basis
 
     """
     dim_H = len(nbody_basis)
