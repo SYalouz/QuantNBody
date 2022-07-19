@@ -1111,8 +1111,8 @@ def get_info_from_psi4( string_geometry,
 
 
 # =============================================================================
-#  FUNCTION TO ASSESS AN SCALAR PRODUCT BETWEEN TWO CORRELATED WAVEFUNCTION 
-#   EXPRESSED IN TWO DIFFERENT MOLECULAR ORBITAL BASIS
+#  FUNCTION TO EXPRESS CORRELATED WAVEFUNCTIONS 
+#  IN DIFFERENT MOLECULAR ORBITAL BASIS
 # =============================================================================
 
 def weight_det( C_B2_B1, occ_spinorb_Det1, occ_spinorb_Det2 ):
@@ -1194,6 +1194,47 @@ def scalar_product_different_MO_basis( Psi_A_MOB1,
     
     return scalar_product
 
+
+def transform_psi_MO_basis1_in_MO_basis2( Psi_A_MOB1, 
+                                          C_MOB1,
+                                          C_MOB2,
+                                          nbody_basis ):
+    """
+    Evaluate the non-trivial scalar product of two multi-configurational 
+    wavefunction expressed in two different moelcular orbital basis.
+            
+    Parameters
+    ----------
+    Psi_A_MOB1  : Wavefunction A (will be a Bra) expressed in the first orbital basis
+    Psi_B_MOB2  : Wavefunction B (will be a Ket) expressed in the second orbital basis
+    C_MOB1      : First basis' Molecular orbital coefficient matrix
+    C_MOB2      : Second basis' Molecular orbital coefficient matrix
+    nbody_basis : List of many-body state
+
+    Returns
+    -------
+    scalar_product :  Amplitude of the scalar product
+
+    """
+    dim_H = len(nbody_basis)
+    
+    # Overlap matrix in the common basis
+    S = scipy.linalg.inv( C_MOB1 @ C_MOB1.T )  
+    # Building the matrix expressing the MO from B1 in the B2 basis
+    C_B2_B1 = C_MOB1.T @ S @ C_MOB2
+    
+    Psi_A_MOB2 = np.zeros_like(Psi_A_MOB1)
+    for I in range(dim_H): 
+        if abs(Psi_A_MOB1[I]) > 1e-8: 
+            # Finding the indices of the spinorbitals which are occupied in the Det_I
+            occ_spinorb_Det_I = np.nonzero( nbody_basis[I] )[0].tolist()
+            for J in range(dim_H):   
+                # Finding the indices of the spinorbitals which are occupied in the Det_J
+                occ_spinorb_Det_J = np.nonzero( nbody_basis[J] )[0].tolist()  
+                D  = weight_det( C_B2_B1, occ_spinorb_Det_I, occ_spinorb_Det_J )
+                Psi_A_MOB2[J] += D *  Psi_A_MOB1[I] 
+    
+    return Psi_A_MOB2
 
 # =============================================================================
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
