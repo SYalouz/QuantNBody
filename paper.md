@@ -50,11 +50,11 @@ In practice, the native functions implementing both fermionic Hamiltonians in th
 They can be set as pure parameters or obtained from external chemistry python packages like PySCF [@sun2020recent] or Psi4 [@turney2012psi4].
 As an illustration, we show in Fig. 1 results one can produce with the package for both fermionic hamiltonians. We focus here on the calculation of the groundstate (noted $| \Psi_0\rangle$) in a $H_2$ molecule and a Fermi-Hubbard dimer, and evaluate several associated properties (energy and many-body basis decomposition).
  
-![$H_2$ molecule and Fermi-Hubbard dimer. **Left column:** ground state energy and its decomposition in the many-body basis for the dissociation of the $H_2$ molecule in a minimal basis (STO-3G) using integrals from Psi4 [@turney2012psi4]. **Right column:** similar properties for the Fermi-Hubbard dimer as a function of $U/t$ (2 electrons on 2 sites). \label{fig:example}](figure_fermion.png)
+![$H_2$ molecule and Fermi-Hubbard dimer. **Left column:** ground state energy and decomposition in the many-body basis for the dissociation of the $H_2$ molecule in a minimal basis (STO-3G) using integrals from Psi4 [@turney2012psi4]. **Right column:** similar properties for the Fermi-Hubbard dimer as a function of $U/t$ (2 electrons on 2 sites and $t = 1$). \label{fig:example}](figure_fermion.png)
 
 ## Bosonic systems
  
-Bosonic Hamiltonians can also be numerically built with the QuantNBody package. A pre-built function of the package allows a quick implementation of the Bose-Hubbard Hamiltonian which reads
+Bosonic Hamiltonians can also be numerically built with the QuantNBody package. For example, a pre-built function allows a quick implementation of the Bose-Hubbard Hamiltonian
 \begin{equation} 
 \hat{H}_{BH} = -t  \sum_{i,j}   a^\dagger_{i} a_{j} 
 + U \sum_{i}  a^\dagger_{i} a_{i}  ( a^\dagger_{i} a_{i}  -1 ) ,
@@ -63,7 +63,7 @@ where $a^\dagger_{i}$ ($a_{i}$) are now the bosonic creation (annihilation) oper
 Here again, the native function implementing the Bose-Hubbard Hamiltonian in the QuantNBody package manages on its own the building of all the one- and two-body bosonic operators *via* the already built single-particle hopping operators. The one-/two-body integrals (i.e. $t$ and $U$) have to be defined by the user. As an illustration, we present in Fig. 2 the ground state properties one can obtain using the native function that implements the Bose-Hubbard Hamiltonian (two bosons on two sites). 
 
   
-![Bose-Hubbard dimer with two bosons. **Left column:** illustration of the system. **Right column:** ground state energy and its decomposition in the many-body basis for the Bose-Hubbard dimer as a function of $U/t$. \label{fig:example}](figure_boson.png)
+![Bose-Hubbard dimer with two bosons. **Left column:** illustration of the system. **Right column:** ground state energy and its decomposition in the many-body basis for the Bose-Hubbard dimer as a function of $U/t$ (with $t = 1$). \label{fig:example}](figure_boson.png)
  
 # Related projects
 
