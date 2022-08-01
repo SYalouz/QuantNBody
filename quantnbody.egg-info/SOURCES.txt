@@ -1,0 +1,17 @@
+LICENSE.txt
+README.md
+setup.py
+quantnbody/__init__.py
+quantnbody.egg-info/PKG-INFO
+quantnbody.egg-info/SOURCES.txt
+quantnbody.egg-info/dependency_links.txt
+quantnbody.egg-info/requires.txt
+quantnbody.egg-info/top_level.txt
+quantnbody/bosonic/BoseHubbard.py
+quantnbody/bosonic/__init__.py
+quantnbody/bosonic/test_bosons_tools.py
+quantnbody/bosonic/tools.py
+quantnbody/fermionic/__init__.py
+quantnbody/fermionic/class_file.py
+quantnbody/fermionic/improved_functions_file.py
+quantnbody/fermionic/tools.py
