@@ -9,7 +9,7 @@
 
 
 QuantNBody is a python package facilitating the implementation and manipulation of quantum many-body systems
-composed of electrons or bosons.
+composed of fermions or bosons.
 It provides a quick and easy way to build many-body operators and wavefunctions and get access
 (in a few python lines) to quantities/objects of interest for research, method developements. This tool can be also of a great help for pedagogical purpose and to help illustrating numerical methods for fermionic or bosonic systems. 
 We provide below a non-exhaustive list of the various possibilites offered by the package:
