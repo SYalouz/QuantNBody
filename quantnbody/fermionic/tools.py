@@ -752,6 +752,7 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     return one_rdm, two_rdm
 
 
+
 def build_hybrid_1rdm_alpha_beta(WFT, a_dagger_a):
     """
     Create a hybrid alpha-beta 1 RDM out of a given wave function
@@ -774,6 +775,7 @@ def build_hybrid_1rdm_alpha_beta(WFT, a_dagger_a):
             one_rdm_alpha_beta[p, q] = WFT.T @ a_dagger_a[2 * p, 2 * q + 1] @ WFT 
             
     return one_rdm_alpha_beta
+
 
 
 def build_transition_1rdm_alpha(WFT_A, WFT_B, a_dagger_a):
@@ -800,6 +802,7 @@ def build_transition_1rdm_alpha(WFT_A, WFT_B, a_dagger_a):
     return transition_one_rdm_alpha
 
 
+
 def build_transition_1rdm_beta(WFT_A, WFT_B, a_dagger_a):
     """
     Create a spin-beta transition 1 RDM out of a given wave function
@@ -822,6 +825,7 @@ def build_transition_1rdm_beta(WFT_A, WFT_B, a_dagger_a):
             transition_one_rdm_beta[p, q] = WFT_A.T @ a_dagger_a[2 * p+1, 2 * q+1] @ WFT_B 
             
     return transition_one_rdm_beta
+
 
 
 def build_transition_1rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
@@ -1150,19 +1154,22 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
     
     return sAsB_coupling
 
+
 def build_spin_subspaces( S2_local, S2_local_target ):
     '''
     
-    TO BE DONE MF
-
+    Create a projector over the many-body space spanning all the configuration 
+    which should be counted to produce a local spin S2_local of value given by  
+    S2_local_target.
+    
     Parameters
     ----------
-    S2_local :  
-    S2_local_target : 
+    S2_local        : Local spin operator assocaited to a restricted number of orbitals
+    S2_local_target : Value of the local spin target to create the assoacited many-body subspace 
 
     Returns
     -------
-    Projector_spin_subspace :  
+    Projector_spin_subspace :  Projector over the many-body subs-space targeted
 
     '''
     S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.A )
@@ -1172,6 +1179,7 @@ def build_spin_subspaces( S2_local, S2_local_target ):
     
     return Projector_spin_subspace
     
+
 # =============================================================================
 #  FUNCTION TO GIVE ACCESS TO BASIC QUANTUM CHEMISTRY DATA FROM PSI4
 # =============================================================================
@@ -1252,7 +1260,7 @@ def get_info_from_psi4( string_geometry,
 
 
 # =============================================================================
-#  FUNCTION TO EXPRESS CORRELATED WAVEFUNCTIONS 
+#  FUNCTION TO EXPRESS CORRELATED WAVE FUNCTIONS 
 #  IN DIFFERENT MOLECULAR ORBITAL BASIS
 # =============================================================================
 
@@ -1375,6 +1383,7 @@ def transform_psi_MO_basis1_in_MO_basis2( Psi_A_MOB1,
                 Psi_A_MOB2[J] += D *  Psi_A_MOB1[I] 
     
     return Psi_A_MOB2
+
 
 # =============================================================================
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
@@ -2740,7 +2749,7 @@ def generate_h_ring_geometry(N_atoms, radius):
 
 def generate_h4_geometry( radius, angle ):
     """
-    A function to build a Hydrogen ring geometry (in the x-y plane)
+    A function to build a Hydrogen rectangle geometry (in the x-y plane)
                          H - H )
                          H - H ) theta 
     radius   :: Radius of the ring
