@@ -656,16 +656,16 @@ def build_2rdm_fh_dipolar_interactions(WFT, a_dagger_a, mask=None):
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
-    big_e_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    big_E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
         for q in range(n_mo):
-            big_e_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+            big_E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
     for p in range(n_mo):
         for q in range(n_mo):
             for r in range(n_mo):
                 for s in range(n_mo):
                     if mask is None or mask[p, q, r, s] != 0:
-                        two_rdm_fh[p, q, r, s] = WFT.T @ big_e_[p, q] @ big_e_[r, s] @ WFT
+                        two_rdm_fh[p, q, r, s] = WFT.T @ big_E_[p, q] @ big_E_[r, s] @ WFT
     return two_rdm_fh
 
 
@@ -675,12 +675,12 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
 
     Parameters
     ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
+    WFT        :  Wave function for which we want to build the spin-free 2-RDM
     a_dagger_a :  Matrix representation of the a_dagger_a operator
 
     Returns
     -------
-    One_RDM_alpha : Spin-free 1-RDM
+    two_rdm : Spin-free 2-RDM
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
@@ -711,7 +711,7 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
 
 def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     """
-    Create a spin-free 2 RDM out of a given wave function
+    Create both spin-free 1- and 2-RDMs out of a given wave function
 
     Parameters
     ----------
@@ -720,8 +720,8 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
 
     Returns
     -------
-    One_RDM_alpha : Spin-free 1-RDM
-
+    one_rdm : Spin-free 1-RDM
+    two_rdm : Spin-free 2-RDM
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     one_rdm = np.zeros((n_mo, n_mo))
@@ -752,7 +752,148 @@ def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     return one_rdm, two_rdm
 
 
-def my_state(slater_determinant, nbody_basis):
+def build_hybrid_1rdm_alpha_beta(WFT, a_dagger_a):
+    """
+    Create a hybrid alpha-beta 1 RDM out of a given wave function
+    (Note : alpha for the lines, and beta for the columns)
+    
+    Parameters
+    ----------
+    WFT        :  Wave function for which we want to build the 1-RDM
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm_alpha_beta : spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm_alpha_beta = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            one_rdm_alpha_beta[p, q] = WFT.T @ a_dagger_a[2 * p, 2 * q + 1] @ WFT 
+            
+    return one_rdm_alpha_beta
+
+
+def build_transition_1rdm_alpha(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-alpha transition 1 RDM out of a given wave function
+
+    Parameters
+    ----------
+    WFT_A      :  Left Wave function will be used for the Bra
+    WFT_B      :  Right Wave function will be used for the Ket
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_one_rdm_alpha : transition spin-alpha 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    transition_one_rdm_alpha = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            transition_one_rdm_alpha[p, q] = WFT_A.T @ a_dagger_a[2 * p, 2 * q] @ WFT_B 
+            
+    return transition_one_rdm_alpha
+
+
+def build_transition_1rdm_beta(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-beta transition 1 RDM out of a given wave function
+
+    Parameters
+    ----------
+    WFT_A      :  Left Wave function will be used for the Bra
+    WFT_B      :  Right Wave function will be used for the Ket
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_one_rdm_beta : transition spin-beta 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    transition_one_rdm_beta = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            transition_one_rdm_beta[p, q] = WFT_A.T @ a_dagger_a[2 * p+1, 2 * q+1] @ WFT_B 
+            
+    return transition_one_rdm_beta
+
+
+def build_transition_1rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-free transition 1 RDM out of two given wave functions
+
+    Parameters
+    ----------
+    WFT_A      :  Left Wave function will be used for the Bra
+    WFT_B      :  Right Wave function will be used for the Ket
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_one_rdm : spin-free transition 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    global E_
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+            
+    transition_one_rdm = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            transition_one_rdm[p, q] = WFT_A.T @ E_[p,q] @ WFT_B 
+            
+    return transition_one_rdm 
+
+
+def build_transition_2rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-free transition 2 RDM out of two given wave functions
+
+    Parameters
+    ----------
+    WFT_A      :  Left Wave function will be used for the Bra
+    WFT_B      :  Right Wave function will be used for the Ket
+    a_dagger_a :  Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_two_rdm : Spin-free transition 2-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    
+    global E_
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+            
+    transition_two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))         
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo): 
+                    transition_two_rdm[p, q, r, s] = WFT_A.T @ E_[p, q] @ E_[r, s] @ WFT_B
+                    if q == r:
+                        transition_two_rdm[p, q, r, s] += - WFT_A.T @ E_[p, s] @ WFT_B 
+
+    return transition_two_rdm
+
+
+# =============================================================================
+#   FUNCTIONS TO CREAT PERSONALIZED MANY_BODY STATES
+# =============================================================================
+
+def my_state( slater_determinant, nbody_basis ):
     """
     Translate a Slater determinant (occupation number list) into a many-body
     state referenced into a given Many-body basis.
