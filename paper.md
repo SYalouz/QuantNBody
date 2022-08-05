@@ -30,11 +30,11 @@ bibliography: paper.bib
 The numerical encoding of quantum many-body problems in the language of second quantization is a crucial step for accessing the properties of model or *ab initio* systems in quantum chemistry and physics.  In practice, it requires developing a code that can build sparse matrix representations of different quantum operators in a given quantum many-body basis (*e.g.* Hamiltonian of a reference system, spin or excitation operators).  Usually, this aspect is kept as a ''blackbox'' to spare the user from cumbersome numerical parts. In general, this type of implementation is appropriate for regular applications of methods. Nevertheless, it can be problematic for researchers in need of numerical tools to quickly develop and test-drive new methodologies. 
 
 The 'QuantNBody' Python package was designed for that purpose: helping theoreticians in need of a simple and reliable tool to numerically create and manipulate objects related to quantum many-body systems (with either fermionic or bosonic particles). 
-It follows a same philosophy as other theoretician-friendly many-body packages such as Quimb [gray2018quimb], Quspin [weinberg2017quspin,weinberg2019quspin] or OpenFermion [mcclean2020openfermion]  to cite but a few. 
+It follows a same philosophy as other theoretician-friendly many-body packages such as Quimb [@gray2018quimb], Quspin [@weinberg2017quspin,@weinberg2019quspin] or OpenFermion [@mcclean2020openfermion]  to cite but a few. 
 
 # Framework of the package
 
-The QuantNbody package is employs the Scipy Package [2020SciPy-NMeth] for the creation of sparse matrices representation of many-body operators. The Numba package [lam2015numba] is also used to accelerate calculation when possible.
+The QuantNbody package is employs the Scipy Package [@2020SciPy-NMeth] for the creation of sparse matrices representation of many-body operators. The Numba package [@lam2015numba] is also used to accelerate calculation when possible.
 The framework of the package lies in two fundamental ingredients. The first one is the creation of a reference many-body vector basis (based on a total number of quantum particles and modes/orbitals to fill) in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any particle-number conserving many-body operator : the single-body hopping operators $a^\dagger_p a_q$.  
 Once these two ingredients have been created, the user can employ various pre-built functions in order to (i) construct different types of many-body operators (*e.g.* hamiltonians, spin and excitation operators), (ii) manipulate/visualize quantum many-body states. All the native functions have been thought to facilitate calculations on many-body systems for new users and young students. Beyond this, the QuantNBody package has been also designed to provide flexibility to experimented users and researchers to develop their own tools to implement/test their own methods.
 
@@ -74,8 +74,7 @@ Here again, the native function implementing the Bose-Hubbard Hamiltonian in the
  
 # Related projects
 
-The QuantNBody package is being currently used in the "Laboratoire de Chimie Quantique de Strasbourg" in several projects dedicated to strongly correlated systems. These projects including the study of spin properties in metal-ligand molecular systems, the development of embedding methods for large fermionic systems and the development of new variational computational methods for bosonic systems to cite but a few. As future developement, we plan to extend the capacities of the package to the treatment of hybrid systems mixing both fermions and phonons degrees of freedom (*e.g.* to treat polaritonic Hamiltonian or even exciton-phonon systems)
-
+The QuantNBody package is being currently used in the "Laboratoire de Chimie Quantique de Strasbourg" in several projects dedicated to strongly correlated systems. These projects including the study of spin properties in metal-ligand molecular systems, the development of embedding methods for large fermionic systems and the development of new variational computational methods for bosonic systems to cite but a few. As future developments, we plan to extend the capacities of the package to the treatment of hybrid systems mixing both fermions and phonons degrees of freedom thus allowing the treatment of polaritonic or even exciton-phonon systems.
 
 # Acknowledgements
 
