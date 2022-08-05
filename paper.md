@@ -14,7 +14,7 @@ authors:
   - name: Sajanthan Sekaran
     affiliation: 1
 affiliations:
- - name: Laboratoire de Chimie Quantique, Institut de Chimie, CNRS/Universit'e de Strasbourg, 4 rue Blaise Pascal, 67000 Strasbourg, France
+ - name: Laboratoire de Chimie Quantique, Institut de Chimie, CNRS/Université de Strasbourg, 4 rue Blaise Pascal, 67000 Strasbourg, France
    index: 1
 date: 11 March 2022
 bibliography: paper.bib
@@ -23,13 +23,13 @@ bibliography: paper.bib
 
 # Summary
 
-The 'QuantNBody' is package is a Python numerical toolbox for quantum chemists/physicists interested in the development of methodologies to study quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way to build matrix representations of bosonic and fermionic quantum many-body operators (*e.g.* hamiltonians, spin or excitation operators) and get access to quantities/objects of interest (*e.g.* energies, reduced density matrices, many-body wave functions). The code includes various native functions and it is flexible enough to help users in building their own numerical tools to implement new methods. 
+The 'QuantNBody' package is a Python toolbox for quantum chemists/physicists interested in methods development to study quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way to build matrix representations of bosonic and fermionic quantum many-body operators (*e.g.* hamiltonians, spin or excitation operators) and get access to quantities/objects of interest (*e.g.* energies, reduced density matrices, many-body wave functions). The code includes various native functions and it is flexible enough to help users in building their own numerical tools to implement new methods. 
 
 # Statement of need
 
-The manipulation of many-body operators in the language of second quantization is a crucial step for accessing the properties of model or *ab initio* systems in quantum chemistry and physics.  From a numerical point of view, this requires developing codes that can build matrix representations of quantum operators in a given quantum many-body basis (*e.g.* Hamiltonians, spin or excitation operators).  In a great majority of the case, this aspect is kept as a ''blackbox'' in codes to spare the users from cumbersome numerical parts and to facilitate their use of already implemented methods. Nevertheless, this type of implementation becomes a real obstacle to overcome for researchers in need of reliable numerical tools to quickly develop and test new methodologies based on the second quantization algebra. 
+The manipulation of many-body operators in the language of second quantization is a crucial step for accessing the properties of model or *ab initio* systems in quantum chemistry and physics.  From a numerical point of view, this requires developing codes that can build matrix representations of quantum operators in a given quantum many-body basis (*e.g.* Hamiltonians, spin or excitation operators).  In a great majority of the case, this aspect is kept as a ''blackbox'' in codes to spare the users from cumbersome numerical parts and to facilitate their use of already implemented methods. Nevertheless, this type of implementation becomes a real obstacle to overcome for researchers in need of reliable numerical tools to quickly develop and test new methodologies based on second quantization algebra. 
 
-The 'QuantNBody' python package was designed for that purpose: helping theoreticians with an efficient and simple-to-use toolbox to numerically create and manipulate objects related to quantum many-body systems (with either fermionic or bosonic particles). The code's philosophy is thus similar to several other packages such as Quimb [@gray2018quimb], Quspin [@weinberg2017quspin;@weinberg2019quspin] or OpenFermion [@mcclean2020openfermion]  which were originally developed  as theoretician-friendly numerical tools.
+The 'QuantNBody' python package was designed answer this problem and to be theoretician-friendly. More precisely, it provides a simple-to-use and efficient numerical toolbox to create and manipulate objects related to quantum many-body systems (with either fermionic or bosonic particles). This package can be seen as a complementary contribution to the family of packages dedicated to quantum many-body systems such as Quimb [@gray2018quimb], Quspin [@weinberg2017quspin;@weinberg2019quspin] or OpenFermion [@mcclean2020openfermion]  which were originally with a same philosophy 
 
 # Framework of the package
 
