@@ -14,7 +14,8 @@ authors:
   - name: Sajanthan Sekaran
     affiliation: 1
 affiliations:
- - name: Laboratoire de Chimie Quantique, 4 rue Blaise Pascal, 67000 Strasbourg, France
+ - name: Laboratoire de Chimie Quantique, Institut de Chimie, 
+ CNRS/Université de Strasbourg, 4 rue Blaise Pascal, 67000 Strasbourg, France
    index: 1
 date: 11 March 2022
 bibliography: paper.bib
@@ -27,16 +28,13 @@ bibliography: paper.bib
 
 # Statement of need
 
-The numerical encoding of quantum many-body problems in the language of second quantization is a crucial step for accessing the properties of model or *ab initio* systems in quantum chemistry and physics.  In practice, it requires developing a code that can build sparse matrix representations of different quantum operators in a given quantum many-body basis (*e.g.* Hamiltonian of a reference system, spin or excitation operators).  Usually, this aspect is kept as a ''blackbox'' to spare the user from cumbersome numerical parts. In general, this type of implementation is appropriate for regular applications of methods. Nevertheless, it can be problematic for researchers in need of numerical tools to quickly develop and test-drive new methodologies. 
+The manipulation of many-body operators in the language of second quantization is a crucial step for accessing the properties of model or *ab initio* systems in quantum chemistry and physics.  From a numerical point of view, such manipulation can be realized by the use of  codes that can build matrix representations of these quantum operators in a given quantum many-body basis (*e.g.* Hamiltonians, spin or excitation operators).  In a great majority of the case, this aspect is kept as a ''blackbox'' in the codes to spare the users from cumbersome numerical parts and to facilitate their use of already implemented methods. Nevertheless, this type of implementation becomes a real wall to overcome for researchers in need of reliable numerical tools to quickly develop and test-drive new methodologies based on second quantization algebra. 
 
-The 'QuantNBody' Python package was designed for that purpose: helping theoreticians in need of a simple and reliable tool to numerically create and manipulate objects related to quantum many-body systems (with either fermionic or bosonic particles). 
-It follows a same philosophy as other theoretician-friendly many-body packages such as Quimb [@gray2018quimb], Quspin [@weinberg2017quspin,@weinberg2019quspin] or OpenFermion [@mcclean2020openfermion]  to cite but a few. 
+The 'QuantNBody' Python package was designed for that purpose: helping theoreticians with a simple and efficient tool to numerically create and manipulate objects related to quantum many-body systems (with either fermionic or bosonic particles). It follows a same philosophy as other theoretician-friendly many-body packages such as Quimb [@gray2018quimb], Quspin [@weinberg2017quspin;@weinberg2019quspin] or OpenFermion [@mcclean2020openfermion]  to cite but a few. 
 
 # Framework of the package
 
-The QuantNbody package is employs the Scipy Package [@2020SciPy-NMeth] for the creation of sparse matrices representation of many-body operators. The Numba package [@lam2015numba] is also used to accelerate calculation when possible.
-The framework of the package lies in two fundamental ingredients. The first one is the creation of a reference many-body vector basis (based on a total number of quantum particles and modes/orbitals to fill) in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any particle-number conserving many-body operator : the single-body hopping operators $a^\dagger_p a_q$.  
-Once these two ingredients have been created, the user can employ various pre-built functions in order to (i) construct different types of many-body operators (*e.g.* hamiltonians, spin and excitation operators), (ii) manipulate/visualize quantum many-body states. All the native functions have been thought to facilitate calculations on many-body systems for new users and young students. Beyond this, the QuantNBody package has been also designed to provide flexibility to experimented users and researchers to develop their own tools to implement/test their own methods.
+The QuantNbody package is employs the Scipy Package [@2020SciPy-NMeth] for the creation of sparse matrices representation of many-body operators. The Numba package [@lam2015numba] is also used to accelerate calculation when possible. The framework of the package lies in two fundamental ingredients. The first one is the creation of a reference many-body vector basis (based on a total number of quantum particles and modes/orbitals to fill) in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any particle-number conserving many-body operator : the single-body hopping operators $a^\dagger_p a_q$.  Once these two ingredients have been created, the user can employ various pre-built functions in order to (i) construct different types of many-body operators (*e.g.* hamiltonians, spin and excitation operators), (ii) manipulate/visualize quantum many-body states. All the native functions have been thought to facilitate calculations for new users and young students. Beyond this, the QuantNBody package has been also designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.
 
 # A quick illustration
 
