@@ -1668,7 +1668,7 @@ def brute_force_orbital_optimization( one_rdm,
                                       show_me=False,
                                       SAD_guess = False):
     '''
-    Method implementing a brute force orbtial ptimzation using scipy optimizer
+    Method implementing a brute force orbtial optimzation using scipy optimizer
 
     Parameters
     ----------
