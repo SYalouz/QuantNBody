@@ -2757,6 +2757,5 @@ def generate_h4_geometry( radius, angle ):
     h4_geometry = """ H   {0}   {1}  0.
                       H   {0}  -{1}  0. 
                       H  -{0}   {1}  0.
-                      H  -{0}  -{1}  0.
-                      symmetry c1""".format( radius*np.cos(angle/2.), radius*np.sin(angle/2.) ) 
+                      H  -{0}  -{1}  0. """.format( radius*np.cos(angle/2.), radius*np.sin(angle/2.) ) 
     return h4_geometry
