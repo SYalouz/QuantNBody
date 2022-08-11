@@ -38,22 +38,22 @@ def RUN_SACASSCF_PSI4(string_geo,
 
     psi4.geometry(string_geo)
     psi4.set_options({'basis': basisset,
-                      'DETCI_FREEZE_CORE': False,
+                      # 'DETCI_FREEZE_CORE': False,
                       'reference': 'RHF',
-                      'scf_type': 'DIRECT',  # set e_convergence and d_convergence to 1e-8 instead of 1e-6
+                       'scf_type': 'DIRECT',  # set e_convergence and d_convergence to 1e-8 instead of 1e-6
                       'num_roots': 2,
-                      'frozen_docc': [0],
+                       # 'frozen_docc': [0],
                       'restricted_docc': [len(frozen_indices)],
                       'active': [len(active_indices)],
-                      'restricted_uocc': [restricted_UOCC],
-                      'frozen_uocc': [0],
+                      'restricted_uocc': [len(virtual_indices)],
+                       # 'frozen_uocc': [0],
                       'mcscf_maxiter': 2000,
                       'avg_states': [0, 1],
                       'avg_weights': [0.5, 0.5],
-                      'S': 0,
-                      # 'MCSCF_R_CONVERGENCE' : 1e-7,
-                      # 'MCSCF_E_CONVERGENCE' : 1e-7,
-                      'MCSCF_ALGORITHM': 'AH'
+                       'S': 0,
+                       'MCSCF_R_CONVERGENCE' : 1e-7,
+                       'MCSCF_E_CONVERGENCE' : 1e-7,
+                       # 'MCSCF_ALGORITHM': 'AH'
                       })
 
     Escf, wfnSCF = psi4.energy('scf', return_wfn=True)
@@ -74,15 +74,16 @@ psi4.core.set_output_file("output_Psi4.txt", False)
 # General Quantum chemistry parameters  =======
 basisset = 'sto-3g'
 nelec_active = 2  # Number of active electrons in the Active-Space
-frozen_indices = tuple(range(1))
-active_indices = tuple(range(1, 5))
-virtual_indices = tuple(range(5, 6))
-N_MO_total = (len(frozen_indices)
+frozen_indices   = [ i for i in range(1) ]
+active_indices   = [ i for i in range(1,3) ]
+virtual_indices  = [ i for i in range(3,6) ] 
+N_MO_total = (  len(frozen_indices)
               + len(active_indices)
               + len(virtual_indices))  # Total number of MOs
 
 # Definition of the states weights : EQUI-ENSEMBLE 
-w_A = w_B = 0.5
+w_A = 0.5
+w_B = 0.5
 
 # Energy convergence criterium for the global optimization 
 E_thresh = 1e-4
@@ -103,7 +104,7 @@ S_2, S_p, S_Z = qnb.fermionic.tools.build_s2_sz_splus_operator(a_dagger_a)
 
 # %%
 
-list_r = np.linspace(0.25, 2.2, 10)
+list_r = np.linspace(0.25, 2.2, 10) 
 
 E_0_qnb = []
 E_1_qnb = []
@@ -274,11 +275,12 @@ plt.rc('lines', linewidth='2')
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(8, 6))
 ax1.plot(list_r, E_0_psi4, color='red', label='$E_0^{psi4}$')
 ax1.plot(list_r, E_1_psi4, color='red', label='$E_1^{psi4}$')
-ax1.plot(list_r, E_0_qnb, color='blue', marker='o', label='$E_0^{qnb}$')
-ax1.plot(list_r, E_1_qnb, color='blue', marker='o', label='$E_1^{qnb}$')
+ax1.plot( list_r,  E_0_qnb, color='blue', ls=':', marker='o', label='$E_0^{qnb}$')
+ax1.plot( list_r,  E_1_qnb, color='blue', ls=':', marker='o', label='$E_1^{qnb}$')
 ax1.set_xlabel('Intertatomic distance $r_{Li-H}$ ($\AA$) ', size=22)
 ax1.set_ylabel('Energy (Ha)', size=22)
-ax1.autoscale(enable=True, axis='y', tight=None)
+# ax1.autoscale(enable=True, axis='y', tight=None)
 ax1.legend(fontsize='x-large')
+ax1.set_ylim(-8,-5)
 ax1.grid()
 plt.show()

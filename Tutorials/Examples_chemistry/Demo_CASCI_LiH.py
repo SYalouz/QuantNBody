@@ -75,7 +75,7 @@ S_2, S_p, S_Z = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
   
-list_r = np.linspace(0.25, 2.2, 15) 
+list_r = np.linspace(0.25, 2.2, 10) 
 
 E_0_qnb = []
 E_1_qnb = []
@@ -154,8 +154,8 @@ for r in tqdm( list_r ):
 
 #%%
  
-plt.rc('font',  family='Helvetica')
-# plt.rc('mathtext', fontset='stix')
+plt.rc('font', family='Helvetica')
+plt.rc('mathtext', fontset='stix')
 plt.rc('xtick', labelsize='xx-large')
 plt.rc('ytick', labelsize='xx-large')
 plt.rc('lines', linewidth='2')
@@ -163,11 +163,11 @@ plt.rc('lines', linewidth='2')
 fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(8, 6)) 
 ax1.plot( list_r,  E_0_psi4, color='red',  label='$E_0^{psi4}$')
 ax1.plot( list_r,  E_1_psi4, color='red',   label='$E_1^{psi4}$')
-ax1.plot( list_r,  E_0_qnb, color='blue', ls='', marker='o', label='$E_0^{qnb}$')
-ax1.plot( list_r,  E_1_qnb, color='blue', ls='', marker='o', label='$E_1^{qnb}$')
+ax1.plot( list_r,  E_0_qnb, color='blue', ls=':', marker='o', label='$E_0^{qnb}$')
+ax1.plot( list_r,  E_1_qnb, color='blue', ls=':', marker='o', label='$E_1^{qnb}$')
 ax1.set_xlabel('Intertatomic distance $r_{Li-H}$ ($\AA$) ', size=22)
 ax1.set_ylabel('Energy (Ha)', size=22)
-ax1.autoscale(enable=True, axis='y', tight=None)
+ax1.set_ylim(-8,-5)
 ax1.legend(fontsize='x-large')
 ax1.grid()
 plt.show()
