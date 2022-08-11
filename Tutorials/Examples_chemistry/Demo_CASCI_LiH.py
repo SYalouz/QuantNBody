@@ -1,7 +1,7 @@
 # ==========================================================================================
 # ==========================================================================================
 # 
-# A code to demonstrate how to implement a FCI method with 
+# A code to demonstrate how to implement a CASCI method with 
 # the QuantNBody package on the LiH molecule.
 # The results are compared to the FCI method already implemented in the
 # Psi4 quantum chemistry package.

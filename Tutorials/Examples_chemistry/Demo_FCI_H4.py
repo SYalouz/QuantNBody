@@ -2,7 +2,7 @@
 # ==========================================================================================
 # 
 # A code to demonstrate how to implement a FCI method with 
-# the QuantNBody package on the LiH molecule.
+# the QuantNBody package on the H4 molecule.
 # The results are compared to the FCI method already implemented in the
 # Psi4 quantum chemistry package.
 #

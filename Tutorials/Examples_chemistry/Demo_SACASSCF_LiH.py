@@ -2,7 +2,7 @@
 # ==========================================================================================
 # 
 # A code to demonstrate how to implement a State-Averaged CASSCF method with 
-# the QuantNBody package on the formaldimine molecule.
+# the QuantNBody package on the Li-H molecule.
 # The results are compared to the SA-CASSCF method already implemented in the
 # Psi4 quantum chemistry package.
 #
