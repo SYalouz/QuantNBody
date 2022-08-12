@@ -470,8 +470,7 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
     """
     if active_indices is not None:
         first_act_index = active_indices[0] 
-        n_active_mo = len( active_indices )
-        print("THATS A TEST",first_act_index)
+        n_active_mo = len( active_indices ) 
     
     one_rdm = np.zeros((n_mo_total, n_mo_total))
     two_rdm = np.zeros((n_mo_total, n_mo_total, n_mo_total, n_mo_total))
@@ -894,7 +893,7 @@ def build_transition_2rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
 
 
 # =============================================================================
-#   FUNCTIONS TO CREAT PERSONALIZED MANY_BODY STATES
+#   FUNCTIONS TO CREAT PERSONALIZED MANY_BODY STATES AND PROJECTORS
 # =============================================================================
 
 def my_state( slater_determinant, nbody_basis ):
@@ -905,7 +904,7 @@ def my_state( slater_determinant, nbody_basis ):
     Parameters
     ----------
     slater_determinant  : occupation number list
-    nbody_basis   : List of many-body states (occupation number states)
+    nbody_basis         : List of many-body states (occupation number states)
 
     Returns
     -------
@@ -916,6 +915,53 @@ def my_state( slater_determinant, nbody_basis ):
     state[kappa] = 1.
 
     return state
+
+def build_projector_active_space( n_elec, 
+                                  frozen_indices,
+                                  active_indices,
+                                  virtual_indices,
+                                  nbody_basis ):
+    """
+    Build a many-body projector operator including all the many-body configurations
+    respecting an active space structure such that :
+        
+                       | Phi > = | frozen, active, virtual >
+
+    Parameters
+    ----------
+    n_elec          : Total number of electron in the system
+    frozen_indices  : List of doubly occupied frozen orbitals
+    active_indices  : List of active orbitals 
+    virtual_indices : List of virtual unoccupied orbitals 
+    nbody_basis     : List of many-body states (occupation number states)
+
+    Returns
+    -------
+    Proj_AS :  Projector assocaited to the active-space defined
+
+    """
+    n_mo = len(frozen_indices) + len(active_indices) + len(virtual_indices)
+    N_elec_frozen = 2 * len(frozen_indices) 
+    state_created_frozen = np.zeros(2*n_mo, dtype=np.int32)
+    state_created_active = np.zeros(2*n_mo, dtype=np.int32)
+    for i in range(n_mo):
+        if (i in frozen_indices):
+            state_created_frozen[2*i]   = 1
+            state_created_frozen[2*i+1] = 1 
+        elif (i in active_indices):
+            state_created_active[2*i]   = 1
+            state_created_active[2*i+1] = 1    
+    
+    Proj_AS = np.zeros((len(nbody_basis),len(nbody_basis)))
+    for state in nbody_basis:
+        if (    state_created_frozen @ state == N_elec_frozen 
+            and state_created_active @ state == n_elec - N_elec_frozen ):
+                
+            fstate_created = my_state( state, nbody_basis )
+            Proj_AS += np.outer(fstate_created, fstate_created)
+            # print(state) 
+            
+    return Proj_AS
 
 
 # =============================================================================
