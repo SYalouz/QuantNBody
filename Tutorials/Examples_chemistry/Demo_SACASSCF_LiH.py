@@ -283,4 +283,6 @@ ax1.set_ylabel('Energy (Ha)', size=22)
 ax1.legend(fontsize='x-large')
 ax1.set_ylim(-8,-5)
 ax1.grid()
+
+
 plt.show()

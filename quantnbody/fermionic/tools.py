@@ -477,7 +477,10 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
     
     global E_
     global e_
-
+    
+    E_ = np.empty((n_active_mo, n_active_mo), dtype=object)
+    e_ = np.empty((n_active_mo, n_active_mo, n_active_mo, n_active_mo), dtype=object)
+    
     if active_indices is not None:
         for p in range(n_active_mo):
             for q in range(n_active_mo):
@@ -842,7 +845,7 @@ def build_transition_1rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
     transition_one_rdm : spin-free transition 1-RDM
 
     """
-    n_mo = np.shape(a_dagger_a)[0] // 2
+    n_mo = np.shape(a_dagger_a)[0] // 2 
     global E_
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
@@ -872,8 +875,7 @@ def build_transition_2rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
     transition_two_rdm : Spin-free transition 2-RDM
 
     """
-    n_mo = np.shape(a_dagger_a)[0] // 2
-    
+    n_mo = np.shape(a_dagger_a)[0] // 2 
     global E_
     E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(n_mo):
@@ -916,11 +918,13 @@ def my_state( slater_determinant, nbody_basis ):
 
     return state
 
+
 def build_projector_active_space( n_elec, 
                                   frozen_indices,
                                   active_indices,
                                   virtual_indices,
-                                  nbody_basis ):
+                                  nbody_basis,
+                                  show_states=False ):
     """
     Build a many-body projector operator including all the many-body configurations
     respecting an active space structure such that :
@@ -944,6 +948,11 @@ def build_projector_active_space( n_elec,
     N_elec_frozen = 2 * len(frozen_indices) 
     state_created_frozen = np.zeros(2*n_mo, dtype=np.int32)
     state_created_active = np.zeros(2*n_mo, dtype=np.int32)
+    
+    if show_states:
+        print()
+        print(' =>> List of states considered in the projector')
+        
     for i in range(n_mo):
         if (i in frozen_indices):
             state_created_frozen[2*i]   = 1
@@ -959,7 +968,9 @@ def build_projector_active_space( n_elec,
                 
             fstate_created = my_state( state, nbody_basis )
             Proj_AS += np.outer(fstate_created, fstate_created)
-            # print(state) 
+            
+            if show_states:  
+               print(state) 
             
     return Proj_AS
 
@@ -1390,6 +1401,7 @@ def scalar_product_different_MO_basis( Psi_A_MOB1,
     return scalar_product
 
 
+
 def transform_psi_MO_basis1_in_MO_basis2( Psi_A_MOB1, 
                                           C_MOB1,
                                           C_MOB2,
@@ -1430,6 +1442,101 @@ def transform_psi_MO_basis1_in_MO_basis2( Psi_A_MOB1,
     
     return Psi_A_MOB2
 
+
+def TEST_transform_psi_MO_basis1_in_MO_basis2( Psi_A_MOB1, 
+                                              C_MOB1,
+                                              C_MOB2,
+                                              nbody_basis, 
+                                              frozen_indices=None):
+    """
+    Transform an intial multi-configurational wavefunction expressed with 
+    an intial molecular orbital basis 1 into another molecular orbital basis 2
+            
+    Parameters
+    ----------
+    Psi_A_MOB1  : Wavefunction A (will be a Bra) expressed in the first orbital basis 
+    C_MOB1      : First basis' Molecular orbital coefficient matrix
+    C_MOB2      : Second basis' Molecular orbital coefficient matrix
+    nbody_basis : List of many-body state
+
+    Returns
+    -------
+    Psi_A_MOB2 :  Final shape of the multiconfigruation wft in the second MO basis
+
+    """
+    dim_H = len(nbody_basis)
+    
+    # Overlap matrix in the common basis
+    S = scipy.linalg.inv( C_MOB1 @ C_MOB1.T )  
+    # Building the matrix expressing the MO from B1 in the B2 basis
+    C_B2_B1 = C_MOB1.T @ S @ C_MOB2 
+        
+    frozen_spinorb_indices = []
+    if frozen_indices != None:
+        frozen_spinorb_indices = [ 1 for i in range(2*len(frozen_indices)) ] 
+        
+    Psi_A_MOB2 = np.zeros_like(Psi_A_MOB1)
+    for I in range(dim_H): 
+        if abs(Psi_A_MOB1[I]) > 1e-8: 
+            # Finding the indices of the spinorbitals which are occupied in the Det_I
+            occ_spinorb_Det_I = np.nonzero( frozen_spinorb_indices +  list(nbody_basis[I]) )[0].tolist()  
+            for J in range(dim_H):   
+                # Finding the indices of the spinorbitals which are occupied in the Det_J
+                occ_spinorb_Det_J = np.nonzero( frozen_spinorb_indices + list(nbody_basis[J]) )[0].tolist()  
+                D  = weight_det( C_B2_B1, occ_spinorb_Det_I, occ_spinorb_Det_J )
+                Psi_A_MOB2[J] += D *  Psi_A_MOB1[I] 
+    
+    return Psi_A_MOB2
+
+
+def TEST_scalar_product_different_MO_basis( Psi_A_MOB1,
+                                            Psi_B_MOB2,
+                                            C_MOB1,
+                                            C_MOB2,
+                                            nbody_basis,
+                                            frozen_indices=None):
+    """
+    Evaluate the non-trivial scalar product of two multi-configurational 
+    wavefunction expressed in two different moelcular orbital basis.
+            
+    Parameters
+    ----------
+    Psi_A_MOB1  : Wavefunction A (will be a Bra) expressed in the first orbital basis
+    Psi_B_MOB2  : Wavefunction B (will be a Ket) expressed in the second orbital basis
+    C_MOB1      : First basis' Molecular orbital coefficient matrix
+    C_MOB2      : Second basis' Molecular orbital coefficient matrix
+    nbody_basis : List of many-body state
+
+    Returns
+    -------
+    scalar_product :  Amplitude of the scalar product
+
+    """
+    dim_H = len( nbody_basis )
+    
+    # Overlap matrix in the common basis
+    S = scipy.linalg.inv( C_MOB1 @ C_MOB1.T )  
+    # Building the matrix expressing the MO from B1 in the B2 basis
+    C_B2_B1 = C_MOB1.T @ S @ C_MOB2
+    
+    frozen_spinorb_indices = []
+    if frozen_indices != None:
+        frozen_spinorb_indices = [ 1 for i in range(2*len(frozen_indices)) ]
+      
+    scalar_product = 0  
+    for I in range(dim_H): 
+        if abs(Psi_A_MOB1[I]) > 1e-8: 
+            # Finding the indices of the spinorbitals which are occupied in the Det_I 
+            occ_spinorb_Det_I = np.nonzero( frozen_spinorb_indices +  list(nbody_basis[I]) )[0].tolist()
+            
+            for J in range(dim_H): 
+                if abs(Psi_B_MOB2[J]) > 1e-8:  
+                    # Finding the indices of the spinorbitals which are occupied in the Det_J
+                    occ_spinorb_Det_J = np.nonzero( frozen_spinorb_indices +  list(nbody_basis[J]) )[0].tolist()   
+                    D  = weight_det( C_B2_B1, occ_spinorb_Det_I, occ_spinorb_Det_J )
+                    scalar_product += D * np.conj(Psi_A_MOB1[I]) * Psi_B_MOB2[J]
+    
+    return scalar_product
 
 # =============================================================================
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
@@ -2166,7 +2273,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
         
         Eig_val_Aug_Hess, Eig_vec_Aug_Hess = np.linalg.eigh(Aug_Hess)
         step_k = np.reshape( Eig_vec_Aug_Hess[1:, 0] / Eig_vec_Aug_Hess[0, 0], np.shape(SA_Grad_filtered) )
-
+         
         if (np.max(np.abs(step_k)) > 0.05):
             step_k = 0.05 * step_k / np.max(np.abs(step_k))
 
@@ -2189,6 +2296,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
         
         # Generator of the rotation : the kew-matrix K = skew(k)
         K_mat = transform_vec_to_skewmatrix(k_vec, n_mo_optimized)
+        # print( K_mat )
         
         # Rotation operator in the MO basis : U = exp(-K)
         U_OO = ( scipy.linalg.expm( - K_mat ) ).real

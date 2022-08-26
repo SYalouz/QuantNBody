@@ -42,14 +42,13 @@ list_U = np.linspace(0, 6, 10)
 
 # Hopping terms
 h_MO = np.zeros((n_mo,n_mo))
-for site in range(n_mo):
-    for site_ in range(site,n_mo-1):
-        h_MO[site,site_] =  h_MO[site_,site] = -1
+for site in range(n_mo-1): 
+    h_MO[site,site+1] =  h_MO[site+1,site] = -1
 h_MO[0,n_mo-1] = h_MO[n_mo-1,0] =  -1
 
 # MO energies 
-for site in range(n_mo): 
-    h_MO[site,site] =  - site
+# for site in range(n_mo): 
+#     h_MO[site,site] =  - site
     
 E_0_qnb = []
 E_1_qnb = []
