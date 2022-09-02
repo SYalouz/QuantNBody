@@ -38,7 +38,7 @@ S_2, s_z, s_plus = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
   
-list_U = np.linspace(0, 6, 10)
+list_U = np.linspace(0, 6, 20)
 
 # Hopping terms
 h_MO = np.zeros((n_mo,n_mo))

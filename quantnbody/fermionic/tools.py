@@ -1489,15 +1489,16 @@ def TEST_transform_psi_MO_basis1_in_MO_basis2( Psi_A_MOB1,
     return Psi_A_MOB2
 
 
-def TEST_scalar_product_different_MO_basis( Psi_A_MOB1,
-                                            Psi_B_MOB2,
-                                            C_MOB1,
-                                            C_MOB2,
-                                            nbody_basis,
-                                            frozen_indices=None):
+def scalar_product_different_MO_basis_with_frozen_orbitals( Psi_A_MOB1,
+                                                            Psi_B_MOB2,
+                                                            C_MOB1,
+                                                            C_MOB2,
+                                                            nbody_basis,
+                                                            frozen_indices=None):
     """
     Evaluate the non-trivial scalar product of two multi-configurational 
-    wavefunction expressed in two different moelcular orbital basis.
+    wavefunction expressed in two different moelcular orbital basis. Each 
+    of these wavefunction has a same number of doubly occupied (frozen) orbital.
             
     Parameters
     ----------
