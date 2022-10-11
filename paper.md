@@ -71,7 +71,7 @@ Here again, the native function implementing the Bose-Hubbard Hamiltonian in the
  
 # Related projects
 
-The QuantNBody package is being currently used in the "Laboratoire de Chimie Quantique de Strasbourg" in several projects dedicated to strongly correlated systems. These projects including the study of spin properties in metal-ligand molecular systems (see Ref. [@roseiro2022excited]), the development of embedding methods for large fermionic systems (see Ref. [@yalouz2022quantum]), and the development of new variational computational methods for bosonic systems to cite but a few. As future developments, we plan to extend the capacities of the package to the treatment of hybrid systems mixing both fermions and bosons degrees of freedom (*e.g.* for polaritonic chemistry or exciton-phonon systems).
+The QuantNBody package is being currently used in the "Laboratoire de Chimie Quantique de Strasbourg" in several projects dedicated to strongly correlated systems. These projects including the study of spin properties in metal-ligand molecular systems [@roseiro2022excited], the development of embedding methods for large fermionic systems [@yalouz2022quantum], and the development of new variational computational methods for bosonic systems to cite but a few. As future developments, we plan to extend the capacities of the package to the treatment of hybrid systems mixing both fermions and bosons degrees of freedom (*e.g.* for polaritonic chemistry or exciton-phonon systems).
 
 # Acknowledgements
 
