@@ -5,7 +5,7 @@
  
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## QuantNBody : a python package to build and manipulate quantum many-body systems.
+## QuantNBody : QuantNBody : a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
 
 
 QuantNBody is a python package facilitating the implementation and manipulation of quantum many-body systems
