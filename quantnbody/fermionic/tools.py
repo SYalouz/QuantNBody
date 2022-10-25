@@ -1177,6 +1177,7 @@ def build_s2_local( a_dagger_a, list_mo_local ):
         s_plus += a_dagger_a[2 * p, 2 * p + 1]
         s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
     s_2 = s_plus @ s_plus.T + s_z @ s_z - s_z
+    
     return s_2
 
 
@@ -1215,7 +1216,7 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
 def build_spin_subspaces( S2_local, S2_local_target ):
     '''
     
-    Create a projector over the many-body space spanning all the configuration 
+    Create a projector over the many-body space spanning all the configurations 
     which should be counted to produce a local spin S2_local of value given by  
     S2_local_target.
     
@@ -1321,6 +1322,7 @@ def get_info_from_psi4( string_geometry,
 #  IN DIFFERENT MOLECULAR ORBITAL BASIS
 # =============================================================================
 
+@njit
 def weight_det( C_B2_B1, occ_spinorb_Det1, occ_spinorb_Det2 ):
     '''
     Evaluate the overlap of two slater determinant expressed in two different 
@@ -1353,7 +1355,7 @@ def weight_det( C_B2_B1, occ_spinorb_Det1, occ_spinorb_Det2 ):
                 M[ ind_row, ind_col ] = C_B2_B1[ i//2, j//2 ]
             ind_col += 1 
         ind_row += 1 
-    Det = scipy.linalg.det( M ) 
+    Det = np.linalg.det( M ) 
     return Det
  
 
@@ -1382,7 +1384,7 @@ def scalar_product_different_MO_basis( Psi_A_MOB1,
     dim_H = len(nbody_basis)
     
     # Overlap matrix in the common basis
-    S = scipy.linalg.inv( C_MOB1 @ C_MOB1.T )  
+    S = np.linalg.inv( C_MOB1 @ C_MOB1.T )  
     # Building the matrix expressing the MO from B1 in the B2 basis
     C_B2_B1 = C_MOB1.T @ S @ C_MOB2
     
