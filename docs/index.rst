@@ -30,26 +30,7 @@ QuantNBody have the following requirements:
 .. toctree::
    :maxdepth: 2
    :caption: How to use
-   
-   install.rst
-   keywords.rst
-   Examples.rst
-   issues.rst
-   illustrativecalc.rst
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Working equations and functions 
-   
-   General.rst
-   MolecularIntegral.rst
-   IntegralTrans.rst
-   HFMethods.rst
-   DIIS.rst
-   MPn.rst
-   Properties.rst
-   GeoOpt.rst
-   CI.rst
-   CC.rst
-   BOMD.rst
+    
+   keywords.rst 
+ 
    
