@@ -17,15 +17,12 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     Create a many-body basis formed by a list of slater-determinants
     (i.e. state encoding occupation numbers in spin-orbitals)
 
-    Parameters
-    ----------
-    n_mo         :  Number of molecular orbitals
-    N_electron   :  Number of electrons
-    S_z_cleaning :  Option if we want to get read of the s_z != 0 states (default is False)
-
-    Returns
-    -------
-    nbody_basis :  List of many-body states (occupation number states) in the basis (occupation number vectors)
+    :param int n_mo:  Number of molecular orbitals
+    :param int N_electron:  Number of electrons
+    :param bool S_z_cleaning:  Option if we want to get read of the s_z != 0 states (default is False)
+    :returns:  ``nbody_basis``:  List of many-body states (occupation number states) in the basis
+        (occupation number vectors)
+    :rtype: NumPy array
     """
     # Building the N-electron many-body basis
     nbody_basis = []
