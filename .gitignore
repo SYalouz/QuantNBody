@@ -7,3 +7,9 @@ __pycache__/
 **/timer.dat
 
 docs/build/
+
+**/output_Psi4.txt
+**/output_psi4.txt
+
+*.egg-info/
+dist/
