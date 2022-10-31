@@ -2,13 +2,13 @@ Installation and Running
 ========================
 
 Prerequisite Packages
-__________
+_____________________
 In order to run QuantNBody you will need to have next packages:
 
-    scipy, numpy, numba
+    scipy, numpy, numba, psi4
 
 Installation
-___________
+____________
 To install the package you can either download the package from `PyPI <https://pypi.org/>`_:
 
     pip install quantnbody

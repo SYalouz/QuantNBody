@@ -16,7 +16,7 @@ QuantNBody
    structure.rst
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: API
 
    api.rst
