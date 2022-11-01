@@ -17,12 +17,19 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     Create a many-body basis formed by a list of slater-determinants
     (i.e. state encoding occupation numbers in spin-orbitals)
 
-    :param int n_mo:  Number of molecular orbitals
-    :param int N_electron:  Number of electrons
-    :param bool S_z_cleaning:  Option if we want to get read of the s_z != 0 states (default is False)
-    :returns:  ``nbody_basis``:  List of many-body states (occupation number states) in the basis
-        (occupation number vectors)
-    :rtype: NumPy array
+    Parameters
+    ----------
+    n_mo : int
+        Number of molecular orbitals
+    N_electron :  int
+        Number of electrons
+    S_z_cleaning : bool, default=False
+        Option if we want to get read of the s_z != 0 states (default is False)
+
+    Returns
+    -------
+    ``nbody_basis``
+        List of many-body states (occupation number states) in the basis (occupation number vectors)
     """
     # Building the N-electron many-body basis
     nbody_basis = []
@@ -47,15 +54,17 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
 def check_sz(ref_state):
     """
     Return the value fo the S_z operator for a unique slater determinant
-    directlyt written as a list of occupation number
+    directly written as a list of occupation number
     
     Parameters
     ----------
-    ref_state :  Slater determinant (list of occupation numbers)
+    ref_state :  Iterable[int]
+        Slater determinant (list of occupation numbers)
 
     Returns
     -------
-    s_z_slater_determinant : value of S_z for the given slater determinant
+    s_z_slater_determinant
+        value of S_z for the given slater determinant
     """
     s_z_slater_determinant = 0
     for elem in range(len(ref_state)):
@@ -74,11 +83,15 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
     
     Parameters
     ----------
-    nbody_basis :  List of many-body states (occupation number states) (occupation number states)
-    silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
+    nbody_basis : Iterable[Iterable[int]]
+        List of many-body states (occupation number states)
+    silent : bool, default=True
+        If it is True, function doesn't print anything when it generates a_dagger_a
+
     Returns
     -------
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    a_dagger_a
+        Matrix representation of the a_dagger_a operator
 
     """
     # Dimensions of problem
@@ -148,11 +161,13 @@ def build_mapping(nbody_basis):
 
     Parameters
     ----------
-    nbody_basis :  List of many-body state written in terms of occupation numbers
+    nbody_basis :  Iterable[Iterable[int]]
+        List of many-body state written in terms of occupation numbers
  
     Returns
     -------
-    mapping_kappa : List of unique values associated to each kappa
+    mapping_kappa : Iterable[int]
+        List of unique values associated to each kappa
     """
     num_digits = np.shape(nbody_basis)[1]
     dim_H = np.shape(nbody_basis)[0]
@@ -175,11 +190,13 @@ def make_integer_out_of_bit_vector(ref_state):
 
     Parameters
     ----------
-    ref_state : Reference slater determinant to turn out into an integer
+    ref_state : Iterable[int]
+        Reference slater determinant to turn out into an integer
 
     Returns
     -------
-    number : unique integer referring to the slater determinant
+    int
+        Number of unique integer referring to the slater determinant.
     """
     number = 0
     for digit in range(len(ref_state)):
@@ -196,15 +213,24 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
     
     Parameters
     ----------
-    type_of_op    :  type of operator to apply (creation of annihilation)
-    index_mode    :  index of the second quantized mode to occupy/empty
-    ref_fock_state :  initial state to be transformed
+    type_of_op : str
+        Type of operator to apply ("a" for creation or "a^" for annihilation)
+    index_mode : int
+        index of the second quantized mode to occupy/empty
+    ref_fock_state : Iterable[int]
+        initial state to be transformed
 
     Returns
     -------
-    new_fock_state :  Resulting occupation number form of the transformed state
-    coeff_phase   :  Phase attached to the resulting state
+    new_fock_state : Iterable[int]
+        Resulting occupation number form of the transformed state
+    coeff_phase : int (1 or -1)
+        Phase attached to the resulting state
 
+    Raises
+    ------
+    Exception
+        if type_of_op is not either "a" or "a^"
     """
     new_fock_state = ref_fock_state.copy()
     coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
@@ -220,22 +246,30 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
 
 @njit
 def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
-    '''
+    """
     Create the final state generated after the consecutive application of the
     a_dagger_a operators on an initial state.
-    
+
     Parameters
     ----------
-    ref_state       :  Initial stater to be modified
-    p               :  index of the mode where a fermion is created
-    q               :  index of the mode where a fermion is killed
-    mapping_kappa   :  Fuction creating the unique mapping
+    ref_state : Iterable[int]
+        Initial stater to be modified
+    p : int
+        index of the mode where a fermion is created
+    q : int
+        index of the mode where a fermion is killed
+    mapping_kappa : Iterable[int]
+        Function creating the unique mapping between unique value of some configuration with its index in nbody_basis.
 
     Returns
     -------
-    kappa_    : final index in the many-body basis for the resulting state
-    p1 and p2 :  phase coefficients  
-    '''
+    kappa_
+        final index in the many-body basis for the resulting state
+    p1 : int
+        phase coefficient after removing electron
+    p2 : int
+        phase coefficient after adding new electron
+    """
     state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
     state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
     kappa_ = mapping_kappa[make_integer_out_of_bit_vector(state_two)]
@@ -260,17 +294,25 @@ def build_hamiltonian_quantum_chemistry(h_,
 
     Parameters
     ----------
-    h_          :  One-body integrals
-    g_          :  Two-body integrals
-    nbody_basis :  List of many-body states (occupation number states)
-    a_dagger_a  :  Matrix representation of the a_dagger_a operator
-    S_2         :  Matrix representation of the S_2 operator (default is None)
-    S_2_target  :  Value of the S_2 mean value we want to target (default is None)
-    penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
+    h_ : Iterable[Iterable[int]]
+        One-body integrals
+    g_ : Iterable[Iterable[Iterable[Iterable[int]]]]
+        Two-body integrals
+    nbody_basis :  Iterable[Iterable[int]]
+        List of many-body states (occupation number states)
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
+    S_2 : default=None
+        Matrix representation of the S_2 operator (default is None)
+    S_2_target : default=None
+        Value of the S_2 mean value we want to target (default is None)
+    penalty : float, default=100
+        Value of the penalty term for state not respecting the spin symmetry (default is 100).
 
     Returns
     -------
-    H_chemistry :  Matrix representation of the electronic structure Hamiltonian
+    H_chemistry
+        Matrix representation of the electronic structure Hamiltonian
 
     """
     # Dimension of the problem 
@@ -327,18 +369,27 @@ def build_hamiltonian_fermi_hubbard(h_,
 
     Parameters
     ----------
-    h_          :  One-body integrals
-    U_          :  Two-body integrals
-    nbody_basis :  List of many-body states (occupation number states)
-    a_dagger_a  :  Matrix representation of the a_dagger_a operator
-    S_2         :  Matrix representation of the S_2 operator (default is None)
-    S_2_target  :  Value of the S_2 mean value we want to target (default is None)
-    penalty     :  Value of the penalty term for state not respecting the spin symmetry (default is 100).
-    v_term      :  4D matrix that is already transformed into correct representation.
+    h_ : Iterable[Iterable[int]]
+        One-body integrals
+    U_ : Iterable[Iterable[Iterable[Iterable[int]]]]
+        Two-body integrals
+    nbody_basis :  Iterable[Iterable[int]]
+        List of many-body states (occupation number states)
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
+    S_2 : default=None
+        Matrix representation of the S_2 operator (default is None)
+    S_2_target : default=None
+        Value of the S_2 mean value we want to target (default is None)
+    penalty : float, default=100
+        Value of the penalty term for state not respecting the spin symmetry (default is 100).
+    v_term : Iterable[Iterable[Iterable[Iterable[int]]]]
+        4D matrix that is already transformed into correct representation.
 
     Returns
     -------
-    H_fermi_hubbard :  Matrix representation of the Fermi-Hubbard Hamiltonian
+    H_fermi_hubbard
+        Matrix representation of the Fermi-Hubbard Hamiltonian
 
     """
     # # Dimension of the problem 
@@ -381,25 +432,30 @@ def build_hamiltonian_fermi_hubbard(h_,
     return H_fermi_hubbard
 
 
-def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target ):
+def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target):
     """
     Create a penalty operator to enforce a given occupancy number of electron
     in the molecular orbitals of the system
 
     Parameters
     ----------
-    a_dagger_a       : Matrix representation of the a_dagger_a operator
-    occupancy_target : Target number of electrons in a given molecular orbital
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
+    occupancy_target : Iterable[int]
+        Target number of electrons in a given molecular orbital
     
     Returns
     -------
-    occupancy_penalty        : penalty operator
-    list_good_states_indices : list of many body state indices respecting the constraint
-    list_bad_states_indices  : list of many body state indices not respecting the constraint
+    occupancy_penalty
+        penalty operator
+    list_good_states_indices
+        list of many body state indices respecting the constraint
+    list_bad_states_indices
+        list of many body state indices not respecting the constraint
     """
     dim_H = a_dagger_a[0,0].shape[0]
     n_mo  = np.shape(a_dagger_a)[0] // 2 
-    occupancy_penalty = ( a_dagger_a[0, 0] + a_dagger_a[1, 1] -  occupancy_target * scipy.sparse.identity(dim_H) )**2  
+    occupancy_penalty = ( a_dagger_a[0, 0] + a_dagger_a[1, 1] -  occupancy_target * scipy.sparse.identity(dim_H) )**2
     for p in range(1,n_mo): 
         occupancy_penalty  +=  ( a_dagger_a[2*p, 2*p] + a_dagger_a[2*p+1, 2*p+1] -  occupancy_target * scipy.sparse.identity(dim_H) )**2
     
@@ -415,12 +471,17 @@ def build_E_and_e_operators( a_dagger_a, n_mo ):
 
     Parameters
     ----------
-    a_dagger_a       : Matrix representation of the a_dagger_a operator
-    n_mo             : Number of molecular orbitals considered
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
+    n_mo : int
+        Number of molecular orbitals considered
+
     Returns
     -------
-    E_, e_           : The spin-free E_pq and e_pqrs many-body operators
-    
+    E_
+        the spin-free E_pq many-body operator
+    e_
+        the spin-free e_pqrs many-body operator
     """
     E_ = np.empty((n_mo, n_mo), dtype=object)
     e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object) 
@@ -450,22 +511,28 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
                                          active_indices,
                                          n_mo_total ):
     """
-    Create a full representation of 1- amd 2-electorn reduced density matrix 
+    Create a full representation of 1- and 2-electron reduced density matrix
     (with  a spin-free form) for a system with an active space 
 
     Parameters
     ----------
-    WFT             : Reference wavefunction
-    a_dagger_a      : Matrix representaiton of the a_dagger_a operator
-    frozen_indices  : List of frozen indices
-    active_indices  : List of active indices
-    n_mo_total      : Total number of molecular orbitals
+    WFT : Iterable[int]
+        Reference wavefunction
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
+    frozen_indices : Iterable[int]
+        List of frozen indices
+    active_indices : Iterable[int]
+        List of active indices
+    n_mo_total : int
+        Total number of molecular orbitals
 
     Returns
     -------
-    one_rdm :  1-electron reduced density matrix of the wavefunction
-    two_rdm :  2-electron reduced density matrix of the wavefunction
-
+    one_rdm
+        1-electron reduced density matrix of the wavefunction
+    two_rdm
+        2-electron reduced density matrix of the wavefunction
     """
     if active_indices is not None:
         first_act_index = active_indices[0] 
@@ -987,12 +1054,14 @@ def fh_get_active_space_integrals ( h_MO,
     This active space may be defined by a list of active indices and
     doubly occupied indices. Note that one_body_integrals and
     two_body_integrals must be defined in an orthonormal basis set (MO like).
+
     Args:
          - occupied_indices: A list of spatial orbital indices
            indicating which orbitals should be considered doubly occupied.
          - active_indices: A list of spatial orbital indices indicating
            which orbitals should be considered active.
          - 1 and 2 body integrals.
+
     Returns:
         tuple: Tuple with the following entries:
         **core_constant**: Adjustment to constant shift in Hamiltonian

@@ -167,7 +167,7 @@ In this subsection, there is documentation for functions for bosonic particles.
 
 .. autofunction:: build_operator_a_dagger_a
 
-.. autofunction:: make_number_out_of_vector
+.. autofunction:: make_integer_out_of_bit_vector
 
 .. autofunction:: my_state
 
@@ -208,5 +208,10 @@ TODO
 
 `Hamiltonian`
 ^^^^^^^^^^^^^
+
+TODO
+
+`mapping_kappa`
+^^^^^^^^^^^^^^^
 
 TODO
