@@ -30,6 +30,16 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     -------
     ``nbody_basis``
         List of many-body states (occupation number states) in the basis (occupation number vectors)
+
+    Examples
+    ________
+    >>> build_nbody_basis(2, 2, False)  # 2 electrons in 2 molecular orbitals
+    array([[1, 1, 0, 0],
+           [1, 0, 1, 0],
+           [1, 0, 0, 1],
+           [0, 1, 1, 0],
+           [0, 1, 0, 1],
+           [0, 0, 1, 1]])
     """
     # Building the N-electron many-body basis
     nbody_basis = []
@@ -53,7 +63,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
 
 def check_sz(ref_state):
     """
-    Return the value fo the S_z operator for a unique slater determinant
+    Return the value of the S_z operator for a unique slater determinant
     directly written as a list of occupation number
     
     Parameters
@@ -65,6 +75,14 @@ def check_sz(ref_state):
     -------
     s_z_slater_determinant
         value of S_z for the given slater determinant
+
+    Examples
+    ________
+    >>> check_sz([0, 0, 1, 0])  # in reference state there is one electron in second orbital with spin up (alpha).
+    0.5
+
+    >>> check_sz([1, 1, 0, 0])  # in reference state there is doubly occupied first MO
+    0.0
     """
     s_z_slater_determinant = 0
     for elem in range(len(ref_state)):
@@ -93,6 +111,11 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
     a_dagger_a
         Matrix representation of the a_dagger_a operator
 
+    Examples
+    ________
+    >>> nbody_basis = nbody_basis(2, 2)
+    >>> build_operator_a_dagger_a(nbody_basis, True)
+    array([...])
     """
     # Dimensions of problem
     dim_H = len(nbody_basis)
@@ -168,6 +191,12 @@ def build_mapping(nbody_basis):
     -------
     mapping_kappa : Iterable[int]
         List of unique values associated to each kappa
+
+    Examples
+    ________
+    >>> nbody_basis = build_nbody_basis(2, 2)
+    >>> build_mapping(nbody_basis)
+    array([0, 0, 0, 5, 0, 4, 3, 0, 0, 2, 1, 0, 0, 0, 0, 0])
     """
     num_digits = np.shape(nbody_basis)[1]
     dim_H = np.shape(nbody_basis)[0]
@@ -608,12 +637,15 @@ def build_1rdm_alpha(WFT, a_dagger_a):
 
     Parameters
     ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    WFT : Iterable[int]
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
 
     Returns
     -------
-    One_RDM_alpha : spin-alpha 1-RDM
+    One_RDM_alpha
+        spin-alpha 1-RDM
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
@@ -631,12 +663,15 @@ def build_1rdm_beta(WFT, a_dagger_a):
 
     Parameters
     ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    WFT : Iterable[int]
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
 
     Returns
     -------
-    One_RDM_alpha : Spin-beta 1-RDM
+    One_RDM_alpha
+        Spin-beta 1-RDM
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
@@ -654,12 +689,15 @@ def build_1rdm_spin_free(WFT, a_dagger_a):
 
     Parameters
     ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    WFT : Iterable[int]
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
 
     Returns
     -------
-    one_rdm : Spin-free 1-RDM
+    one_rdm
+        Spin-free 1-RDM
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
@@ -679,17 +717,19 @@ def build_2rdm_fh_on_site_repulsion(WFT, a_dagger_a, mask=None):
 
     Parameters
     ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
-    mask       :  4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
-                  For default None the whole 2RDM is calculated.
-                  If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
-                  array that ensures that we won't calculate elements that are not going to be used in calculation of
-                  2-electron interactions.
+    WFT : Iterable[int]
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a :
+        Matrix representation of the a_dagger_a operator
+    mask :  Iterable[Iterable[Iterable[Iterable[int]]]], default=None
+        4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+        For default None the whole 2RDM is calculated.
+        If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+        array that ensures that we won't calculate elements that are not going to be used in calculation of
+        2-electron interactions.
     Returns
     -------
-    two_rdm for the on-site-repulsion operator
-    
+        two_rdm for the on-site-repulsion operator
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
