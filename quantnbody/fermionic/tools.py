@@ -212,6 +212,8 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
         new_fock_state[index_mode] += -1
     elif type_of_op == 'a^':
         new_fock_state[index_mode] += 1
+    else:
+        raise Exception('type_of_op has to either be "a" or "a^"!')
 
     return new_fock_state, coeff_phase
 
