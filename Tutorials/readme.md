@@ -7,7 +7,7 @@ We gather a series of tutorials/examples detailing how to use the QuantNBody pac
 In order to learn how to domesticate the package, we encourage the new users to read the jupyter notebooks tutorials in the following order:
 
 - *Tuto_FIRST_STEP.ipynb:* This tutorial explains the basics of the QuantNBody package. Focusing on fermionic systems, 
-we explain how the encoding of a many-body basis (spin orbitals occupied by electrons) is realized in practice in the code.
+we explain how the encoding of a many-body basis  is realized in practice in the code (spin orbitals occupied by electrons).
 We also detail how we encode the single-body hopping operators. The latter being a central tool for the creation of any particle number conserving operators in the code. 
 
 - *Tuto_PLAYING_WITH_STATES.ipynb:* This second tutorial illustrates how to easily manipulate multi-body states with the help of different illustrative examples. 
