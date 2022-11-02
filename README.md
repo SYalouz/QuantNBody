@@ -33,7 +33,7 @@ develop and implement famous many-body methods such as :
  
 --- 
 
- ## How to easily install the package (in developement mode)
+ ## Installing the package (in developement mode)
 To install the latest version of QuantNBody in a quick and easy way:
 
 ```
