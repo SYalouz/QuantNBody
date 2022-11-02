@@ -46,3 +46,20 @@ python -m pip install -e .
  
  - Psi4 installations : [Using conda](https://anaconda.org/psi4/psi4), see also the [following link](https://psicode.org/psi4manual/1.2.1/conda.html)
 
+ ## Tutorials for the package:
+ 
+Different examples and tutorials are furnished in the tutorial/ repository in python or under the form of Jupyter notebooks.  
+
+
+ ## How to contribute:
+
+
+We'd love to accept your contributions and patches to QuantNBody. There are a few small guidelines you need to follow.  
+
+All submissions require review. We use GitHub pull requests for this purpose. Consult GitHub Help for more information on using pull requests. Furthermore, please make sure your new code comes with documentation.
+
+
+ ## Support: 
+ 
+If you are having issues, please let us know by posting the issue on our Github issue tracker.
+  
