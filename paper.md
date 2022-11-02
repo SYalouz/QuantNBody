@@ -54,7 +54,7 @@ In practice, native functions are already implemented in the QuantNBody package 
 They can be set as pure parameters or obtained from external chemistry Python packages like PySCF [@sun2020recent] or Psi4 [@parrish2017psi4].
 As an illustration, we show in Fig. 1 results one can produce with the package for both fermionic Hamiltonians. We focus here on the calculation of the groundstate (noted $| \Psi_0\rangle$) in a H$_2$ molecule and a Fermi-Hubbard dimer, and evaluate several associated properties (energy and many-body basis decomposition).
  
-![$H_2$ molecule and Fermi-Hubbard dimer. **Left column:** ground state energy and decomposition in the many-body basis for the dissociation of the $H_2$ molecule in a minimal basis (STO-3G) using integrals from Psi4 [@parrish2017psi4]. **Right column:** similar properties for the Fermi-Hubbard dimer as a function of $U/t$ (2 electrons on 2 sites and $t = 1$). \label{fig:example}](figure_fermion.png)
+![H$_2$ molecule and Fermi-Hubbard dimer. **Left column:** ground state energy and decomposition in the many-body basis for the dissociation of the H$_2$ molecule in a minimal basis (STO-3G) using integrals from Psi4 [@parrish2017psi4]. **Right column:** similar properties for the Fermi-Hubbard dimer as a function of $U/t$ (2 electrons on 2 sites and $t = 1$). \label{fig:example}](figure_fermion.png)
 
 ## Bosonic systems
  
