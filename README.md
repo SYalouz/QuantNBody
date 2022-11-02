@@ -48,7 +48,7 @@ python -m pip install -e .
 
  ## Tutorials
  
-Different examples and tutorials are furnished in the tutorial/ repository in python or under the form of Jupyter notebooks.  
+Different examples and tutorials are furnished in the [Tutorials repository](https://github.com/SYalouz/QuantNBody/tree/main/Tutorials) under the form of Jupyter notebooks or python scripts.  
 
 
  ## How to contribute
