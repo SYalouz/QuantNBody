@@ -2,6 +2,7 @@ import unittest
 import quantnbody as qnb
 import scipy
 import psi4
+import numpy as np
 
 BASIS_SET = "sto-3g"
 GEOMETRY_H2 = "H   0.   0.   0.\nH   0.74   0.   0."
@@ -79,7 +80,20 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(True, False)
 
     def test_fermi_hubbard(self):
-        self.assertEqual(True, False)
+        nbody_basis = qnb.fermionic.tools.build_nbody_basis(6, 6)
+        a_dagger_a = qnb.fermionic.tools.build_operator_a_dagger_a(nbody_basis)
+        t = - np.diag(np.ones(5), 1) - np.diag(np.ones(5), -1)
+        t[0, -1] = -1
+        t[-1, 0] = -1
+        v = np.diag(np.linspace(1, 2, 6))
+        U = np.zeros((6, 6, 6, 6))
+        U[np.arange(6), np.arange(6), np.arange(6), np.arange(6)] = 5
+        H = qnb.fermionic.tools.build_hamiltonian_fermi_hubbard(t + v, U, nbody_basis, a_dagger_a)
+        eig_en, eig_vec = scipy.linalg.eigh(H.A)
+        E_0 = eig_en[0]
+
+        reference_result = 100.123  # How to calculate reference result for Hubbard model?
+        self.assertAlmostEqual(E_0, reference_result, 8)
 
     def test_bose_hubbard(self):
         self.assertEqual(True, False)
