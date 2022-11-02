@@ -1,5 +1,5 @@
 ---
-title: 'QuantNBody:  a python package for quantum chemistry and physics to build and manipulate many-body operators and wave functions.'
+title: 'QuantNBody:  a Python package for quantum chemistry and physics to build and manipulate many-body operators and wave functions.'
 tags:
   - Python
   - quantum physics and chemistry
@@ -23,7 +23,7 @@ bibliography: paper.bib
 
 # Summary
 
-The 'QuantNBody' package is a Python toolkit for quantum chemists/physicists interested in methods development to study quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way to build matrix representations of bosonic and fermionic quantum many-body operators (*e.g.* hamiltonians, spin or excitation operators) and get access to quantities/objects of interest (*e.g.* energies, reduced density matrices, many-body wave functions). The code includes various native functions and it is flexible enough to help users in building their own numerical tools to implement new methods. 
+The 'QuantNBody' package is a Python toolkit for quantum chemists/physicists interested in methods development to study quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way to build matrix representations of bosonic and fermionic quantum many-body operators (*e.g.* Hamiltonians, spin or excitation operators) and get access to quantities/objects of interest (*e.g.* energies, reduced density matrices, many-body wave functions). The code includes various native functions and it is flexible enough to help users in building their own numerical tools to implement new methods. 
 
 # Statement of need
 
@@ -33,7 +33,7 @@ The 'QuantNBody' code was designed to answer this problem: it is a theoretician-
 
 # Framework of the package
 
-The QuantNbody package employs the Scipy Package [@2020SciPy-NMeth] for the creation of sparse matrices representation of many-body operators. The Numba package [@lam2015numba] is also used to accelerate calculation when possible. The framework of the package lies in two fundamental ingredients. The first one is the creation of a reference many-body vector basis (based on a total number of quantum particles and modes/orbitals to fill) in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any particle-number conserving many-body operator : the single-body hopping operators $a^\dagger_p a_q$.  Once these two ingredients have been created, the user can employ various pre-built functions in order to (i) construct different types of many-body operators (*e.g.* hamiltonians, spin and excitation operators), (ii) manipulate/visualize quantum many-body states. All the native functions have been thought to facilitate calculations for new users and young students. Beyond this, the QuantNBody package has been also designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.
+The QuantNbody package employs the SciPy Package [@2020SciPy-NMeth] for the creation of sparse matrices representation of many-body operators. The Numba package [@lam2015numba] is also used to accelerate calculation when possible. The framework of the package lies in two fundamental ingredients. The first one is the creation of a reference many-body vector basis (based on a total number of quantum particles and modes/orbitals to fill) in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any particle-number conserving many-body operator which is: the single-body hopping operators $a^\dagger_p a_q$.  Once these two ingredients have been created, the user can employ various pre-built functions in order to (i) construct different types of many-body operators (*e.g.* Hamiltonians, spin and excitation operators), (ii) manipulate/visualize quantum many-body states. All the native functions have been thought to facilitate calculations for new users and young students. Beyond this, the QuantNBody package has been also designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.
 
 # A quick illustration
 
@@ -41,18 +41,18 @@ As an illustration of the various types of system one can treat with the QuantNB
 
 ## Fermionic systems
 Different fermionic Hamiltonians can be straightforwardly built with the QuantNBody package. For example, a pre-built function of the package allows a quick implementation of the quantum chemistry *ab initio* molecular electronic structure Hamiltonian
-\begin{equation} 
+\begin{equation} \label{eq:mol}
 \hat{H}= \sum_{p,q} h_{pq} \sum_\sigma^{\uparrow,\downarrow} a^\dagger_{p,\sigma} a_{q,\sigma} 
 + \frac{1}{2} \sum_{p,q,r,s}  g_{pqrs} \sum_{\sigma,\tau}^{\uparrow,\downarrow} a^\dagger_{p,\sigma} a^\dagger_{r,\tau} a_{s,\tau} a_{q,\sigma}  ,
 \end{equation}
-where $a^\dagger_{i,\sigma}$ ($a_{i,\sigma}$) are the fermionic creation (annihilation) operators in the orbital $i$ with spin $\sigma$. In a similar way,  another native function has been also created to numerically build the Fermi-hubbard Hamiltonian from condensed matter theory
-\begin{equation} 
+where $a^\dagger_{i,\sigma}$ ($a_{i,\sigma}$) are the fermionic creation (annihilation) operators in the orbital $i$ with spin $\sigma$. In a similar way,  another native function has been also created to numerically build the Fermi-Hubbard Hamiltonian from condensed matter theory
+\begin{equation} \label{eq:FH}
 \hat{H}_{FH} = -t  \sum_{i,j} \sum_\sigma^{\uparrow,\downarrow} a^\dagger_{i,\sigma} a_{j,\sigma} 
 + U \sum_{i}  a^\dagger_{i,\uparrow}a_{i,\uparrow} a^\dagger_{i,\downarrow} a_{i,\downarrow},
 \end{equation}
-In practice, the native functions implementing both fermionic Hamiltonians in the QuantNBody package manage on their own the building of the one- and two-body fermionic operators *via* the already built single-body hopping operators mentioned earlier. Nevertheless, the one-/two-body integrals (i.e.  $h_{pq}$, $g_{pqrs}$ and $t$ and $U$) have to be defined by the user.
-They can be set as pure parameters or obtained from external chemistry python packages like PySCF [@sun2020recent] or Psi4 [@parrish2017psi4].
-As an illustration, we show in Fig. 1 results one can produce with the package for both fermionic hamiltonians. We focus here on the calculation of the groundstate (noted $| \Psi_0\rangle$) in a $H_2$ molecule and a Fermi-Hubbard dimer, and evaluate several associated properties (energy and many-body basis decomposition).
+In practice, native functions are already implemented in the QuantNBody package to build both types of fermionic Hamiltonians. This implementation is based on the use of the already built single-body hopping operators mentioned earlier to generate the one- and two-body fermionic excitation operators (present in Eq. \cite{eq:FH} and Eq. \cite{eq:mol}). Nevertheless, the one-/two-body integrals (*i.e.*  $h_{pq}$, $g_{pqrs}$ and $t$ and $U$) have to be defined by the user.
+They can be set as pure parameters or obtained from external chemistry Python packages like PySCF [@sun2020recent] or Psi4 [@parrish2017psi4].
+As an illustration, we show in Fig. 1 results one can produce with the package for both fermionic Hamiltonians. We focus here on the calculation of the groundstate (noted $| \Psi_0\rangle$) in a H$_2$ molecule and a Fermi-Hubbard dimer, and evaluate several associated properties (energy and many-body basis decomposition).
  
 ![$H_2$ molecule and Fermi-Hubbard dimer. **Left column:** ground state energy and decomposition in the many-body basis for the dissociation of the $H_2$ molecule in a minimal basis (STO-3G) using integrals from Psi4 [@parrish2017psi4]. **Right column:** similar properties for the Fermi-Hubbard dimer as a function of $U/t$ (2 electrons on 2 sites and $t = 1$). \label{fig:example}](figure_fermion.png)
 
