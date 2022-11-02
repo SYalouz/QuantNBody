@@ -46,7 +46,7 @@ python -m pip install -e .
  
  - Psi4 installations : [Using conda](https://anaconda.org/psi4/psi4), see also the [following link](https://psicode.org/psi4manual/1.2.1/conda.html)
 
- ## Tutorials for the package:
+ ## Tutorials
  
 Different examples and tutorials are furnished in the tutorial/ repository in python or under the form of Jupyter notebooks.  
 
