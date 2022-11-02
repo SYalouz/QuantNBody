@@ -12,7 +12,7 @@ we explain how the encoding of a many-body basis  is realized in practice in the
 We also detail how we encode the single-body hopping operators. The latter being a central tool for the creation of any particle number conserving operators later on. 
 
 - *Tuto_PLAYING_WITH_STATES.ipynb:* 
-This second tutorial illustrates how to easily manipulate many-body states. Here we show how to create our own state and visualize it with native functions. We also show ho to apply excitation on these states to modify them.
+This second tutorial illustrates how to easily manipulate many-body states. Here we detail how to create our own state step by step with native functions from QuantNBody. We also show how to apply excitation on these states to modify them and also how to visualize the resulting decomposition in the many-body basis.
 
 - *Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.ipynb:* 
 This third tutorial focuses on the construction of different spin operators (*e.g.* $\hat{S}_2$) and *ab initio* electronic structure Hamiltonians. We show here how to easily build both types of operator. Furthermore, we demonstrate how to combine these operators together to find specific eigenstates with a desired spin symmetry and compare the results to Psi4.
