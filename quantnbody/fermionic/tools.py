@@ -226,6 +226,11 @@ def make_integer_out_of_bit_vector(ref_state):
     -------
     int
         Number of unique integer referring to the slater determinant.
+
+    Examples
+    ________
+    >>> make_integer_out_of_bit_vector(np.array([1, 1, 0, 0]))
+    12
     """
     number = 0
     for digit in range(len(ref_state)):
@@ -246,7 +251,7 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
         Type of operator to apply ("a" for creation or "a^" for annihilation)
     index_mode : int
         index of the second quantized mode to occupy/empty
-    ref_fock_state : Iterable[int]
+    ref_fock_state : np.array
         initial state to be transformed
 
     Returns
@@ -260,6 +265,13 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
     ------
     Exception
         if type_of_op is not either "a" or "a^"
+
+    Examples
+    ________
+    >>> qnb.new_state_after_sq_fermi_op("a", 0, np.array([1, 1, 0, 0]))  # annihilation of e- spin MO with index 0
+    (array([0, 1, 0, 0]), 1.0)
+    >>> qnb.new_state_after_sq_fermi_op("a^", 3, np.array([1, 1, 0, 0])) # creation of electron
+    (array([1, 1, 0, 1]), 1.0)
     """
     new_fock_state = ref_fock_state.copy()
     coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
@@ -298,6 +310,13 @@ def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
         phase coefficient after removing electron
     p2 : int
         phase coefficient after adding new electron
+
+    Examples
+    ________
+    >>> nbody_basis = build_nbody_basis(2, 2)  # 2 electrons and 2 MO
+    >>> mapping = build_mapping(nbody_basis)
+    >>> build_final_state_ad_a(np.array([1, 1, 0, 0]), 2, 1, mapping)  # exciting electron from spin MO 1 to spin MO 2
+    (1, -1.0, -1.0)
     """
     state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
     state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
@@ -481,6 +500,20 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target):
         list of many body state indices respecting the constraint
     list_bad_states_indices
         list of many body state indices not respecting the constraint
+
+    Examples TODO: Saad help!
+    ________
+    >>> nbody_basis = build_nbody_basis(2, 2)
+    >>> a_dagger_a = build_operator_a_dagger_a(nbody_basis)
+    >>> build_penalty_orbital_occupancy(a_dagger_a, np.array([0.2, 0.8, 0, 0, 0 ,0]))
+    (matrix([[ 3.6, -1.6,  0. ,  0. ,  0. ,  0. ],
+             [-0.4,  0.4,  0. ,  0. ,  0. ,  0. ],
+             [-0.4, -1.6,  2. ,  0. ,  0. ,  0. ],
+             [-0.4, -1.6,  0. ,  2. ,  0. ,  0. ],
+             [-0.4, -1.6,  0. ,  0. ,  2. ,  0. ],
+             [-0.4, -1.6,  0. ,  0. ,  0. ,  4. ]]),
+     array([], dtype=int64),
+     array([0, 1, 2, 3, 4, 5], dtype=int64))
     """
     dim_H = a_dagger_a[0,0].shape[0]
     n_mo  = np.shape(a_dagger_a)[0] // 2 
@@ -511,6 +544,16 @@ def build_E_and_e_operators( a_dagger_a, n_mo ):
         the spin-free E_pq many-body operator
     e_
         the spin-free e_pqrs many-body operator
+
+    Examples
+    ________
+    >>> nbody_basis = qnb.build_nbody_basis(2, 2)
+    >>> a_dagger_a = qnb.build_operator_a_dagger_a(nbody_basis)
+    >>> build_E_and_e_operators(a_dagger_a, 2)
+    (array([[<6x6 sparse matrix of type '<class 'numpy.float64'>'
+         	with 5 stored elements in Compressed Sparse Row format>,
+         ...], ...], dtype=object),
+     array([[[[...], ...], ...], ...]))
     """
     E_ = np.empty((n_mo, n_mo), dtype=object)
     e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object) 
@@ -545,7 +588,7 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
 
     Parameters
     ----------
-    WFT : Iterable[int]
+    WFT : Iterable[float]
         Reference wavefunction
     a_dagger_a :
         Matrix representation of the a_dagger_a operator
@@ -637,7 +680,7 @@ def build_1rdm_alpha(WFT, a_dagger_a):
 
     Parameters
     ----------
-    WFT : Iterable[int]
+    WFT : Iterable[float]
         Wave function for which we want to build the 1-RDM
     a_dagger_a :
         Matrix representation of the a_dagger_a operator
