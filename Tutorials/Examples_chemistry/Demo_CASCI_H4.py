@@ -15,8 +15,7 @@ import psi4
 import math
 import scipy
 import matplotlib.pyplot as plt
-import sys
-from tqdm import tqdm
+import sys 
 sys.path.append('../')
 
 import quantnbody as qnb
@@ -80,7 +79,7 @@ list_angle = np.linspace(0.15, 3., 18)
 E_0_qnb = []
 E_1_qnb = []
 
-for angle in tqdm( list_angle ):
+for angle in ( list_angle ):
 
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations 
@@ -131,7 +130,7 @@ for angle in tqdm( list_angle ):
 #========================================================|
 E_0_psi4 = [ ]
 E_1_psi4 = [ ]
-for angle in tqdm( list_angle ):
+for angle in ( list_angle ):
 
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations

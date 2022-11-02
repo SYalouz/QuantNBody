@@ -15,8 +15,7 @@ import psi4
 import math
 import scipy 
 import matplotlib.pyplot as plt
-import sys
-from tqdm import tqdm
+import sys 
 sys.path.append('../')
 
 import quantnbody as qnb
@@ -80,7 +79,7 @@ list_r = np.linspace(0.25, 2.2, 10)
 E_0_qnb = []
 E_1_qnb = []
 
-for r in tqdm( list_r ): 
+for r in ( list_r ): 
     
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations 
@@ -133,7 +132,7 @@ for r in tqdm( list_r ):
 #========================================================|
 E_0_psi4 = [ ]
 E_1_psi4 = [ ]
-for r in tqdm( list_r ): 
+for r in ( list_r ): 
     
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations

@@ -13,8 +13,7 @@ import psi4
 import math
 import scipy 
 import matplotlib.pyplot as plt
-import sys
-from tqdm import tqdm
+import sys 
 sys.path.append('../')
 
 import quantnbody as qnb
@@ -41,7 +40,7 @@ list_U = np.linspace(0, 2, 20)
 
 E_0_qnb = []
 E_1_qnb = []
-for U in  tqdm(list_U) : 
+for U in  (list_U) : 
     U_  = np.zeros(( n_mode, n_mode, n_mode, n_mode )) 
     for site in range(n_mode):
         U_[ site, site, site, site ]  = -U/2

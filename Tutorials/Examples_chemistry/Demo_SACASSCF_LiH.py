@@ -15,8 +15,7 @@ import psi4
 import math
 import scipy
 import matplotlib.pyplot as plt
-import sys
-from tqdm import tqdm
+import sys 
 
 sys.path.append('../')
 
@@ -243,7 +242,7 @@ for r in (list_r):
 # ========================================================|
 E_0_psi4 = []
 E_1_psi4 = []
-for r in tqdm(list_r):
+for r in (list_r):
     # ========================================================|
     # Molecular geometry / Quantum chemistry calculations
     # Clean all previous options for psi4
