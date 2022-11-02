@@ -1,6 +1,6 @@
 # Welcome to the tutorials !
 
-In this folder we gather a series of tutorials/examples detailing how to use the QuantNBody package for different types of many-body systems. 
+We gather a series of tutorials/examples detailing how to use the QuantNBody package for different types of many-body systems. 
 
 ## Notebooks tutorials
 
