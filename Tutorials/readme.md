@@ -4,7 +4,7 @@ In this folder we gather a series of tutorials/examples of how to use the QuantN
 
 In order to learn the how to domesticate the package, we encourage the new users to follow the jupyter noteboks tutorials in the following order:
 
-- Tuto_FIRST_STEP.ipynb:
+- **Tuto_FIRST_STEP.ipynb:**
 This tutorial explains the basics of the QuantNBody package. Focusing on fermionic systems, 
 we explain how the encoding a many-body basis is realized in practice in the code. We also detail how we encode the single-body hopping operators.
 The latter being a central tools for the creation of any particle number conserving operator in the code. 
