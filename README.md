@@ -16,7 +16,7 @@ We provide below a non-exhaustive list of the various possibilites offered by th
 
 - Visualizing the structure of any wavefunction in a given many-body basis (for fermionic and bosonic systems)
 - Building 1-body, 2-body (...) reduced density matrices (for fermionic and bosonic systems)
-- Building Spin operators $\hat{S}^2$, $\hat{S}__{z}$, $\hat{S}__+$  expressed in a many-body basis (for fermionic system)
+- Building Spin operators $\hat{S}^2$, $\hat{S}\sb{z}$, $\hat{S}\sb{+}$  expressed in a many-body basis (for fermionic system)
 - Building model Hamiltonians e.g. Bose-Hubbard, Fermi-Hubbard ( parameters given by the user )
 - Building molecular *ab initio* Hamiltonians (needs psi4 to provide the electronic integrals)
 - ...
