@@ -4,7 +4,7 @@ We gather a series of tutorials/examples detailing how to use the QuantNBody pac
 
 ## Notebooks tutorials
 
-In order to learn how to domesticate the package, we encourage the new users to read the jupyter notebooks tutorials in the following order:
+In order to domesticate the package, we encourage the new users to read the jupyter notebooks tutorials in the following order:
 
 - *Tuto_FIRST_STEP.ipynb:* 
 This tutorial explains the basics of the QuantNBody package. Focusing on fermionic systems, 
