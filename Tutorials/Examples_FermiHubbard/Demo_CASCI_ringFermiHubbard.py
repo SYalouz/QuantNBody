@@ -13,8 +13,7 @@ import psi4
 import math
 import scipy 
 import matplotlib.pyplot as plt
-import sys
-from tqdm import tqdm
+import sys 
 sys.path.append('../')
 
 import quantnbody as qnb
