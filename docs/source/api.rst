@@ -1,92 +1,190 @@
-QuanNBody API
+Fermionic systems
 =============
-
-fermionic.tools
-_______________
 
 .. currentmodule:: quantnbody.fermionic.tools
 
 In this subsection, there are written functions for fermionic particles.
 
-.. autofunction:: build_nbody_basis
 
-.. autofunction:: check_sz
+_______________
+
+Basic functions for the creation of many-fermion operators
+----------------------------------------------------------------
+.. autofunction:: build_nbody_basis
+_______________
 
 .. autofunction:: build_operator_a_dagger_a
+_______________
+
+.. autofunction:: check_sz
+_______________
 
 .. autofunction:: build_mapping
+_______________
 
 .. autofunction:: make_integer_out_of_bit_vector
+_______________
 
 .. autofunction:: new_state_after_sq_fermi_op
+_______________
 
 .. autofunction:: build_final_state_ad_a
+_______________
 
+
+
+
+Many-body Hamiltonians and excitations operators
+--------------------------------------------------------
 .. autofunction:: build_hamiltonian_quantum_chemistry
+_______________
 
 .. autofunction:: build_hamiltonian_fermi_hubbard
-
-.. autofunction:: build_penalty_orbital_occupancy
+_______________
 
 .. autofunction:: build_E_and_e_operators
+_______________
+_______________
 
+Spin operators
+--------
+.. autofunction:: build_s2_sz_splus_operator
+_______________
+
+.. autofunction:: build_s2_local
+_______________
+
+.. autofunction:: build_sAsB_coupling
+_______________
+
+.. autofunction:: build_spin_subspaces
+_______________
+_______________
+
+
+Reduced density matrices
+--------------------------------
 .. autofunction:: build_full_mo_1rdm_and_2rdm_for_AS
+_______________
 
 .. autofunction:: build_1rdm_alpha
+_______________
 
 .. autofunction:: build_1rdm_beta
+_______________
 
 .. autofunction:: build_1rdm_spin_free
+_______________
 
 .. autofunction:: build_2rdm_fh_on_site_repulsion
+_______________
 
 .. autofunction:: build_2rdm_fh_dipolar_interactions
+_______________
 
 .. autofunction:: build_2rdm_spin_free
+_______________
 
 .. autofunction:: build_1rdm_and_2rdm_spin_free
+_______________
 
 .. autofunction:: build_hybrid_1rdm_alpha_beta
+_______________
 
 .. autofunction:: build_transition_1rdm_alpha
+_______________
 
 .. autofunction:: build_transition_1rdm_beta
+_______________
 
 .. autofunction:: build_transition_1rdm_spin_free
+_______________
 
 .. autofunction:: build_transition_2rdm_spin_free
+_______________
+_______________
 
+Functions to create/manipulate/visualize many-body wavefunctions
+------------------------------------------------------------------------
 .. autofunction:: my_state
+_______________
 
 .. autofunction:: build_projector_active_space
+_______________
+
+.. autofunction:: build_penalty_orbital_occupancy
+_______________
+
+.. autofunction:: weight_det
+_______________
+
+.. autofunction:: scalar_product_different_MO_basis
+_______________
+
+.. autofunction:: transform_psi_MO_basis1_in_MO_basis2
+_______________
+
+.. autofunction:: TEST_transform_psi_MO_basis1_in_MO_basis2
+_______________
+
+.. autofunction:: scalar_product_different_MO_basis_with_frozen_orbitals
+_______________
+
+.. autofunction:: visualize_wft
+
+_______________
+_______________
+
+Functions to manipulate fermionic integrals
+------------------------------------------------
+
+.. autofunction:: transform_1_2_body_tensors_in_new_basis
+_______________
 
 .. autofunction:: fh_get_active_space_integrals
+_______________
 
 .. autofunction:: fh_get_active_space_integrals_with_V
+_______________
 
 .. autofunction:: qc_get_active_space_integrals
 
-.. autofunction:: build_s2_sz_splus_operator
+_______________
+_______________
 
-.. autofunction:: build_s2_local
+Quantum embedding transformations (Householder)
+--------------------------------------------------------
 
-.. autofunction:: build_sAsB_coupling
+.. autofunction:: householder_transformation
+_______________
 
-.. autofunction:: build_spin_subspaces
+.. autofunction:: block_householder_transformation
+
+_______________
+_______________
+
+Psi4 calculation helper
+------------------------
 
 .. autofunction:: get_info_from_psi4
 
-.. autofunction:: weight_det
+_______________
 
-.. autofunction:: scalar_product_different_MO_basis
+.. autofunction:: generate_h_chain_geometry
 
-.. autofunction:: transform_psi_MO_basis1_in_MO_basis2
+_______________
 
-.. autofunction:: TEST_transform_psi_MO_basis1_in_MO_basis2
+.. autofunction:: generate_h_ring_geometry
 
-.. autofunction:: scalar_product_different_MO_basis_with_frozen_orbitals
+_______________
 
-.. autofunction:: visualize_wft
+.. autofunction:: generate_h4_geometry
+
+_______________
+_______________
+
+Miscellaneous
+----------------
 
 .. autofunction:: get_ket_in_atomic_orbitals
 
@@ -128,17 +226,8 @@ In this subsection, there are written functions for fermionic particles.
 
 .. autofunction:: delta
 
-.. autofunction:: transform_1_2_body_tensors_in_new_basis
 
-.. autofunction:: householder_transformation
 
-.. autofunction:: block_householder_transformation
-
-.. autofunction:: generate_h_chain_geometry
-
-.. autofunction:: generate_h_ring_geometry
-
-.. autofunction:: generate_h4_geometry
 
 fermionic.Hamiltonian
 _____________________
@@ -150,10 +239,12 @@ In this subsection, a class that repachage some of the functions from `fermionic
 .. autoclass:: Hamiltonian
    :members:
 
-bosonic.tools
-_____________
 
-.. currentmodule:: quantnbody.fermionic.tools
+
+Bosonic systems
+=============
+
+.. currentmodule:: quantnbody.bosonic.tools
 
 In this subsection, there is documentation for functions for bosonic particles.
 
@@ -182,6 +273,7 @@ In this subsection, there is documentation for functions for bosonic particles.
 .. autofunction:: visualize_wft
 
 .. autofunction:: delta
+
 
 
 Important data structures
