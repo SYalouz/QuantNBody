@@ -5,3 +5,4 @@ readthedocs-sphinx-ext
 numpy
 scipy
 numba
+tqdm
