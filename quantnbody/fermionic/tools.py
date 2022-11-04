@@ -114,8 +114,8 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
     Examples
     ________
     >>> nbody_basis = nbody_basis(2, 2)
-    >>> build_operator_a_dagger_a(nbody_basis, True)
-    array([...])
+    >>> a_dagger_a = build_operator_a_dagger_a(nbody_basis, True) 
+    >>> a_dagger_a[0,0] # Get access to the operator counting the electron in the first spinorbital 
     """
     # Dimensions of problem
     dim_H = len(nbody_basis)
