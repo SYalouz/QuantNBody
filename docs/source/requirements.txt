@@ -2,7 +2,6 @@ nbsphinx
 sphinx
 sphinxemoji
 readthedocs-sphinx-ext
-psi4
 numpy
 scipy
 numba
