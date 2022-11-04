@@ -47,8 +47,9 @@ To illustrate how to use this package, several example codes and tutorials have 
 
 .. toctree::
    :maxdepth: 4
-   :caption: Data structures
+   :caption: References to QuantNBody
 
+   references.rst
 
 
 Indices and tables

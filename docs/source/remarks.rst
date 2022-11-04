@@ -5,22 +5,23 @@ A few remarks
 In the following **QuantNBody tutorials**, we will detail how the package can be used in practice to manipulate and create many-body operators and wavefunctions for fermionic and bosonic systems.
 We encourage the new users to follow the tutorials in the following order:
 
-* *Tuto 1:* first steps with the package
-This tutorial explains the basics of the QuantNBody package. Focusing on fermionic systems,
-we explain how the encoding of a many-body basis  is realized in practice in the code (spin orbitals occupied by electrons).
-We also detail how we encode the single-body hopping operators. The latter being a central tool for the creation of any particle number conserving operators later on.
+*Tuto 1:* first steps with the package
+  This tutorial explains the basics of the QuantNBody package. Focusing on fermionic systems,
+  we explain how the encoding of a many-body basis  is realized in practice in the code (spin orbitals occupied by electrons).
+  We also detail how we encode the single-body hopping operators. The latter being a central tool for the creation of any particle number conserving operators later on.
 
-* *Tuto 2:* playing with many-body wavefunctions
-This second tutorial illustrates how to easily manipulate many-body states. Here we detail how to create our own state step by step with native functions from QuantNBody. We also show how to apply excitation on these states to modify them and also how to visualize the resulting decomposition in the many-body basis.
+*Tuto 2:* playing with many-body wavefunctions
+  This second tutorial illustrates how to easily manipulate many-body states. Here we detail how to create our own state step by step with native functions from QuantNBody. We also show how to apply excitation on these states to modify them and also how to visualize the resulting decomposition in the many-body basis.
 
-* *Tuto 3:* electronic structure Hamiltonian and spin operators
-This third tutorial focuses on the construction of different spin operators (*e.g.* $\hat{S}_2$) and *ab initio* electronic structure Hamiltonians. We show here how to easily build both types of operator. Furthermore, we demonstrate how to combine these operators together to find specific eigenstates with a desired spin symmetry and compare the results to Psi4.
+*Tuto 3:* electronic structure Hamiltonian and spin operators
+  This third tutorial focuses on the construction of different spin operators (*e.g.* :math:`\hat{S}_2`) and *ab initio* electronic structure Hamiltonians. We show here how to easily build both types of operator. Furthermore, we demonstrate how to combine these operators together to find specific eigenstates with a desired spin symmetry and compare the results to Psi4.
 
-* *Tuto 4:* the Bose-Hubbard system
-For those interesting in bosonic systems, we also describe here equivalent features/functions to build operators, see and manipulate wavefunctions.
+*Tuto 4:* the Bose-Hubbard system
+  For those interesting in bosonic systems, we also describe here equivalent features/functions to build operators, see and manipulate wavefunctions.
 
 
-  **Enjoy our tutorials !**  |:wink:| |:+1:|
+
+**Enjoy our tutorials !**  |:wink:| |:+1:|
 
 .. note::
 

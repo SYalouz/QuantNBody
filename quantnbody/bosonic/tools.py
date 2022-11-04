@@ -1,10 +1,10 @@
 import scipy
 import numpy as np
 from itertools import combinations_with_replacement
-from numba import njit, prange 
+from numba import njit, prange
 import scipy.sparse
-from tqdm import tqdm 
- 
+from tqdm import tqdm
+
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
@@ -12,16 +12,19 @@ from tqdm import tqdm
 def build_nbody_basis( n_mode, n_boson ):
     """
     Create a many-body basis formed by a list of fock-state with a conserved total
-    number of bosons 
+    number of bosons
 
     Parameters
     ----------
-    n_mode    :  Number of modes in total 
-    N_boson   :  Number of bosons in total 
+    n_mode    : int
+        Number of modes in total
+    N_boson   :  int
+        Number of bosons in total
 
     Returns
     -------
-    nbody_basis :  List of many-body states (occupation number states)  
+    nbody_basis : array
+        List of many-body states (occupation number states)
     """
     # Building the N-electron many-body basis
     nbody_basis = []
@@ -30,9 +33,9 @@ def build_nbody_basis( n_mode, n_boson ):
         for index in list(combination):
             fock_state[ index ] += 1
         nbody_basis += [ fock_state ]
-        
+
     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
- 
+
 
 @njit
 def build_mapping( nbodybasis ):
@@ -42,24 +45,26 @@ def build_mapping( nbodybasis ):
 
     Parameters
     ----------
-    nbody_basis :  Many-body basis
+    nbody_basis : array
+        Many-body basis
 
     Returns
     -------
-    mapping_kappa : List of unique values associated to each kappa
+    mapping_kappa : array
+        List of unique values associated to each kappa
     """
     n_mode  = np.shape(nbodybasis)[1]
     n_boson = np.sum(nbodybasis[0])
     max_number = n_boson * 10**(( n_mode - 1 )*2) + 1
-    dim_H = np.shape(nbodybasis)[0] 
+    dim_H = np.shape(nbodybasis)[0]
     mapping_kappa = np.zeros( max_number, dtype=np.int32 )
     for kappa in range(dim_H):
         ref_state = nbodybasis[ kappa ]
-        number = 0 
-        for index_mode in range(n_mode):  
+        number = 0
+        for index_mode in range(n_mode):
             number += ref_state[index_mode] * 10**(( n_mode - index_mode - 1 )*2)
         mapping_kappa[ int(np.round(number)) ] = kappa
-        
+
     return mapping_kappa
 
 
@@ -67,17 +72,17 @@ def build_mapping( nbodybasis ):
 # def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
 #     state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
 #     state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
-#     kappa_ = mapping_kappa[ make_number_out_of_vector(state_two) ]  
- 
-#     return kappa_, coeff1, coeff2
- 
+#     kappa_ = mapping_kappa[ make_number_out_of_vector(state_two) ]
 
-# OLDER and MORE "BRUTE FORCE" FUNCTION KEPT FOR DEBUGGING 
+#     return kappa_, coeff1, coeff2
+
+
+# OLDER and MORE "BRUTE FORCE" FUNCTION KEPT FOR DEBUGGING
 # @njit
 def build_final_state_ad_a(ref_state, p, q, nbodybasis):
     state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
-    state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one) 
-    kappa_ = nbodybasis.index( state_two.tolist() ) 
+    state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
+    kappa_ = nbodybasis.index( state_two.tolist() )
     return kappa_, coeff1, coeff2
 
 
@@ -98,7 +103,7 @@ def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
     """
     new_fock_state    = ref_fock_state.copy()
     num_boson_in_mode = ref_fock_state[index_mode]
-    coeff = 0 
+    coeff = 0
     if type_of_op == 'a':
         new_fock_state[index_mode] += -1
         coeff = np.sqrt( num_boson_in_mode )
@@ -107,7 +112,7 @@ def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
         coeff = np.sqrt( num_boson_in_mode + 1)
 
     return new_fock_state, coeff
- 
+
 
 # numba -> njit version of build_operator_a_dagger_a
 def build_operator_a_dagger_a(nbodybasis, silent=True):
@@ -117,38 +122,41 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
 
     Parameters
     ----------
-    nbody_basis :  List of many-body states (occupation number states) (occupation number states)
-    silent      :  If it is True, function doesn't print anything when it generates a_dagger_a
+    nbody_basis : array
+        List of many-body states (occupation number states) (occupation number states)
+    silent      : Boolean
+        If it is True, function doesn't print anything when it generates a_dagger_a
     Returns
     -------
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator in the many-body basis
 
     """
     # Dimensions of problem
     dim_H  = len(nbodybasis)
-    n_mode = len(nbodybasis[0]) 
+    n_mode = len(nbodybasis[0])
     n_boson= np.sum(nbodybasis[0])
     # mapping_kappa = build_mapping(nbodybasis) # <== To be clearly improved
 
     a_dagger_a = np.zeros((n_mode, n_mode), dtype=object)
-   
-    for p in range( n_mode ): 
+
+    for p in range( n_mode ):
         for q in range(p, n_mode):
             a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
             a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
-     
-    for q in (range(n_mode)): 
-        for p in range(q, n_mode): 
+
+    for q in (range(n_mode)):
+        for p in range(q, n_mode):
             for kappa in range(dim_H):
-                
+
                 ref_state = nbodybasis[kappa]
-                if p != q and (ref_state[q] == 0 or ref_state[p] == n_boson): 
-                    pass 
+                if p != q and (ref_state[q] == 0 or ref_state[p] == n_boson):
+                    pass
                 else :
                     # kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, nbodybasis.tolist()) # #  OLDER FUNCTION KEPT FOR DEBUGGING 
+                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, nbodybasis.tolist()) # #  OLDER FUNCTION KEPT FOR DEBUGGING
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] =  coeff1 * coeff2
-                    
+
     if not silent:
         print()
         print('\t ===========================================')
@@ -156,7 +164,7 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
         print('\t ===========================================')
 
     return a_dagger_a
- 
+
 
 @njit
 def make_number_out_of_vector( ref_state ):
@@ -170,11 +178,11 @@ def make_number_out_of_vector( ref_state ):
     Returns
     -------
     number : unique integer referring to the Fock state
-    """ 
+    """
     # print( ref_state )
-    n_mode  = len(ref_state) 
-    n_boson = np.sum(ref_state)  
-    num_digits = 0 
+    n_mode  = len(ref_state)
+    n_boson = np.sum(ref_state)
+    num_digits = 0
     while n_boson != 0:
         n_boson //= 10
         num_digits += 1
@@ -182,32 +190,35 @@ def make_number_out_of_vector( ref_state ):
     number = 0
     for index_mode in range(n_mode):
         number += ref_state[index_mode] * 10**(( n_mode - index_mode - 1 )*2) #<= New type of counting for boson
-    # print('number',number )    
-    
-    return number 
+    # print('number',number )
+
+    return number
 
 def my_state(fockstate, nbodybasis):
     """
-    Translate a Slater determinant (occupation number list) into a many-body
-    state referenced into a given Many-body basis.
+    Translate a fockstate (occupation number list) into a many-body
+    state referenced into a given many-body basis.
 
     Parameters
     ----------
-    fock_state  : occupation number list
-    nbodybasis : List of many-body states (occupation number states)
+    fock_state  : array
+        list of occupation number in each mode
+    nbodybasis : array
+        List of many-body states (occupation number states)
 
     Returns
     -------
-    state :  The slater determinant referenced in the many-body basis
+    state :  array
+        The fockstate referenced in the many-body basis
     """
-    kappa = np.flatnonzero((nbodybasis == fockstate).all(1))[0]  
+    kappa = np.flatnonzero((nbodybasis == fockstate).all(1))[0]
     state = np.zeros(np.shape(nbodybasis)[0])
     state[kappa] = 1.
 
     return state
- 
+
 # =============================================================================
-#  MANY-BODY HAMILTONIAN : BOSE-HUBBARD 
+#  MANY-BODY HAMILTONIAN : BOSE-HUBBARD
 # =============================================================================
 
 
@@ -218,17 +229,21 @@ def build_hamiltonian_bose_hubbard(h_, U_, nbodybasis, a_dagger_a ):
 
     Parameters
     ----------
-    h_          :  One-body integrals
-    U_          :  Two-body integrals
-    nbody_basis :  List of many-body states (occupation number states)
-    a_dagger_a  :  Matrix representation of the a_dagger_a operator  
-    v_term      :  4D matrix that is already transformed into correct representation.
+    h_          :  array
+        One-body integrals
+    U_          :  array
+        Two-body integrals
+    nbody_basis :  array
+        List of many-body states (occupation number states)
+    a_dagger_a  :  array
+        Matrix representation of the a_dagger_a operator
 
     Returns
     -------
-    H_bose_hubbard :  Matrix representation of the Bose-Hubbard Hamiltonian
+    H_bose_hubbard :  array
+        Matrix representation of the Bose-Hubbard Hamiltonian in the many-body basis
     """
-    # # Dimension of the problem 
+    # # Dimension of the problem
     dim_H = len(nbodybasis)
     n_mode = np.shape(h_)[0]
 
@@ -236,36 +251,39 @@ def build_hamiltonian_bose_hubbard(h_, U_, nbodybasis, a_dagger_a ):
     H_bose_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mode):
         # H_bose_hubbard += a_dagger_a[ p, p] @  ( a_dagger_a[ p , p ] - scipy.sparse.identity(dim_H) ) * U_[p, p, p, p]
-        for q in range(n_mode): 
+        for q in range(n_mode):
             H_bose_hubbard += a_dagger_a[p, q] * h_[p, q]
-            
+
             for r in range(n_mode):
                 for s in range(n_mode):
-                    if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices 
+                    if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
                         H_bose_hubbard += a_dagger_a[ p, r ] @  a_dagger_a[ q , s ]  * U_[p, q, r, s]
                         if ( q == r ):
                            H_bose_hubbard +=  - a_dagger_a[ p , s ]  * U_[p, q, r, s]
-                         
-                            
+
+
     return H_bose_hubbard
- 
-    
+
+
 # =============================================================================
 #  DIFFERENT TYPES OF REDUCED DENSITY-MATRICES
 # =============================================================================
 
 def build_1rdm(WFT, a_dagger_a):
     """
-    Create a 1 RDM out of a given wave function
+    Create a 1 RDM for a given wave function associated to a Bose-Hubbard system
 
     Parameters
     ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    WFT        :  array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a :  array
+        Matrix representation of the a_dagger_a operator
 
     Returns
     -------
-    One_Rone_rdmDM : 1-RDM
+    one_rdm : array
+        1-RDM (Bose-Hubbard system)
 
     """
     n_mode = np.shape(a_dagger_a)[0]
@@ -279,29 +297,32 @@ def build_1rdm(WFT, a_dagger_a):
 
 def build_2rdm(WFT, a_dagger_a):
     """
-    Create a 2 RDM out of a given wave function
+    Create a 2 RDM for a given wave function assocaited to a Bose-Hubbard system
 
     Parameters
     ----------
-    WFT        :  Wave function for which we want to build the 1-RDM
-    a_dagger_a :  Matrix representation of the a_dagger_a operator
+    WFT        : array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
 
     Returns
     -------
-    One_Rone_rdmDM : 1-RDM 
+    two_rdm : array
+        2-RDM (Bose-Hubbard system)
 
     """
-    n_mode = np.shape(a_dagger_a)[0] 
+    n_mode = np.shape(a_dagger_a)[0]
     two_rdm = np.zeros((n_mode, n_mode, n_mode, n_mode))
     for p in range(n_mode):
-        for q in range(n_mode): 
+        for q in range(n_mode):
             for r in range(n_mode):
                 for s in range(n_mode):
-                    two_rdm[p, q, r, s] += WFT.T @ a_dagger_a[ p, r ] @ a_dagger_a[ q, s ]   @ WFT 
+                    two_rdm[p, q, r, s] += WFT.T @ a_dagger_a[ p, r ] @ a_dagger_a[ q, s ]   @ WFT
                     if ( q == r ):
-                        two_rdm[p, q, r, s] += - WFT.T @  a_dagger_a[ p , s ]  @ WFT    
+                        two_rdm[p, q, r, s] += - WFT.T @  a_dagger_a[ p , s ]  @ WFT
     return two_rdm
-    
+
 
 
 # =============================================================================
@@ -310,8 +331,8 @@ def build_2rdm(WFT, a_dagger_a):
 
 def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
     """
-    Transform electronic integrals from an initial basis "B1" to a new basis "B2".
-    The transformation is realized thanks to a passage matrix noted "C" linking
+    Transform bosonic integrals from an initial basis "B1" to a new basis "B2".
+    The transformation is realized thanks to a transfer matrix noted "C" linking
     both basis like
 
             | B2_l > = \\sum_{p} | B1_p >  C_{pl}
@@ -320,14 +341,19 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
 
     Parameters
     ----------
-    h_b1 : 1-electron integral given in basis B1
-    g_b1 : 2-electron integral given in basis B1
-    C    : Passage matrix
+    h_b1 : array
+        1-boson integrals given in basis B1
+    g_b1 : array
+        2-boson integrals given in basis B1
+    C    : array
+        Transfer matrix
 
     Returns
     -------
-    h_b2 : 1-electron integral given in basis B2
-    g_b2 : 2-electron integral given in basis B2
+    h_b2 : array
+        1-boson integrals given in basis B2
+    g_b2 : array
+        2-boson integrals given in basis B2
     """
     h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1, optimize=True)
     g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
@@ -343,15 +369,18 @@ def visualize_wft(WFT, nbodybasis, cutoff=0.005 ):
     """
     Print the decomposition of a given input wave function in a many-body basis.
 
-   Parameters
+    Parameters
     ----------
-    WFT              : Reference wave function
-    nbody_basis      : List of many-body states (occupation number states)
-    cutoff           : Cut off for the amplitudes retained (default is 0.005) 
+    WFT              : array
+        Reference wave function
+    nbody_basis      : array
+        List of many-body states (occupation number states)
+    cutoff           : array
+        Cut off for the amplitudes retained (default is 0.005)
 
     Returns
     -------
-    Same string that was printed to the terminal (the wave function)
+        Terminal printing of the wave function
 
     """
     list_index = np.where(abs(WFT) > cutoff)[0]
@@ -370,9 +399,9 @@ def visualize_wft(WFT, nbodybasis, cutoff=0.005 ):
 
         ket = '|' +   ",".join([str(elem) for elem in state]) + '⟩'
         return_string += f'\t{coefficients[index]:+1.5f}\t{ket}\n'
-        
+
     print(return_string)
-    
+
     return return_string
 
 
@@ -385,4 +414,3 @@ def delta(index_1, index_2):
     if index_1 == index_2:
         d = 1.0
     return d
-

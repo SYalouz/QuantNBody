@@ -101,24 +101,25 @@ Here we choose to structure the occupation numbers as follows
 -  **Even** indices refer to :math:`\alpha`-spinorbitals
 -  **Odd** indices refer to :math:`\beta`-spinorbitals
 
-**IMPORTANT NOTE :**
+.. note::
 
-For each configuration, we associate a unique :math:`\kappa` index which
-defines a unique “numerical” vector. In practice, any numerical
-representation of a given many-body operator will be given in the basis
-indexed by the :math:`\kappa`. As an example, let us imagine we want to
-encode numerically a second quantization operator :math:`O`. This means
-in practice that we create a matrix representation in the many-body
-basis such that
+  Bluilding a matrix representation of a many-body operator, what does it mean ?
+    For each configuration, we associate a unique :math:`\kappa` index which
+    defines a unique “numerical” vector. In practice, any numerical
+    representation of a given many-body operator will be given in the numerical many-body basis
+    indexed by the :math:`\kappa`. As an example, let us imagine we want to
+    encode numerically a second quantization operator :math:`O`. This means
+    in practice that we create a matrix representation of this operator in the many-body
+    basis such that
 
-.. math::
+    .. math::
 
-    O = \sum_{\kappa, \kappa'
-    =1}^{\dim_H}  \langle \kappa' | O | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |
+        O = \sum_{\kappa, \kappa'
+        =1}^{\dim_H}  \langle \kappa' | O | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |
 
-In practice, this indexing is realized by the QuantNBody package and
-used then as a central tool to build every matrix element of a given
-many-body operators.
+    In practice, this indexing is realized by the QuantNBody package and
+    used then as a central tool to build every matrix element of a given
+    many-body operators.
 
 Building and storing the :math:`a^\dagger_{p,\sigma} a_{q,\tau}` operators
 --------------------------------------------------------------------------
