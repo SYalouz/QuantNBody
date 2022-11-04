@@ -23,7 +23,7 @@ For those interesting in bosonic systems, we also describe here equivalent featu
 
 ## Examples of scripts
 
-We also provide a series of python scripts illustrating different types of many-body calculations. All these methods are implemented from scratch with the QuantNBody packages. The folder are named according to the type of system used as a study case:
+We also provide a series of python scripts illustrating different types of many-body calculations. All these methods are implemented from scratch with the QuantNBody packages. The folders are named according to the type of system used as a study case:
 
 - *Examples_BoseHubbard:* script for FCI calculations on small-sized Bose-Hubbard systems.
 - *Examples_FermiHubbard:* scripts for CAS-CI and FCI calculations on small-sized Fermi-Hubbard systems.

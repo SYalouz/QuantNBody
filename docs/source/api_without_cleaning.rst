@@ -16,6 +16,23 @@ _______________
 .. autofunction:: build_operator_a_dagger_a
 _______________
 
+.. autofunction:: check_sz
+_______________
+
+.. autofunction:: build_mapping
+_______________
+
+.. autofunction:: make_integer_out_of_bit_vector
+_______________
+
+.. autofunction:: new_state_after_sq_fermi_op
+_______________
+
+.. autofunction:: build_final_state_ad_a
+_______________
+
+
+
 
 Many-body Hamiltonians and excitations operators
 --------------------------------------------------------
@@ -26,8 +43,7 @@ _______________
 _______________
 
 .. autofunction:: build_E_and_e_operators
-
-
+_______________
 _______________
 
 Spin operators

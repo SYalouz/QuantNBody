@@ -1,4 +1,4 @@
-*QuantNbody* tutorials : the Bose-Hubbard system
+*Tuto 4:* the Bose-Hubbard system
 ===================
 
 **Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
