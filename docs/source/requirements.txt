@@ -1,2 +1,4 @@
 nbsphinx
 sphinx
+sphinxemoji
+readthedocs-sphinx-ext
