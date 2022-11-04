@@ -1,4 +1,4 @@
-*QuantNbody* tutorials : first steps with the package
+*Tuto 1:* first steps with the package
 =====================================================
 
 **Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
@@ -76,7 +76,7 @@ should have **6 many-body states.**
     for s in range(len(nbody_basis)):
         print('| kappa={} >'.format(s), '=', nbody_basis[s])
 
- 
+
 .. code:: none
 
     Shape  of the kappa states

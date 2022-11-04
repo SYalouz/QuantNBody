@@ -1,4 +1,4 @@
-*QuantNbody* tutorials : playing with many-body wavefunctions
+*Tuto 2:* playing with many-body wavefunctions
 =============================================================
 
 **Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,

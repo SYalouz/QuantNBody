@@ -1,4 +1,4 @@
-*QuantNbody* tutorials : electronic structure Hamiltonian and spin operators
+*Tuto 3:* electronic structure Hamiltonian and spin operators
 ============================================================================
 
 **Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
@@ -296,6 +296,9 @@ term and thus obtain singlet in :math:`H_4`.
 
         elem += 1
 
+
+Plotting the spin corrected :math:`H_4` PES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code:: ipython3
 
     import matplotlib.pyplot as plt
