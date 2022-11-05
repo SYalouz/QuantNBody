@@ -11,7 +11,7 @@ Installation and Running
   #. **Psi4**  : for installing, see https://anaconda.org/psi4/psi4, or https://psicode.org/psi4manual/1.2.1/conda.html
 
 
-An easy way to install the QuantNBody package is by using "pip" in your terminal as follows:
+An easy way to install the QuantNBody package is by using :code:`pip` in your terminal as follows:
 
     >>> pip install quantnbody
 

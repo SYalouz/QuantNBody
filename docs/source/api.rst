@@ -3,14 +3,14 @@ Fermionic systems
 
 .. currentmodule:: quantnbody.fermionic.tools
 
-In this subsection, there are written functions for fermionic particles.
+In this subsection, we list a series of functions useful for fermionic systems.
 
 
 _______________
 
 
 
-Basic functions for the creation of many-fermion operators
+Basic functions for the creation of many-fermion systems
 ----------------------------------------------------------------
 
 
@@ -61,6 +61,38 @@ _______________
 
 
 
+
+Creating/manipulating/visualizing many-body wavefunctions
+------------------------------------------------------------------------
+.. autofunction:: my_state
+_______________
+
+.. autofunction:: visualize_wft
+_______________
+
+.. autofunction:: build_projector_active_space
+_______________
+
+.. autofunction:: weight_det
+_______________
+
+.. autofunction:: scalar_product_different_MO_basis
+_______________
+
+.. autofunction:: transform_psi_MO_basis1_in_MO_basis2
+_______________
+
+.. autofunction:: scalar_product_different_MO_basis_with_frozen_orbitals
+
+
+
+
+_______________
+
+_______________
+
+
+
 Reduced density matrices
 --------------------------------
 
@@ -103,35 +135,6 @@ Reduced density matrices
 .. autofunction:: build_full_mo_1rdm_and_2rdm_for_AS
 
 
-
-_______________
-
-_______________
-
-
-
-
-Creating/manipulating/visualizing many-body wavefunctions
-------------------------------------------------------------------------
-.. autofunction:: my_state
-_______________
-
-.. autofunction:: visualize_wft
-_______________
-
-.. autofunction:: build_projector_active_space
-_______________
-
-.. autofunction:: weight_det
-_______________
-
-.. autofunction:: scalar_product_different_MO_basis
-_______________
-
-.. autofunction:: transform_psi_MO_basis1_in_MO_basis2
-_______________
-
-.. autofunction:: scalar_product_different_MO_basis_with_frozen_orbitals
 
 
 _______________
@@ -199,6 +202,10 @@ _______________
 Orbital optimization
 ---------------------
 
+.. note::
+  The following functions have been developed for a specific application to the *ab initio* electronic structure problem (*i.e.* quantum chemistry).
+  Their use for the Fermi-Hubbard model may not be appropriate!
+
 .. autofunction:: transform_vec_to_skewmatrix
 
 .. autofunction:: transform_vec_to_skewmatrix_with_active_space
@@ -227,6 +234,9 @@ Orbital optimization
 |
 |
 
+_______________
+
+_______________
 
 
 
@@ -235,10 +245,10 @@ Bosonic systems
 
 .. currentmodule:: quantnbody.bosonic.tools
 
-In this subsection, there is documentation for functions for bosonic particles.
+In this subsection, we list a series of functions useful for bosonic systems.
 
 
-Basic functions for the creation of many-boson operators
+Basic functions for the creation of many-boson systems
 ----------------------------------------------------------------
 
 .. autofunction:: build_nbody_basis
@@ -260,6 +270,17 @@ _______________
 
 _______________
 
+Creating/manipulating/visualizing many-body wavefunctions
+------------------------------------------------------------------------
+
+.. autofunction:: my_state
+
+.. autofunction:: visualize_wft
+
+_______________
+
+_______________
+
 Reduced density matrices
 --------------------------------
 
@@ -267,16 +288,7 @@ Reduced density matrices
 
 .. autofunction:: build_2rdm
 
-_______________
 
-_______________
-
-Creating/manipulating/visualizing many-body wavefunctions
-------------------------------------------------------------------------
-
-.. autofunction:: my_state
-
-.. autofunction:: visualize_wft
 
 
 _______________
@@ -288,3 +300,7 @@ Functions to manipulate bosonic integrals
 ------------------------------------------------
 
 .. autofunction:: transform_1_2_body_tensors_in_new_basis
+
+_______________
+
+_______________

@@ -21,7 +21,7 @@ We encourage the new users to follow the tutorials in the following order:
 
 
 
-**Enjoy our tutorials !**  |:wink:| |:+1:|
+**Enjoy the tutorials !**  |:wink:| |:+1:|
 
 .. note::
 
@@ -30,6 +30,6 @@ We encourage the new users to follow the tutorials in the following order:
   All these methods are implemented from scratch with the QuantNBody packages.
   The folders are named according to the type of system used as a study case:
 
-  - *Examples_BoseHubbard:* script for FCI calculations on small-sized Bose-Hubbard systems.
-  - *Examples_FermiHubbard:* scripts for CAS-CI and FCI calculations on small-sized Fermi-Hubbard systems.
-  - *Examples_chemistry:* scripts for CAS-CI, SA-CASSCF and FCI calculation on small-sized molecular systems.
+  - `/Examples_BoseHubbard/: <https://github.com/SYalouz/QuantNBody/tree/main/Tutorials/Examples_BoseHubbard>`_ contains script for FCI calculations on small-sized Bose-Hubbard systems.
+  - `/Examples_FermiHubbard/: <https://github.com/SYalouz/QuantNBody/tree/main/Tutorials/Examples_FermiHubbard>`_ contains scripts for CAS-CI and FCI calculations on small-sized Fermi-Hubbard systems.
+  - `/Examples_chemistry/: <https://github.com/SYalouz/QuantNBody/tree/main/Tutorials/Examples_chemistry>`_ contains scripts for CAS-CI, SA-CASSCF and FCI calculation on small-sized molecular systems.
