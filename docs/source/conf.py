@@ -23,7 +23,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx_rtd_theme',
               'nbsphinx',
               'sphinxemoji.sphinxemoji']
- 
+
 napoleon_numpy_docstring = True 
 
 templates_path = ['_templates']

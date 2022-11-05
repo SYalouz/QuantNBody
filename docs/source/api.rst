@@ -104,9 +104,6 @@ Reduced density matrices
 
 
 
-.. autofunction:: compute_energy_with_rdm
-
-
 _______________
 
 _______________
@@ -199,12 +196,14 @@ _______________
 _______________
 
 
-Miscellaneous
-----------------
+Orbital optimization
+---------------------
 
-.. autofunction:: prepare_vector_k_orbital_rotation_fwith_active_space
+.. autofunction:: transform_vec_to_skewmatrix
 
 .. autofunction:: transform_vec_to_skewmatrix_with_active_space
+
+.. autofunction:: prepare_vector_k_orbital_rotation_with_active_space
 
 .. autofunction:: energy_cost_function_orbital_optimization
 
@@ -212,25 +211,15 @@ Miscellaneous
 
 .. autofunction:: sa_build_mo_hessian_and_gradient
 
-.. autofunction:: sa_build_mo_hessian_and_gradient_no_active_space
-
 .. autofunction:: build_mo_gradient
 
 .. autofunction:: orbital_optimisation_newtonraphson
 
 .. autofunction:: orbital_optimisation_newtonraphson_no_active_space
 
-.. autofunction:: transform_vec_to_skewmatrix
-
 .. autofunction:: build_generalized_fock_matrix
 
 .. autofunction:: build_generalized_fock_matrix_active_space_adapted
-
-.. autofunction:: f_inactive
-
-.. autofunction:: f_active
-
-.. autofunction:: q_aux
 
 
 
