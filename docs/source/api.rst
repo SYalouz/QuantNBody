@@ -1,5 +1,5 @@
 Fermionic systems
-=============
+=================
 
 .. currentmodule:: quantnbody.fermionic.tools
 
@@ -64,23 +64,24 @@ _______________
 
 Creating/manipulating/visualizing many-body wavefunctions
 ------------------------------------------------------------------------
+
 .. autofunction:: my_state
-_______________
+
 
 .. autofunction:: visualize_wft
-_______________
+
 
 .. autofunction:: build_projector_active_space
-_______________
+
 
 .. autofunction:: weight_det
-_______________
+
 
 .. autofunction:: scalar_product_different_MO_basis
-_______________
+
 
 .. autofunction:: transform_psi_MO_basis1_in_MO_basis2
-_______________
+
 
 .. autofunction:: scalar_product_different_MO_basis_with_frozen_orbitals
 
@@ -147,13 +148,13 @@ Functions to manipulate fermionic integrals
 ------------------------------------------------
 
 .. autofunction:: transform_1_2_body_tensors_in_new_basis
-_______________
+
 
 .. autofunction:: fh_get_active_space_integrals
-_______________
+
 
 .. autofunction:: fh_get_active_space_integrals_with_V
-_______________
+
 
 .. autofunction:: qc_get_active_space_integrals
 
@@ -168,7 +169,7 @@ Quantum embedding transformations (Householder)
 --------------------------------------------------------
 
 .. autofunction:: householder_transformation
-_______________
+
 
 .. autofunction:: block_householder_transformation
 
@@ -241,7 +242,7 @@ _______________
 
 
 Bosonic systems
-=============
+===============
 
 .. currentmodule:: quantnbody.bosonic.tools
 
