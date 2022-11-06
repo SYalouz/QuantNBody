@@ -15,7 +15,7 @@ It provides a quick and easy way to build many-body operators and wavefunctions 
 
  ## Documentation of the package
 
-[See the documentation here !](quantnbody.readthedocs.io) 
+[See the documentation here !](https://quantnbody.readthedocs.io/en/latest/) 
 
 
 We provide below a non-exhaustive list of the various possibilities offered by the package:
