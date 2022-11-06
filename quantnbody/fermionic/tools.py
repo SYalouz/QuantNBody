@@ -3195,14 +3195,14 @@ def householder_transformation(M):
     Householder transformation transforming a squared matrix " M " into a
     block-diagonal matrix " M_BD " such that
 
-                           M_BD = P M P
+    .. math::  M_BD = P M P
 
     where " P " represents the Householder transformation built from the
     vector "v" such that
 
-                         P = Id - 2 * v.v^T
+    .. math:: P = I - 2  v \bullet v^T
 
-    Nota Bene : This returns a 2x2 block on left top corner
+    .. note:: This returns a 2x2 block on left top corner
 
     Parameters
     ----------
@@ -3240,15 +3240,21 @@ def block_householder_transformation(M, size):
     """
     Block Householder transformation transforming a square matrix ” M ” into a
     block-diagonal matrix ” M_BD ” such that
-                           M_BD = H(V) M H(V)
+
+    .. math:: M_{BD} = H(V) \bullet M \bullet H(V)
+
     where ” H(V) ” represents the Householder transformation built from the
     matrix “V” such that
-                        H(V) = Id - 2. * V(V^{T} V)^{-1}V^{T}
-    Nota Bene : Depending on the size of the block needed (unchanged by the transformation),
-         this returns a (2 x size)*(2 x size) block on left top corner
-    ----------
-    Article : F. Rotella, I. Zambettakis, Block Householder Transformation for Parallel QR Factorization,
-              Applied Mathematics Letter 12 (1999) 29-34
+
+    .. math:: H(V) = I - 2. \bullet V(V^{T} V)^{-1}V^{T}
+
+    .. note:: Depending on the size of the block needed (unchanged by the transformation),
+      this returns a (2 x size)*(2 x size) block on left top corner
+
+    See Also
+    --------
+    Article: F. Rotella, I. Zambettakis, Block Householder Transformation for Parallel QR Factorization,
+      Applied Mathematics Letter 12 (1999) 29-34
 
     Parameters
     ----------
