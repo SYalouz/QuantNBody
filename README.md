@@ -16,8 +16,10 @@ It provides a quick and easy way to build many-body operators and wavefunctions 
  ## Documentation of the package
 
 <div style="text-align: center;">
+  
 [>>>>> See the documentation here ! <<<<<](https://quantnbody.readthedocs.io/en/latest/) 
-</div>
+                                                                                        
+<\div>
 
 We provide below a non-exhaustive list of the various possibilities offered by the package:
 
