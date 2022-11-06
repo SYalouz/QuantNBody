@@ -15,7 +15,7 @@ e_ = False
 def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     """
     Create a many-body basis as a list of slater-determinants. Here, these states are
-    occupation numbersvectors taking the form of bitstrings -- *e.g.* |1100⟩ --
+    occupation numbersvectors taking the form of bitstrings (*e.g.* \|1100⟩)
     describing how the electrons occupy the spin-orbitals.
 
     Parameters
@@ -1124,7 +1124,7 @@ def build_projector_active_space( n_elec,
     Build a many-body projector operator including all the many-body configurations
     respecting an active space structure such that :
 
-                       | Phi > = | frozen, active, virtual >
+                       | Phi ⟩ = | frozen, active, virtual ⟩
 
     Parameters
     ----------
@@ -1417,6 +1417,8 @@ def build_s2_local( a_dagger_a, list_mo_local ):
     ----------
     a_dagger_a : array
         matrix representation of the a_dagger_a operator in the many-body basis.
+    list_mo_local :
+        TODO
 
     Returns
     -------
