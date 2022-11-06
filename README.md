@@ -1,5 +1,7 @@
 <div align="center">
+   
 [<img src="logo.png" width="700">](https://quantnbody.readthedocs.io/en/latest/) 
+   
 </div>
    
  
