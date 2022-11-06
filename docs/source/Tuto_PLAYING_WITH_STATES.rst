@@ -131,6 +131,7 @@ we show below how do that
 
     print( Psi )
 
+ 
 
 .. parsed-literal::
 
@@ -194,18 +195,14 @@ just built using the “visualize_wft” function implemented in QuantNBody:
     qnb.fermionic.tools.visualize_wft( Psi, nbody_basis )
     print()
 
+ 
 
 .. parsed-literal::
 
-
-    	-----------
-    	 Coeff.      N-body state
-    	-------     -------------
-    	+0.70711	|00001111⟩
-    	+0.70711	|11110000⟩
-
-
-
+    Coeff.      N-body state
+    -------     -------------
+    +0.70711	\|00001111⟩
+    +0.70711	\|11110000⟩
 
 Which returns precisely what we have implemented !
 
@@ -320,12 +317,13 @@ straightforwardly implemented in a few line of python code !
     qnb.fermionic.tools.visualize_wft(Psi,nbody_basis)
     print()
 
+ 
 
 .. parsed-literal::
 
 
-    	-----------
-    	 Coeff.      N-body state
-    	-------     -------------
-    	-0.70711	|11011000⟩
-    	+0.70711	|11100100⟩
+    -----------
+     Coeff.      N-body state
+    -------     -------------
+    -0.70711	\|11011000⟩
+    +0.70711	\|11100100⟩
