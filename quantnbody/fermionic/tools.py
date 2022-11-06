@@ -41,6 +41,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
            [0, 1, 1, 0],
            [0, 1, 0, 1],
            [0, 0, 1, 1]])
+
     """
     # Building the N-electron many-body basis
     nbody_basis = []
@@ -84,6 +85,7 @@ def check_sz(ref_state):
 
     >>> check_sz([1, 1, 0, 0])  # in reference state there is doubly occupied first MO
     0.0
+
     """
     s_z_slater_determinant = 0
     for elem in range(len(ref_state)):
@@ -117,6 +119,7 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
     >>> nbody_basis = nbody_basis(2, 2)
     >>> a_dagger_a = build_operator_a_dagger_a(nbody_basis, True)
     >>> a_dagger_a[0,0] # Get access to the operator counting the electron in the first spinorbital
+
     """
     # Dimensions of problem
     dim_H = len(nbody_basis)
@@ -198,6 +201,7 @@ def build_mapping(nbody_basis):
     >>> nbody_basis = build_nbody_basis(2, 2)
     >>> build_mapping(nbody_basis)
     array([0, 0, 0, 5, 0, 4, 3, 0, 0, 2, 1, 0, 0, 0, 0, 0])
+
     """
     num_digits = np.shape(nbody_basis)[1]
     dim_H = np.shape(nbody_basis)[0]
@@ -232,6 +236,7 @@ def make_integer_out_of_bit_vector(ref_state):
     ________
     >>> make_integer_out_of_bit_vector(np.array([1, 1, 0, 0]))
     12
+
     """
     number = 0
     for digit in range(len(ref_state)):
@@ -273,6 +278,7 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
     (array([0, 1, 0, 0]), 1.0)
     >>> qnb.new_state_after_sq_fermi_op("a^", 3, np.array([1, 1, 0, 0])) # creation of electron
     (array([1, 1, 0, 1]), 1.0)
+
     """
     new_fock_state = ref_fock_state.copy()
     coeff_phase = (-1.) ** np.sum(ref_fock_state[0:index_mode])
@@ -318,6 +324,7 @@ def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     >>> mapping = build_mapping(nbody_basis)
     >>> build_final_state_ad_a(np.array([1, 1, 0, 0]), 2, 1, mapping)  # exciting electron from spin MO 1 to spin MO 2
     (1, -1.0, -1.0)
+
     """
     state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
     state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
@@ -515,6 +522,7 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target):
              [-0.4, -1.6,  0. ,  0. ,  0. ,  4. ]]),
      array([], dtype=int64),
      array([0, 1, 2, 3, 4, 5], dtype=int64))
+
     """
     dim_H = a_dagger_a[0,0].shape[0]
     n_mo  = np.shape(a_dagger_a)[0] // 2
@@ -552,6 +560,7 @@ def build_E_and_e_operators( a_dagger_a, n_mo ):
     >>> nbody_basis = qnb.build_nbody_basis(2, 2)
     >>> a_dagger_a = qnb.build_operator_a_dagger_a(nbody_basis)
     >>> build_E_and_e_operators(a_dagger_a, 2)
+
     """
     E_ = np.empty((n_mo, n_mo), dtype=object)
     e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object)
@@ -604,6 +613,7 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
         1-electron reduced density matrix of the wavefunction
     two_rdm : array
         2-electron reduced density matrix of the wavefunction
+
     """
     if active_indices is not None:
         first_act_index = active_indices[0]
@@ -773,6 +783,7 @@ def build_2rdm_fh_on_site_repulsion(WFT, a_dagger_a, mask=None):
     -------
         two_rdm_fh : array
             2-RDM associated to the on-site-repulsion operator
+
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
@@ -932,6 +943,7 @@ def build_hybrid_1rdm_alpha_beta(WFT, a_dagger_a):
     -------
     one_rdm_alpha_beta :  array
         spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)
+
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     one_rdm_alpha_beta = np.zeros((n_mo, n_mo))
@@ -960,6 +972,7 @@ def build_transition_1rdm_alpha(WFT_A, WFT_B, a_dagger_a):
     -------
     transition_one_rdm_alpha : array
         transition spin-alpha 1-RDM
+
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     transition_one_rdm_alpha = np.zeros((n_mo, n_mo))
@@ -988,6 +1001,7 @@ def build_transition_1rdm_beta(WFT_A, WFT_B, a_dagger_a):
     -------
     transition_one_rdm_beta : array
         transition spin-beta 1-RDM
+
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
     transition_one_rdm_beta = np.zeros((n_mo, n_mo))
@@ -1091,6 +1105,7 @@ def my_state( slater_determinant, nbody_basis ):
     -------
     state :  array
         The slater determinant translated into the "kappa" many-body basis
+
     """
     kappa = np.flatnonzero((nbody_basis == slater_determinant).all(1))[0]  # nbody_basis.index(slater_determinant)
     state = np.zeros(np.shape(nbody_basis)[0])
@@ -1195,6 +1210,7 @@ def fh_get_active_space_integrals ( h_MO,
         effective one-electron integrals over active space
     U_MO_active : array
         two-electron integrals over active space (coulomb interactions)
+
     """
 
     # Determine core constant ========
@@ -1254,6 +1270,7 @@ def fh_get_active_space_integrals_with_V( h_MO,
         two-electron integrals over active space (coulomb interactions)
     V_MO_active : array
         two-electron integrals over active space (dipolar interactions)
+
     """
 
     # Determine core constant ========
@@ -1322,6 +1339,7 @@ def qc_get_active_space_integrals(h_MO,
         effective one-electron integrals over active space
     g_MO_active : array
         two-electron integrals over active space
+
     """
     # Fix data type for a few edge cases
     frozen_indices = [] if frozen_indices is None else frozen_indices
@@ -1391,7 +1409,7 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
 
 def build_s2_local( a_dagger_a, list_mo_local ):
-    '''
+    """
     Create a matrix representation of the local spin operators s_2 in the many-body basis
     for a local set of  orbitals attached to a "molecular fragment".
 
@@ -1405,7 +1423,7 @@ def build_s2_local( a_dagger_a, list_mo_local ):
     s2_local  : array
         matrix representation of the local s_2 operator  in the many-body basis.
 
-    '''
+    """
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -1418,7 +1436,7 @@ def build_s2_local( a_dagger_a, list_mo_local ):
 
 
 def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
-    '''
+    """
     Create a matrix representation of the product of two local spin operators
     s_A x s_B in the many-body basis. Each one being associated to a local set
     of molecular orbitals attached to two different "molecular fragments" A and B.
@@ -1437,7 +1455,7 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
     sAsB_coupling : array
         matrix representation of s_A x s_B in the many-body basis.
 
-    '''
+    """
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus_A = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_plus_B = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -1456,7 +1474,7 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
 
 
 def build_spin_subspaces( S2_local, S2_local_target ):
-    '''
+    """
 
     Create a projector over the many-body space spanning all the configurations
     which should be counted to produce a local spin s2_local of value given by
@@ -1475,7 +1493,7 @@ def build_spin_subspaces( S2_local, S2_local_target ):
         Projector over the many-body sub-space targeted (*i.e.* outer product of
         the maany-body states respecting the local spin symmetry demanded)
 
-    '''
+    """
     S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.A )
     Set_vectors = S2_local_eigvec[ :,   (S2_local_eigval >= S2_local_target-1.e-3)
                                       & (S2_local_eigval <= S2_local_target+1.e-3)   ]
@@ -1492,7 +1510,7 @@ def get_info_from_psi4( string_geometry,
                         basisset,
                         molecular_charge=0,
                         TELL_ME=False ):
-    '''
+    """
     Simple Psi4 interface to obtain relevant information for a quantum chemistry problem.
     Function to realise an Hartree-Fock calculation on a given molecule and to
     return all the associated information for futhrer correlated wavefunction
@@ -1524,7 +1542,7 @@ def get_info_from_psi4( string_geometry,
     E_rep_nuc   : float
         Energy of the nuclei repulsion
 
-    '''
+    """
     if not TELL_ME:
         # To prevent psi4 from printing the output in the terminal
         psi4.core.set_output_file("output_Psi4.txt", False)
@@ -1580,7 +1598,7 @@ def get_info_from_psi4( string_geometry,
 
 @njit
 def weight_det( C_B2_B1, occ_spinorb_Det1, occ_spinorb_Det2 ):
-    '''
+    """
     Evaluate the overlap of two slater determinants expressed in two different
     orbital basis. This is actually given by the determinant of the overlap of the
     occupied spin orbital present in each slater determinant.
@@ -1599,7 +1617,7 @@ def weight_det( C_B2_B1, occ_spinorb_Det1, occ_spinorb_Det2 ):
     Det_amplitude : float
         resulting determinant of the occupied spinorbital from the two different basis
 
-    '''
+    """
     # Number of electron = number of occupied spin-orbitals
     n_elec = len(occ_spinorb_Det1)
     # Matrix containing the final spin-orbital overlaps
@@ -2064,21 +2082,21 @@ def energy_cost_function_orbital_optimization( Vec_k,
                                                 frozen_indices,
                                                 active_indices,
                                                 virtual_indices ):
-    '''
+    """
     Energy cost function for a brute force orbital optimization with scipy
     (based on spin-free RDMs and ab initio problem)
-    
+
     Parameters
     ----------
-    Vec_k           :  array 
+    Vec_k           :  array
         vector containing all the orbital rotation parameters
-    one_rdm         :  array 
+    one_rdm         :  array
         1-electron reduced density matrix
-    two_rdm         :  array 
+    two_rdm         :  array
         2-electron reduced density matrix
-    h               :  array 
+    h               :  array
         1-electron integral to be transformed by orbital rotation
-    g               :  array 
+    g               :  array
         2-electron integral to be transformed by orbital rotation
     E_rep_nuc       :  float
         Energy of repulsion between the nuclei
@@ -2094,7 +2112,7 @@ def energy_cost_function_orbital_optimization( Vec_k,
     E_new :  float
         Final energy after playing with the orbital rotation parameters
 
-    '''
+    """
     n_mo = np.shape(h)[0]
     K_mat = transform_vec_to_skewmatrix_with_active_space(Vec_k,
                                                           n_mo,
@@ -2128,13 +2146,13 @@ def brute_force_orbital_optimization( one_rdm,
                                       grad_tolerance=1e-6,
                                       show_me=False,
                                       SAD_guess = False):
-    '''
+    """
     Method implementing a brute force orbtial optimization using scipy optimizer
     (based on spin-free RDMs and ab initio problem)
-    
+
     Parameters
     ----------
-    one_rdm         :  array 
+    one_rdm         :  array
         1-electron reduced density matrix
     two_rdm         :  array
         2-electron reduced density matrix
@@ -2142,7 +2160,7 @@ def brute_force_orbital_optimization( one_rdm,
         1-electron integral to be transformed
     g               : array
         2-electron integral to be transformed
-    E_rep_nuc       :  float 
+    E_rep_nuc       :  float
         Energy of repulsion between the nuclei
     C_ref           :  array
         Inital coefficient matrix for the molecular orbital (to be rotated)
@@ -2152,30 +2170,30 @@ def brute_force_orbital_optimization( one_rdm,
         List of active indices
     virtual_indices :  array
         List of virtual indices
-    max_iteration   :  int 
+    max_iteration   :  int
         Maximum number of iteration for the optimization. The default is 1000.
-    method_name     :  str 
+    method_name     :  str
         Method name for the orbital optimization. (The default is 'BFGS')
-    grad_tolerance  :  float 
+    grad_tolerance  :  float
         Gradient threshold for the convergence of the optmization. The default is 1e-6.
-    show_me         :  boolean 
+    show_me         :  boolean
         To show the evolution of the optimizaiton process. The default is False.
     SAD_guess       :  boolean
-        Guess orbital (important for HF orbital optimization) implementing a 
+        Guess orbital (important for HF orbital optimization) implementing a
         " Superposition of Atomic Density"(SAD guess). (The default is False.)
 
     Returns
     -------
     C_OO    :  array
         Orbital-optimized molecular orbital coefficient matrix
-    E_new   :  float 
+    E_new   :  float
         Final energy after orbital optimizaiton
     h_OO    :  array
         Orbital-optimized 1-electron integrals
     g_OO    :  array
         Orbital-optimized 2-electron integrals
 
-    '''
+    """
     n_mo = np.shape(h)[0]
     Vec_k = prepare_vector_k_orbital_rotation_with_active_space( n_mo,
                                                                   frozen_indices,
@@ -3158,6 +3176,7 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
         1-electron integral given in basis B2
     g_b2 : array
         2-electron integral given in basis B2
+
     """
     h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1, optimize=True)
     g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
@@ -3242,6 +3261,7 @@ def block_householder_transformation(M, size):
         Transformation matrix
     moore_penrose_inv : array
         Moore Penrose inverse of Householder matrix
+
     """
     n = np.shape(M)[0]
     a1 = M[size:2 * size, :size]
@@ -3285,6 +3305,7 @@ def generate_h_chain_geometry(N_atoms, dist_HH):
     ----------
     h_chain_geometry : str
         XYZ string encoding the geometry of the ring chain
+
     """
     h_chain_geometry = 'H 0. 0. 0.'  # Define the position of the first atom
     for n in range(1, N_atoms):
@@ -3308,6 +3329,7 @@ def generate_h_ring_geometry(N_atoms, radius):
     ----------
     h_ring_geometry : str
         XYZ string encoding the geometry of the hydrogen ring
+
     """
     theta_hh = 2 * np.pi / N_atoms  # Angle separating two consecutive H atoms (homogeneous distribution)
     theta_ini = 0.0
@@ -3335,6 +3357,7 @@ def generate_h4_geometry( radius, angle ):
     ----------
     h_ring_geometry : str
         XYZ string encoding the geometry of the hydrogen ring
+
     """
     h4_geometry = """ H   {0}   {1}  0.
                       H   {0}  -{1}  0.

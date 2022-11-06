@@ -25,6 +25,7 @@ def build_nbody_basis( n_mode, n_boson ):
     -------
     nbody_basis : array
         List of many-body states (occupation number states)
+
     """
     # Building the N-electron many-body basis
     nbody_basis = []
