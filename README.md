@@ -17,8 +17,7 @@ It provides a quick and easy way to build many-body operators and wavefunctions 
 
 <div align="center">
   
-[<img src="button_documentation.png" width="100"> ](https://quantnbody.readthedocs.io/en/latest/) 
-[>>>>> See the documentation here ! <<<<<](https://quantnbody.readthedocs.io/en/latest/) 
+[<img src="button_documentation.png" width="300"> ](https://quantnbody.readthedocs.io/en/latest/)  
                                                                                         
 </div>
 
