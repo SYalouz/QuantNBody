@@ -1417,13 +1417,13 @@ def build_s2_local( a_dagger_a, list_mo_local ):
     ----------
     a_dagger_a : array
         matrix representation of the a_dagger_a operator in the many-body basis.
-    list_mo_local :
-        TODO
+    list_mo_local : array
+        List of molecular orbital indices belonging to fragment of interest
 
     Returns
     -------
     s2_local  : array
-        matrix representation of the local s_2 operator  in the many-body basis.
+        matrix representation of the local s_2 operator in the many-body basis.
 
     """
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]

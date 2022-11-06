@@ -21,7 +21,7 @@ A) The first is the **creation of a many-body basis** (based on a total
    number of quantum particles and modes/orbitals to be filled) in which
    each operator can be represented.
 
-B) The second is the creation of the set of :math:`a^\dagger a`\ \*\*
+B) The second is the creation of the set of :math:`a^\dagger_p a_q`
    hopping operators that are needed to construct any many-body operator
    that conserves the number of particles.
 
@@ -98,8 +98,8 @@ us check the first state for which we have
 Here we choose to structure the occupation numbers as follows
 
 -  Each couple of terms refer to **a same spatial orbital**
--  **Even** indices refer to :math:`\alpha`-spinorbitals
--  **Odd** indices refer to :math:`\beta`-spinorbitals
+-  **Even** indices refer to :math:`\alpha`-spin-orbitals
+-  **Odd** indices refer to :math:`\beta`-spin-orbitals
 
 .. note::
 
@@ -186,7 +186,7 @@ a_dagger_a[10,1]  :math:`\longrightarrow a^\dagger_{5,\alpha} a_{0,\beta}`
 
 In practice, the resulting many-body operators we get access to are
 expressed in the original many-body basis stored under a sparse format.
-We take the example of the first operator :math:`a^\dagger_{0,\alpha}a_{0,\alpha}` below for which we show the asscociated
+We take the example of the first operator :math:`a^\dagger_{0,\alpha}a_{0,\alpha}` below for which we show the associated
 sparse and dense matrix representation in the many-body basis
 
 .. code:: ipython3
