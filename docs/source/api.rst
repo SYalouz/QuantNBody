@@ -22,7 +22,7 @@ Basic functions for the creation of many-fermion systems
 
 _______________
 
-_______________
+|
 
 
 Many-body Hamiltonians and excitations operators
@@ -38,7 +38,7 @@ Many-body Hamiltonians and excitations operators
 
 _______________
 
-_______________
+|
 
 Spin operators
 ---------------
@@ -57,7 +57,7 @@ Spin operators
 
 _______________
 
-_______________
+|
 
 
 
@@ -90,7 +90,7 @@ Creating/manipulating/visualizing many-body wavefunctions
 
 _______________
 
-_______________
+|
 
 
 
@@ -140,7 +140,7 @@ Reduced density matrices
 
 _______________
 
-_______________
+|
 
 
 
@@ -161,7 +161,7 @@ Functions to manipulate fermionic integrals
 
 _______________
 
-_______________
+|
 
 
 
@@ -177,7 +177,7 @@ Quantum embedding transformations (Householder)
 
 _______________
 
-_______________
+|
 
 
 
@@ -197,7 +197,7 @@ Psi4 calculation helper
 
 _______________
 
-_______________
+|
 
 
 Orbital optimization
@@ -237,7 +237,7 @@ Orbital optimization
 
 _______________
 
-_______________
+|
 
 
 
@@ -258,7 +258,7 @@ Basic functions for the creation of many-boson systems
 
 _______________
 
-_______________
+|
 
 
 Many-body Hamiltonians and excitations operators
@@ -269,7 +269,7 @@ Many-body Hamiltonians and excitations operators
 
 _______________
 
-_______________
+|
 
 Creating/manipulating/visualizing many-body wavefunctions
 ------------------------------------------------------------------------
@@ -280,7 +280,7 @@ Creating/manipulating/visualizing many-body wavefunctions
 
 _______________
 
-_______________
+|
 
 Reduced density matrices
 --------------------------------
@@ -294,14 +294,10 @@ Reduced density matrices
 
 _______________
 
-_______________
+|
 
 
 Functions to manipulate bosonic integrals
 ------------------------------------------------
 
 .. autofunction:: transform_1_2_body_tensors_in_new_basis
-
-_______________
-
-_______________
