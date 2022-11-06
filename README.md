@@ -1,6 +1,6 @@
-<p align="center">
+<div align="center">
  [<img src="logo.png" width="700">](https://quantnbody.readthedocs.io/en/latest/) 
-</p>
+</div>
    
  
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
