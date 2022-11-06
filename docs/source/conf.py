@@ -29,6 +29,8 @@ napoleon_numpy_docstring = True
 templates_path = ['_templates']
 exclude_patterns = []
 
+autodoc_mock_imports = ["psi4"]  # To prevent errors to be raised because of lack of psi4 on PyPi
+
 html_static_path = ['_static']
 html_logo = "_static/logo2.png"
 
