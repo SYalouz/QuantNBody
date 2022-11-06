@@ -218,7 +218,7 @@ sparse and dense matrix representation in the many-body basis
 We see here that this operator simply counts the number of electrons in
 the first spin-orbital explaining why we only have ones on the three
 first elements of the diagonal (see the shape of the three many-body
-states given ealrier to understand).
+states given earlier to understand).
 
 Building our first many-body Hamiltonian : a fermi-Hubbard molecule
 -------------------------------------------------------------------
@@ -237,6 +237,7 @@ site basis, the model Hamiltonian is usually expressed such that:
    }
 
 | with :
+
 - :math:`t_{ij}` the hopping terms between the pair of
   connected sites :math:`\langle i, j \rangle`.
 

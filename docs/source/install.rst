@@ -22,4 +22,4 @@ For this, write the following lines in your terminal:
   >>> cd QuantNBody
   >>> python -m pip install -e .
 
-And dont forget to always :code:`git pull` if you want to get the latest version of the package !
+And dont forget to always :code:`git pull` if you want to get the latest version of the package!
