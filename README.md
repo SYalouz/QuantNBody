@@ -10,7 +10,7 @@
 
 <div align="center">
   
-[<img src="button_documentation.svg" width="300"> ](https://quantnbody.readthedocs.io/en/latest/)  
+[<img src="button_documentation.svg" width="250"> ](https://quantnbody.readthedocs.io/en/latest/)  
                                                                                         
 </div>
 
