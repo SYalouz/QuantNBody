@@ -21,7 +21,7 @@ The code includes various native functions and it is flexible enough to help use
      :align: left
 
   **A research-friendly package:** with QuantNBody we want to facilitate the implementation of quantum many-body systems
-  composed of fermions or bosons for theoretical research and method developements. It provides a quick and easy way to build many-body operators and wavefunctions and get access
+  composed of fermions or bosons for theoretical research and method developments. It provides a quick and easy way to build many-body operators and wavefunctions and get access
   to quantities and objects of interest (in a few python lines).
 
   .. figure:: teaching.png
@@ -51,7 +51,7 @@ Beyond this, the QuantNBody package has been also designed to provide flexibilit
 Brief illustration of what is possible
 =======================================
 
-We provide below a non-exhaustive list of the various possibilites offered by the package:
+We provide below a non-exhaustive list of the various possibilities offered by the package:
 
   *  Visualizing the structure of any wavefunction in a given many-body basis (for fermionic and bosonic systems)
   *  Building 1-body, 2-body (...) reduced density matrices (for fermionic and bosonic systems)

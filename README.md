@@ -11,8 +11,14 @@
 QuantNBody is a python package facilitating the implementation and manipulation of quantum many-body systems
 composed of fermions or bosons.
 It provides a quick and easy way to build many-body operators and wavefunctions and get access
-(in a few python lines) to quantities/objects of interest for theoretical research and method developements. This tool can be also of a great help for pedagogical purpose and to help illustrating numerical methods for fermionic or bosonic systems. 
-We provide below a non-exhaustive list of the various possibilites offered by the package:
+(in a few python lines) to quantities/objects of interest for theoretical research and method developments. This tool can be also of a great help for pedagogical purpose and to help illustrating numerical methods for fermionic or bosonic systems. 
+
+ ## Documentation of the package
+
+[See the documentation here !](quantnbody.readthedocs.io) 
+
+
+We provide below a non-exhaustive list of the various possibilities offered by the package:
 
 - Visualizing the structure of any wavefunction in a given many-body basis (for fermionic and bosonic systems)
 - Building 1-body, 2-body (...) reduced density matrices (for fermionic and bosonic systems)
@@ -23,7 +29,7 @@ We provide below a non-exhaustive list of the various possibilites offered by th
 
 To illustrate how to use this package, several example codes and tutorials have been implemented 
 to help the new users (see the ''Tutorials'' folder).
-Particularily, we show how to employ the tools already implemented to 
+Particularly, we show how to employ the tools already implemented to 
 develop and implement famous many-body methods such as :
 - FCI : Full Configuration Interaction (for bosonic and fermionic systems)
 - CAS-CI : Complete Active Space CI  (for fermionic systems)
@@ -33,7 +39,7 @@ develop and implement famous many-body methods such as :
  
 --- 
 
- ## Installing the package (in developement mode)
+ ## Installing the package (in development mode)
 To install the latest version of QuantNBody in a quick and easy way:
 
 ```
