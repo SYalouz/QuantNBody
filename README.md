@@ -7,7 +7,7 @@
  
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## QuantNBody : QuantNBody : a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
+## QuantNBody :  a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
 
 
 <div align="center">
