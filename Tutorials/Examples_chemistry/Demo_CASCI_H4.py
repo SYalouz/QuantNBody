@@ -109,7 +109,7 @@ for angle in ( list_angle ):
 
     E_core, h_, g_  = qnb.fermionic.tools.qc_get_active_space_integrals(h_MO,
                                                               g_MO,
-                                                              occupied_indices = frozen_indices,
+                                                              frozen_indices = frozen_indices,
                                                               active_indices   = active_indices)
     #%%
     # Building the matrix representation of the Hamiltonian operators 
