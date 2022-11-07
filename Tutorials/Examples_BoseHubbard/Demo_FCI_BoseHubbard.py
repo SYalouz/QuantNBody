@@ -20,8 +20,7 @@ import quantnbody as qnb
 n_mode  = 4
 n_boson = 10
 
-nbodybasis = qnb.bosonic.tools.build_nbody_basis( n_mode, n_boson ) 
-# mapping = qnb.bosonic.tools.build_mapping( nbodybasis ) 
+nbodybasis = qnb.bosonic.tools.build_nbody_basis( n_mode, n_boson )  
 dim_H = np.shape(nbodybasis)[0] 
 
 #%% 
