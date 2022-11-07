@@ -55,6 +55,5 @@ This tool can be also of a great help for pedagogical purpose and to help illust
 Indices and tables
 ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
+* :ref:`genindex` 
 * :ref:`search`
