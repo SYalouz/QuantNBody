@@ -8,7 +8,7 @@ What is QuantNBody ?
 The **QuantNBody** package is a Python toolkit for quantum chemists/physicists interested in methods development to study
 quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way
 to build matrix representations of bosonic and fermionic quantum many-body operators (*e.g.* Hamiltonians, spin or excitation
-operators) and get access to quantities/objects of interest (*e.g.* energies, reduced density matrices, many-body wave functions).
+operators) and get access to quantities/objects of interest (*e.g.* energies, reduced density matrices, many-body wavefunctions).
 The code includes various native functions and it is flexible enough to help users in building their own numerical tools to implement new methods.
 
 .. note::
@@ -20,7 +20,7 @@ The code includes various native functions and it is flexible enough to help use
      :alt: alternate text
      :align: left
 
-  **A research-friendly package:** with QuantNBody we want to facilitate the implementation of quantum many-body systems
+  **A research-friendly package:** with QuantNBody, we want to facilitate the implementation of quantum many-body systems
   composed of fermions or bosons for theoretical research and method developments. It provides a quick and easy way to build many-body operators and wavefunctions and get access
   to quantities and objects of interest (in a few python lines).
 
@@ -45,7 +45,7 @@ the user can employ various pre-built functions in order to
 
   #. Manipulate/visualize **quantum many-body states**.
 
-Beyond this, the QuantNBody package has been also designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.
+Beyond this, the QuantNBody package has also been designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.
 
 
 Brief illustration of what is possible
@@ -60,8 +60,8 @@ We provide below a non-exhaustive list of the various possibilities offered by t
   *  Building molecular *ab initio* Hamiltonians :math:`\hat{H}` (Psi4 provides the electronic integrals)
 
 
-Below we show some results one can produce with QuantNBody for a hydrogen molecule, a Fermi-Hubbard dimer and a Bose-Hubbard dimer.
-To generate these data, the the package was used to code from scratch each many-body Hamiltonian and to analyze their associated groundstate :math:`|\Psi_0\rangle`.
+Below we show some results one can produce with QuantNBody for the hydrogen molecule, a Fermi-Hubbard dimer and a Bose-Hubbard dimer.
+To generate these data, the package was used to code (from scratch) each many-body Hamiltonian and to analyze their associated groundstate :math:`|\Psi_0\rangle`.
 
 .. figure:: figure_fermion.png
     :width: 800

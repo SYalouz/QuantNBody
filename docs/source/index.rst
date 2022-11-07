@@ -14,7 +14,7 @@ A Python package for quantum chemistry and physics.
 composed of fermions or bosons.
 It provides a quick and easy way to build many-body operators and wavefunctions and get access
 (in a few python lines) to quantities and objects of interest for theoretical research and method developements.
-This tool can be also of a great help for pedagogical purpose and to help illustrating numerical methods for fermionic or bosonic systems.
+This tool also can be of a great help for pedagogical purpose and to help illustrate numerical methods for fermionic or bosonic systems.
 
 .. toctree::
    :maxdepth: 4
