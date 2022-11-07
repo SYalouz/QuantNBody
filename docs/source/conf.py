@@ -22,7 +22,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
               'sphinx_rtd_theme',
               'nbsphinx',
-              'sphinxemoji.sphinxemoji']
+              'sphinxemoji.sphinxemoji',
+              'IPython.sphinxext.ipython_console_highlighting']
 
 napoleon_numpy_docstring = True 
 
