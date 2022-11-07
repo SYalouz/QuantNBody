@@ -3195,14 +3195,17 @@ def householder_transformation(M):
     Householder transformation transforming a squared matrix " M " into a
     block-diagonal matrix " M_BD " such that
 
-    .. math::  M_BD = P M P
+    .. math::  
+        M_BD = P M P
 
     where " P " represents the Householder transformation built from the
     vector "v" such that
 
-    .. math:: P = I - 2  v \bullet v^T
+    .. math:: 
+        P = I - 2  v \bullet v^T
 
-    .. note:: This returns a 2x2 block on left top corner
+    .. note:: 
+        This returns a 2x2 block on left top corner
 
     Parameters
     ----------
@@ -3241,15 +3244,18 @@ def block_householder_transformation(M, size):
     Block Householder transformation transforming a square matrix ” M ” into a
     block-diagonal matrix ” M_BD ” such that
 
-    .. math:: M_{BD} = H(V) \bullet M \bullet H(V)
+    .. math:: 
+        M_{BD} = H(V) \bullet M \bullet H(V)
 
     where ” H(V) ” represents the Householder transformation built from the
     matrix “V” such that
 
-    .. math:: H(V) = I - 2. \bullet V(V^{T} V)^{-1}V^{T}
+    .. math:: 
+        H(V) = I - 2. \bullet V(V^{T} V)^{-1}V^{T}
 
-    .. note:: Depending on the size of the block needed (unchanged by the transformation),
-      this returns a (2 x size)*(2 x size) block on left top corner
+    .. note:: 
+        Depending on the size of the block needed (unchanged by the transformation),
+        this returns a (2 x size)*(2 x size) block on left top corner
 
     See Also
     --------
