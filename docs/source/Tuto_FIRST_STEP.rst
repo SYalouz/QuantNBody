@@ -124,7 +124,7 @@ Here we choose to structure the occupation numbers as follows
 Building and storing the :math:`a^\dagger_{p,\sigma} a_{q,\tau}` operators
 --------------------------------------------------------------------------
 
-Once the list of many-body state is created, the next crucial point in
+Once the list of many-body states is created, the next crucial point in
 the **QuantNBody** package consists in building the
 :math:`a^\dagger_{p,\sigma} a_{q,\tau}` many-body operators.
 
@@ -137,10 +137,10 @@ are built in practice using series of
 
 With the QuantNBody package, we build the
 :math:`a^\dagger_{p,\sigma} a_{q,\tau}` operators once and for all and
-store them via a very simple command line. This way we will be able to
+store them via a very simple command line. In this way, we will be able to
 use them later on for any type of developments.
 
-The command line is simple and only require the list of many-body states
+The command line is simple and only requires the list of many-body states
 we built previously :
 
 .. code:: ipython3
@@ -245,7 +245,7 @@ Building our first many-body Hamiltonian : a fermi-Hubbard molecule
 -------------------------------------------------------------------
 
 In this final part of the tutorial we will use the previously built
-:code:a_dagger_a variable to implement a fermi-Hubbard molecule. In the local
+:code:`a_dagger_a` variable to implement a fermi-Hubbard molecule. In the local
 site basis, the model Hamiltonian is usually expressed such that:
 
 .. math::
@@ -280,7 +280,7 @@ In a more general basis (not necessarily local) we have
    \hat{H} =\sum_{\langle p,q \rangle}^{N_{MO}} -h_{pq} \sum_{\sigma=\uparrow,\downarrow} (\hat{a}^\dagger_{p,\sigma}\hat{a}_{q,\sigma}+\hat{a}^\dagger_{q,\sigma}\hat{a}_{p,\sigma}) + \sum_i^{N_{MO}} U_{p,q,r,s} \hat{a}^\dagger_{p,\uparrow}\hat{a}_{q,\uparrow} \hat{a}^\dagger_{r,\downarrow}\hat{a}_{s,\downarrow} ,
 
 
-where for commodity we have introduced the one-body integrals
+where, for commodity, we have introduced the one-body integrals
 :math:`h_{pq}` which embed the hopping terms and the chemical potentials
 such as
 
@@ -418,7 +418,7 @@ for example the numpy library.
 
 And finally, we can call a very useful function from the QuantNBody
 package that help visualizing the shape of a wavefunction as shown
-below. This function lists the most important many-body state
+below. This function lists the most important many-body states
 contributing to the wavefunction with the associated coefficients in
 front.
 

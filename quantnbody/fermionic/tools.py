@@ -25,7 +25,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     N_electron :  int
         Number of electrons
     S_z_cleaning : bool, default=False
-        Option if we want to get read of the s_z != 0 states (default is False)
+        Option if we want to get rid of the s_z != 0 states (default is False)
 
     Returns
     -------
@@ -685,12 +685,12 @@ def build_full_mo_1rdm_and_2rdm_for_AS( WFT,
 
 def build_1rdm_alpha(WFT, a_dagger_a):
     """
-    Create a spin-alpha 1 RDM for of a given wave function
+    Create a spin-alpha 1 RDM for a given wave function
 
     Parameters
     ----------
     WFT : array
-        Wave function for which we want to build the 1-RDM (expressed in the nuemrical basis)
+        Wave function for which we want to build the 1-RDM (expressed in the numerical basis)
     a_dagger_a : array
         Matrix representation of the a_dagger_a operator
 
@@ -837,7 +837,7 @@ def build_2rdm_fh_dipolar_interactions(WFT, a_dagger_a, mask=None):
 
 def build_2rdm_spin_free(WFT, a_dagger_a):
     """
-    Create a spin-free 2 RDM for of a given wave function
+    Create a spin-free 2 RDM for a given wave function
 
     Parameters
     ----------
@@ -880,7 +880,7 @@ def build_2rdm_spin_free(WFT, a_dagger_a):
 
 def build_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
     """
-    Create both spin-free 1- and 2-RDMs for of a given wave function
+    Create both spin-free 1- and 2-RDMs for a given wave function
 
     Parameters
     ----------
@@ -1241,7 +1241,7 @@ def fh_get_active_space_integrals_with_V( h_MO,
                                           active_indices=None ):
     """
     Similar function as before but with an additional dipolar term V  when considering a Fermi-Hubbard system.
-    Restricts the system at a spatial orbital level to an active space
+    Restricts the system at a spatial orbital level to an active space. 
     This active space may be defined by a list of active indices and
     doubly occupied indices. Note that one_body_integrals and
     two_body_integrals must be defined in an orthonormal basis set (MO like).
@@ -1314,7 +1314,7 @@ def qc_get_active_space_integrals(h_MO,
                                   frozen_indices=None,
                                   active_indices=None):
     """
-    Restricts an ab initio  electronic structure system at a spatial orbital level to an active space
+    Restricts an ab initio  electronic structure system at a spatial orbital level to an active space.
     This active space may be defined by a list of active indices and
     doubly occupied indices. Note that one_body_integrals and
     two_body_integrals must be defined in an orthonormal basis set (MO like).
@@ -1493,7 +1493,7 @@ def build_spin_subspaces( S2_local, S2_local_target ):
     -------
     Projector_spin_subspace : array
         Projector over the many-body sub-space targeted (*i.e.* outer product of
-        the maany-body states respecting the local spin symmetry demanded)
+        the many-body states respecting the local spin symmetry demanded)
 
     """
     S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.A )
@@ -1515,7 +1515,7 @@ def get_info_from_psi4( string_geometry,
     """
     Simple Psi4 interface to obtain relevant information for a quantum chemistry problem.
     Function to realise an Hartree-Fock calculation on a given molecule and to
-    return all the associated information for futhrer correlated wavefunction
+    return all the associated information for further correlated wavefunction
     calculation for QuantNBody.
 
     Parameters
@@ -1610,9 +1610,9 @@ def weight_det( C_B2_B1, occ_spinorb_Det1, occ_spinorb_Det2 ):
     C_B2_B1          : array
         Coefficient matrix of the MO basis 1 expressed in the MO basis 2
     occ_spinorb_Det1 : array
-        Occupied spinorbital in the slater detemrinant 1 (bra)
+        Occupied spinorbital in the slater determinant 1 (bra)
     occ_spinorb_Det2 : array
-        occupied spinorbital in the slater detemrinant 2 (ket)
+        occupied spinorbital in the slater determinant 2 (ket)
 
     Returns
     -------
@@ -1646,7 +1646,7 @@ def scalar_product_different_MO_basis( Psi_A_MOB1,
                                        nbody_basis ):
     """
     Evaluate the non-trivial scalar product of two multi-configurational
-    wavefunction expressed in two different moelcular orbital basis.
+    wavefunction expressed in two different molecular orbital basis.
 
     Parameters
     ----------
@@ -1846,7 +1846,7 @@ def scalar_product_different_MO_basis_with_frozen_orbitals( Psi_A_MOB1,
 
 def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
     """
-    Print the decomposition of a given input wave function in a many-body basis.
+    Print the decomposition of a given input wavefunction in a many-body basis.
 
     Parameters
     ----------
@@ -1861,7 +1861,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
 
     Returns
     -------
-        Terminal printing of the wave function
+        Terminal printing of the wavefunction
 
     """
     list_index = np.where(abs(WFT) > cutoff)[0]
@@ -2569,7 +2569,7 @@ def orbital_optimisation_newtonraphson(one_rdm_SA,
     C_transf        : array
         Initial MO coeff matrix
     E_rep_nuc       :  array
-        Energy of the nucleic repulsion
+        Energy of the nuclei repulsion
     h_AO            :  array
         1-electron integrals in the AO basis
     g_AO            :  array
@@ -2901,7 +2901,7 @@ def orbital_optimisation_newtonraphson_no_active_space(one_rdm_SA,
 
 def transform_vec_to_skewmatrix(Vec_k, n_mo):
     """
-    Create the anti-symmetric K matrix necessary fpor the orbital optimization
+    Create the anti-symmetric K matrix necessary for the orbital optimization
     based on a vector k encoding the kappa (i.e. orbital rotation parameters)
 
     Parameters

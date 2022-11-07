@@ -5,7 +5,7 @@
 France - July 2022**
 
 In this QuantNBody tutorial, we will focus on the construction of spin
-operators like :math:`S_2` and :math:`S_z` and ab initio electronic
+operators like :math:`S_2` and :math:`S_z` and *ab initio* electronic
 structure Hamiltonians :math:`H`. We will show how easily we can build
 these operators and use them.
 
@@ -22,7 +22,7 @@ Let us first import our package and some additional libraries
 Electronic structure Hamiltonian
 --------------------------------
 
-The ab initio electronic structure Hamiltonian describes how a
+The *ab initio* electronic structure Hamiltonian describes how a
 collection of :math:`N_e` electrons rearrange around a set of positively
 charged nuclei in a molecule. This operator is defined like:
 
@@ -189,7 +189,7 @@ and the spin-up creation operator
 
 as we know that :math:`{S}_- = {S}_+^\dagger`.
 
-Below we show how to generate the matrix representation of the three
+Below we show how to generate the matrix representation of these three
 operators with a single pre-made function.
 
 .. code:: ipython3
@@ -198,8 +198,8 @@ operators with a single pre-made function.
 
 Now, we can use the :math:`{S}_2` operator to check the spin
 symmetry of the state produced by the QuantNBody. For this, nothing more
-simple : we compute the averaged value of this operator for the 10 first
-eigenstates of the ab initio Hamiltonian
+simple: we compute the averaged value of this operator for the 10 first
+eigenstates of the *ab initio* Hamiltonian
 
 .. math::  \langle {S}_2 \rangle_\Psi \equiv  \langle \Psi | {S}_2 | \Psi\rangle
 
@@ -248,7 +248,7 @@ value of the spin symmetry targeted :math:`s_2^{target}` has to be
 defined by the user.
 
 This extension has been implemented for every fermionic Hamitlonian
-(model or ab initio ones). We show below the additional arguments we
+(model or *ab initio* ones). We show below the additional arguments we
 have to provide to the Hamiltonian function to generate this penalty
 term and thus obtain singlet in :math:`H_4`.
 

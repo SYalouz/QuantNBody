@@ -298,7 +298,7 @@ def build_1rdm(WFT, a_dagger_a):
 
 def build_2rdm(WFT, a_dagger_a):
     """
-    Create a 2 RDM for a given wave function assocaited to a Bose-Hubbard system
+    Create a 2 RDM for a given wave function associated to a Bose-Hubbard system
 
     Parameters
     ----------
