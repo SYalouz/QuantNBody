@@ -332,14 +332,17 @@ def build_2rdm(WFT, a_dagger_a):
 
 def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
     """
-    Transform bosonic integrals from an initial basis "B1" to a new basis "B2".
-    The transformation is realized thanks to a transfer matrix noted "C" linking
+    Transform electronic integrals from an initial basis "B1" to a new basis "B2".
+    The transformation is realized thanks to a passage matrix noted "C" linking
     both basis like
+    
+    .. math::
+        
+        | B2_l \\rangle =  \sum_p | B1_p \\rangle C_{pl} 
 
-            | B2_l > = \\sum_{p} | B1_p >  C_{pl}
-
-    with | B2_l > and | B1_p > are vectors of the basis B1 and B2 respectively
-
+    with :math:`| B2_l \\rangle` and :math:`| B2_p \\rangle` are vectors of the
+    basis B1 and B2 respectively.
+    
     Parameters
     ----------
     h_b1 : array

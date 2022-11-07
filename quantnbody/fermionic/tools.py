@@ -3158,10 +3158,13 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
     Transform electronic integrals from an initial basis "B1" to a new basis "B2".
     The transformation is realized thanks to a passage matrix noted "C" linking
     both basis like
+    
+    .. math::
+        
+        | B2_l \\rangle =  \sum_p | B1_l \\rangle C_{pl} 
 
-            | B2_l > = \\sum_{p} | B1_p >  C_{pl}
-
-    with | B2_l > and | B1_p > are vectors of the basis B1 and B2 respectively
+    with :math:`| B2_l \\rangle` and :math:`| B2_p \\rangle` are vectors of the
+    basis B1 and B2 respectively.
 
     Parameters
     ----------
@@ -3202,7 +3205,7 @@ def householder_transformation(M):
     vector "v" such that
 
     .. math:: 
-        P = I - 2  v \bullet v^T
+        P = I - 2  v . v^T
 
     .. note:: 
         This returns a 2x2 block on left top corner
@@ -3245,13 +3248,13 @@ def block_householder_transformation(M, size):
     block-diagonal matrix ” M_BD ” such that
 
     .. math:: 
-        M_{BD} = H(V) \bullet M \bullet H(V)
+        M_{BD} = H(V) M H(V)
 
     where ” H(V) ” represents the Householder transformation built from the
     matrix “V” such that
 
     .. math:: 
-        H(V) = I - 2. \bullet V(V^{T} V)^{-1}V^{T}
+        H(V) = I - 2  V(V^{T} V)^{-1}V^{T}
 
     .. note:: 
         Depending on the size of the block needed (unchanged by the transformation),
