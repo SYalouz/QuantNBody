@@ -57,6 +57,12 @@ python -m pip install -e .
  
  - Psi4 installations : [Using conda](https://anaconda.org/psi4/psi4), see also the [following link](https://psicode.org/psi4manual/1.2.1/conda.html)
 
+Once the package is fully installed, you can run some tests to check if everything was correclty installed. For this, go the the testing folder and run the following line in your terminal:
+```
+python TESTS.py
+```
+
+
  ## Tutorials
  
 Different examples and tutorials are furnished in the [Tutorials repository](https://github.com/SYalouz/QuantNBody/tree/main/Tutorials) under the form of Jupyter notebooks or python scripts.  
