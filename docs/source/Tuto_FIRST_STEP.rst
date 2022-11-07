@@ -13,9 +13,9 @@ electrons or bosons. To achieve this goal, the package has been designed
 to provide a fast and easy way to construct many-body operators and wave
 functions in a given many-body basis. In this way, it becomes possible
 to access quantities/objects of interest in a few lines of python to
-speed up and facilitate method development.
+speed up and facilitate methodology development.
 
-To do this, the package works with two fundamental ingredients.
+To that purpose, the package works with two fundamental ingredients.
 
 A) The first is the **creation of a many-body basis** (based on a total
    number of quantum particles and modes/orbitals to be filled) in which
@@ -30,9 +30,9 @@ functions to construct different types of many-body operators
 (e.g. Hamiltonians, spin operators), and manipulate/view many-body
 quantum states. Note that the QuantNBody package has also been designed
 to provide flexibility for users to also create their own operators and
-functions based on the tools provided.
+functions based on the provided tools.
 
-**Nota Bene:** For the sake of simplicity, we will concentrate in these
+**Nota Bene:** For sake of simplicity, we will focus in these
 tutorials on fermionic systems.
 
 Let us first import the package !
@@ -68,7 +68,7 @@ should have **6 many-body states.**
 
 .. code:: ipython3
 
-    N_MO = N_elec = 2 # We define the numebr of MO adn electrons
+    N_MO = N_elec = 2 # We define the number of MO and electrons
 
     nbody_basis = qnb.fermionic.tools.build_nbody_basis( N_MO, N_elec ) # Building the nbody_basis
 
@@ -103,13 +103,13 @@ Here we choose to structure the occupation numbers as follows
 
 .. note::
 
-  Bluilding a matrix representation of a many-body operator, what does it mean ?
+    Building a matrix representation of a many-body operator, what does it mean ?
     For each configuration, we associate a unique :math:`\kappa` index which
     defines a unique “numerical” vector. In practice, any numerical
     representation of a given many-body operator will be given in the numerical many-body basis
     indexed by the :math:`\kappa`. As an example, let us imagine we want to
-    encode numerically a second quantization operator :math:`O`. This means
-    in practice that we create a matrix representation of this operator in the many-body
+    encode numerically a second quantization operator :math:`O`. In practice, this means
+    that we create a matrix representation of this operator in the many-body
     basis such that
 
     .. math::
@@ -118,7 +118,7 @@ Here we choose to structure the occupation numbers as follows
         =1}^{\dim_H}  \langle \kappa' | O | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |
 
     In practice, this indexing is realized by the QuantNBody package and
-    used then as a central tool to build every matrix element of a given
+    then used as a central tool to build every matrix element of a given
     many-body operators.
 
 Building and storing the :math:`a^\dagger_{p,\sigma} a_{q,\tau}` operators
