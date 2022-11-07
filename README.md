@@ -1,6 +1,8 @@
-<p align="center">
-  <img src="logo.png" width="700">  
-</p> 
+<div align="center">
+   
+[<img src="logo.png" width="700">](https://quantnbody.readthedocs.io/en/latest/) 
+   
+</div>
    
  
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -10,7 +12,7 @@
 
 <div align="center">
   
-[<img src="button_documentation.svg" width="300"> ](https://quantnbody.readthedocs.io/en/latest/)  
+[<img src="button_documentation.svg" width="250"> ](https://quantnbody.readthedocs.io/en/latest/)  
                                                                                         
 </div>
 
