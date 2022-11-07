@@ -160,12 +160,13 @@ class MyTestCase(unittest.TestCase):
         nbodybasis = qnb.bosonic.tools.build_nbody_basis(n_mode, n_boson)
         a_dagger_a = qnb.bosonic.tools.build_operator_a_dagger_a(nbodybasis)
 
-        assert np.allclose(nbodybasis, np.load('nbodybasis_boson_test.npy')), 'Error in many-body basis generation'
+        self.assertTrue(np.allclose(nbodybasis, np.load('nbodybasis_boson_test.npy')),
+                        'Error in many-body basis generation')
         test_a_dagger_a = np.load('a_dagger_a_boson_test.npy', allow_pickle=True)
         for mode in range(n_mode):
             for mode_ in range(n_mode):
-                assert np.allclose(a_dagger_a[mode, mode_].A,
-                                   test_a_dagger_a[mode, mode_].A), 'Error in groundstate energy estimation'
+                self.assertTrue(np.allclose(a_dagger_a[mode, mode_].A,
+                                   test_a_dagger_a[mode, mode_].A), 'Error in groundstate energy estimation')
 
     def test_BOSON_MODEL_HAMILTONIAN(self):
         n_mode = 4
