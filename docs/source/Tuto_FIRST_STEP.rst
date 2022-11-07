@@ -185,9 +185,31 @@ a_dagger_a[10,1]  :math:`\longrightarrow a^\dagger_{5,\alpha} a_{0,\beta}`
    </center>
 
 In practice, the resulting many-body operators we get access to are
-expressed in the original many-body basis stored under a sparse format.
-We take the example of the first operator :math:`a^\dagger_{0,\alpha}a_{0,\alpha}` below for which we show the associated
-sparse and dense matrix representation in the many-body basis
+expressed in the numerical many-body basis (*i.e.* the :math:`\kappa` indices).
+To better illustrate that, let us consider :code:`a_dagger_a[0,0]`. As explained before, this numerical object encodes
+:math:`a^\dagger_{0,\alpha} a_{0,\alpha}` which can theoretically be expressed in the many-body basis as follows
+
+.. math::
+
+    a^\dagger_{0,\alpha} a_{0,\alpha} = \sum_{\kappa, \kappa'
+    =1}^{\dim_H}  \langle \kappa' | a^\dagger_{0,\alpha} a_{0,\alpha} | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |,
+
+As the effect of this operator is simply to count the number of electrons in
+the first spin-orbital, we can simplify the previous expression as follows
+
+.. math::
+
+    a^\dagger_{0,\alpha} a_{0,\alpha} =   | 1100    \rangle\langle 1100 |  +  | 1010    \rangle\langle 1010 | + | 1001    \rangle\langle 1001 |.
+
+In terms of encoding in the numerical :math:`\kappa` many-body basis, this operator can be rewritten as follows
+
+.. math::
+
+    a^\dagger_{0,\alpha} a_{0,\alpha} =   | \kappa=0    \rangle\langle \kappa=0 |  +  | \kappa=1    \rangle\langle \kappa=1 | + | \kappa=2    \rangle\langle \kappa=2 |.
+
+
+With **QuantNBody**, the object :code:`a_dagger_a[0,0]` can be seen as the table (*i.e.* matrix) encoding all the matrix elements :math:`\langle \kappa' | a^\dagger_{0,\alpha} a_{0,\alpha} | \kappa  \rangle`
+of the associated many-body operator :math:`a^\dagger_{0,\alpha} a_{0,\alpha}`. This encoding is realized in practice via a *sparse matrix representation* which can be made dense as shown below
 
 .. code:: ipython3
 
@@ -214,11 +236,10 @@ sparse and dense matrix representation in the many-body basis
      [0. 0. 0. 0. 0. 0.]
      [0. 0. 0. 0. 0. 0.]]
 
+Here, we see here that the effect of this operator is simply to count the number of electrons in
+the first spin-orbital. This explains why we only have ones on the three
+first elements of the diagonal !
 
-We see here that this operator simply counts the number of electrons in
-the first spin-orbital explaining why we only have ones on the three
-first elements of the diagonal (see the shape of the three many-body
-states given earlier to understand).
 
 Building our first many-body Hamiltonian : a fermi-Hubbard molecule
 -------------------------------------------------------------------
