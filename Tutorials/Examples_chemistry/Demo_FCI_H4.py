@@ -21,7 +21,7 @@ sys.path.append('../')
 import quantnbody as qnb
 
 def RUN_FCI_PSI4( string_geo,
-                       basisset ):
+                  basisset ):
     '''
     A function to run a FCI method with the Psi4 package
     ''' 
@@ -29,9 +29,9 @@ def RUN_FCI_PSI4( string_geo,
     psi4.core.clean_variables()
     psi4.core.clean_options()
     
-    psi4.geometry( string_geo )
+    psi4.geometry( string_geo ) 
     psi4.set_options({ 'basis': basisset, 
-                      'num_roots': 2  })
+                       'num_roots': 2  })
     
     Escf, wfnSCF = psi4.energy('scf', return_wfn=True)
     fci, fci_wfn = psi4.energy('FCI',return_wfn=True)
@@ -66,7 +66,7 @@ S_2, S_p, S_Z = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 
 #%%
   
-list_angle = np.linspace(0.25, 3., 18) 
+list_angle = np.linspace(0.15, 3., 18) 
 
 E_0_qnb = []
 E_1_qnb = []
@@ -75,17 +75,17 @@ for angle in ( list_angle ):
     
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations 
-    # Li-H geometry  
-    string_geo =  qnb.fermionic.tools.generate_h4_geometry( 1., angle )
-                    
-    molecule = psi4.geometry(string_geo) 
+    # H4 geometry  
+    string_geo = qnb.fermionic.tools.generate_h4_geometry( 1., angle )
+    string_geo += '\n symmetry c1'    
+    molecule = psi4.geometry(string_geo)
     psi4.set_options({'basis'      : basisset,
                       'reference'  : 'rhf',
                       'SCF_TYPE'   : 'DIRECT' })
-    
+ 
     scf_e, scf_wfn = psi4.energy( 'HF', molecule=molecule, return_wfn=True, verbose=0 )
     E_rep_nuc = molecule.nuclear_repulsion_energy()
-    C_RHF     = np.asarray(scf_wfn.Ca()).copy()             # MO coeff matrix from the initial RHF calculation
+    C_RHF     = np.asarray(scf_wfn.Ca()).copy()              # MO coeff matrix from the initial RHF calculation
     mints     = psi4.core.MintsHelper(scf_wfn.basisset())   # Get AOs integrals using MintsHelper
     Num_AO    = np.shape(np.asarray(mints.ao_kinetic()))[0] 
 
@@ -98,7 +98,7 @@ for angle in ( list_angle ):
     g_AO = np.asarray(mints.ao_eri()).reshape(( Num_AO, Num_AO, Num_AO, Num_AO )) 
      
     h_MO, g_MO  = qnb.fermionic.tools.transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_ref )
-   
+    
     #%%
     # Building the matrix representation of the Hamiltonian operators 
     H  = qnb.fermionic.tools.build_hamiltonian_quantum_chemistry(h_MO,
@@ -125,7 +125,7 @@ for angle in ( list_angle ):
     # Clean all previous options for psi4
      
     string_geo = qnb.fermionic.tools.generate_h4_geometry(1, angle)
-                    
+    string_geo += '\n' + 'symmetry c1'                    
     E0_fci, E1_fci  =  RUN_FCI_PSI4( string_geo,
                                      basisset  )
 
@@ -145,7 +145,7 @@ ax1.plot( list_angle,  E_0_psi4, color='red',  label='$E_0^{psi4}$')
 ax1.plot( list_angle,  E_1_psi4, color='red',   label='$E_1^{psi4}$')
 ax1.plot( list_angle,  E_0_qnb, color='blue', ls='', marker='o', label='$E_0^{qnb}$')
 ax1.plot( list_angle,  E_1_qnb, color='blue', ls='', marker='o', label='$E_1^{qnb}$')
-ax1.set_xlabel('Intertatomic distance $r_{Li-H}$ ($\AA$) ', size=22)
+ax1.set_xlabel('H-H angle (rad.)', size=22)
 ax1.set_ylabel('Energy (Ha)', size=22)
 ax1.autoscale(enable=True, axis='y', tight=None)
 ax1.legend(fontsize='x-large')

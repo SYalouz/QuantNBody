@@ -20,14 +20,14 @@ import quantnbody as qnb
  
 #========================================================|
 # Parameters for the simulation 
-nelec_active =  4   #   Number of active electrons in the Active-Space  
-n_mo         =  4   #   Number of molecular orbital
+nelec_active =  8   #   Number of active electrons in the Active-Space  
+n_mo         =  8   #   Number of molecular orbital
 
 # Dimension of the many-body space 
 dim_H  = math.comb( 2*n_mo, nelec_active ) 
 
 # Building the Many-body basis            
-nbody_basis = qnb.fermionic.tools.build_nbody_basis( n_mo, nelec_active )
+nbody_basis = qnb.fermionic.tools.build_nbody_basis( n_mo, nelec_active, S_z_cleaning=True )
 
 # Building the matrix representation of the adagger_a operator in the many-body basis                       
 a_dagger_a  = qnb.fermionic.tools.build_operator_a_dagger_a( nbody_basis )

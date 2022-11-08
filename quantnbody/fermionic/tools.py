@@ -3161,7 +3161,7 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
     
     .. math::
         
-        | B2_l \\rangle =  \sum_p | B1_l \\rangle C_{pl} 
+        | B2_l \\rangle =  \sum_p | B1_p \\rangle C_{pl} 
 
     with :math:`| B2_l \\rangle` and :math:`| B2_p \\rangle` are vectors of the
     basis B1 and B2 respectively.

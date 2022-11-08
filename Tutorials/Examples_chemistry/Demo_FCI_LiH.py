@@ -20,8 +20,7 @@ sys.path.append('../')
 
 import quantnbody as qnb
 
-def RUN_FCI_PSI4( string_geo,
-                       basisset ):
+def RUN_FCI_PSI4( string_geo, basisset ):
     '''
     A function to run a FCI method with the Psi4 package
     ''' 

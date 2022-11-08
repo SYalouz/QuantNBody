@@ -83,9 +83,9 @@ for angle in ( list_angle ):
 
     #========================================================|
     # Molecular geometry / Quantum chemistry calculations 
-    # Li-H geometry  
+    # H4 geometry  
     string_geo = qnb.fermionic.tools.generate_h4_geometry( 1., angle )
-
+    string_geo += '\n symmetry c1'    
     molecule = psi4.geometry(string_geo)
     psi4.set_options({'basis'      : basisset,
                       'reference'  : 'rhf',
@@ -108,18 +108,18 @@ for angle in ( list_angle ):
     h_MO, g_MO  = qnb.fermionic.tools.transform_1_2_body_tensors_in_new_basis( h_AO, g_AO, C_ref )
 
     E_core, h_, g_  = qnb.fermionic.tools.qc_get_active_space_integrals(h_MO,
-                                                              g_MO,
-                                                              frozen_indices = frozen_indices,
-                                                              active_indices   = active_indices)
+                                                                        g_MO,
+                                                                        frozen_indices = frozen_indices,
+                                                                        active_indices = active_indices)
     #%%
     # Building the matrix representation of the Hamiltonian operators 
-    H  = qnb.fermionic.tools.build_hamiltonian_quantum_chemistry(h_,
-                                                       g_,
-                                                       nbody_basis,
-                                                       a_dagger_a,
-                                                       S_2=S_2,
-                                                       S_2_target=0,
-                                                       penalty=100)
+    H  = qnb.fermionic.tools.build_hamiltonian_quantum_chemistry(  h_,
+                                                                   g_,
+                                                                   nbody_basis,
+                                                                   a_dagger_a,
+                                                                   S_2=S_2,
+                                                                   S_2_target=0,
+                                                                   penalty=100)
 
     eig_en, eig_vec = scipy.linalg.eigh( H.A )
     E_0_qnb += [ eig_en[0] + E_core + E_rep_nuc ]
@@ -137,7 +137,7 @@ for angle in ( list_angle ):
     # Clean all previous options for psi4
 
     string_geo = qnb.fermionic.tools.generate_h4_geometry(1., angle)
-
+    string_geo += '\n symmetry c1'    
     E0_casci, E1_casci  =  RUN_CASCI_PSI4( string_geo,
                                             basisset,
                                             active_indices,
