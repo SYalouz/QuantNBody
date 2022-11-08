@@ -53,7 +53,7 @@ where $a^\dagger_{i,\sigma}$ ($a_{i,\sigma}$) are the fermionic creation (annihi
 \hat{H}_{FH} = -t  \sum_{i,j} \sum_\sigma^{\uparrow,\downarrow} a^\dagger_{i,\sigma} a_{j,\sigma} 
 + U \sum_{i}  a^\dagger_{i,\uparrow}a_{i,\uparrow} a^\dagger_{i,\downarrow} a_{i,\downarrow},
 \end{equation}
-In practice, native functions are already implemented in the QuantNBody package to build both types of fermionic Hamiltonians. This implementation is based on the use of the already built single-body hopping operators mentioned earlier to generate the one- and two-body fermionic excitation operators (present in Eq. \cite{eq:FH} and Eq. \cite{eq:mol}). Nevertheless, the one-/two-body integrals (*i.e.*  $h_{pq}$, $g_{pqrs}$ and $t$ and $U$) have to be defined by the user.
+In practice, native functions are already implemented in the QuantNBody package to build both types of fermionic Hamiltonians. This implementation is based on the use of the already built single-body hopping operators mentioned earlier to generate the one- and two-body fermionic excitation operators (present in Eq. \ref{eq:FH} and Eq. \ref{eq:mol}). Nevertheless, the one-/two-body integrals (*i.e.*  $h_{pq}$, $g_{pqrs}$ and $t$ and $U$) have to be defined by the user.
 They can be set as pure parameters or obtained from external chemistry Python packages like PySCF [@sun2020recent] or Psi4 [@parrish2017psi4].
 As an illustration, we show in Fig. 1 results one can produce with the package for both fermionic Hamiltonians. We focus here on the calculation of the groundstate (noted $| \Psi_0\rangle$) in a H$_2$ molecule and a Fermi-Hubbard dimer, and evaluate several associated properties (energy and many-body basis decomposition).
  
