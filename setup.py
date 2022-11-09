@@ -5,7 +5,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '1.0.2'
+VERSION = '1.1.1'
 DESCRIPTION = 'A python package for quantum chemistry/physics to manipulate many-body operators and wave functions.'
 
 setup(
@@ -19,7 +19,7 @@ setup(
     packages=find_packages(),
     url='https://github.com/SYalouz/QuantNBody',
     license='',
-    install_requires=['scipy', 'numpy', 'numba', 'psi4'],
+    install_requires=['scipy', 'numpy', 'numba', 'tqdm'],  # 'psi4' But it is not on the PyPi!!!!!!
     keywords=['quantum physics and chemistry', 'quantum many-body systems', 'exact diagonalization'],
     classifiers=[
         "Programming Language :: Python :: 3", 
