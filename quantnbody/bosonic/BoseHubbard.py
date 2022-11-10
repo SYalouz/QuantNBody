@@ -3,7 +3,6 @@ import numpy as np
 from scipy import linalg 
 import math as m
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 from numba import njit, prange
 
 N_B = 50
@@ -59,7 +58,7 @@ for PARAM_iter in range(N_points):
         # print(fockstate, list(combination))
 
     H = np.zeros(( dim_H, dim_H ))
-    for kappa in tqdm(range(dim_H)):
+    for kappa in range(dim_H):
         ref_fockstate = list_focktates[ kappa ]
         
         for site in range(N_S):

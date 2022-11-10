@@ -19,7 +19,7 @@ setup(
     packages=find_packages(),
     url='https://github.com/SYalouz/QuantNBody',
     license='',
-    install_requires=['scipy', 'numpy', 'numba', 'tqdm'],  # 'psi4' But it is not on the PyPi!!!!!!
+    install_requires=['scipy', 'numpy', 'numba'],  # 'psi4' But it is not on the PyPi!!!!!!
     keywords=['quantum physics and chemistry', 'quantum many-body systems', 'exact diagonalization'],
     classifiers=[
         "Programming Language :: Python :: 3", 

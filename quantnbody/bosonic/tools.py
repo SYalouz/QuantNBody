@@ -3,7 +3,6 @@ import numpy as np
 from itertools import combinations_with_replacement
 from numba import njit, prange
 import scipy.sparse
-from tqdm import tqdm
 
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
