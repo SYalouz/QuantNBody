@@ -5,7 +5,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '1.1.1'
+VERSION = '1.1.2'
 DESCRIPTION = 'A python package for quantum chemistry/physics to manipulate many-body operators and wave functions.'
 
 setup(
