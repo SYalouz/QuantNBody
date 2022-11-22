@@ -28,16 +28,3 @@ For this, write the following lines in your terminal:
   >>> python -m pip install -e .
 
 And dont forget to always :code:`git pull` if you want to get the latest version of the package!
-
-
-How to contribute
-______________________________
-
-We'd love to accept your contributions and patches to QuantNBody. There are a few small guidelines you need to follow.
-
-All submissions require review. We use GitHub pull requests for this purpose. Consult GitHub Help for more information on using pull requests. Furthermore, please make sure your new code comes with documentation.
-
-Support
-______________________________
-
-If you are having issues, please let us know by posting the issue on our Github issue tracker.
