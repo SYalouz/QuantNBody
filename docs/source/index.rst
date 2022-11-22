@@ -17,19 +17,19 @@ It provides a quick and easy way to build many-body operators and wavefunctions 
 This tool also can be of a great help for pedagogical purpose and to help illustrate numerical methods for fermionic or bosonic systems.
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 6
    :caption: Introduction
 
    intro.rst
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 6
    :caption: How to install
 
    install.rst
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 6
    :caption: Tutorials and examples
 
    remarks.rst
@@ -39,14 +39,14 @@ This tool also can be of a great help for pedagogical purpose and to help illust
    Tuto_BOSE_HUBBARD.rst
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 6
    :caption: List of functions implemented
 
    remarks_structure.rst
    api.rst
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 6
    :caption: References to QuantNBody
 
    references.rst
