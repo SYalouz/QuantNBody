@@ -20,14 +20,14 @@ import quantnbody as qnb
  
 #========================================================|
 # Parameters for the simulation 
-nelec_active =  6   #   Number of active electrons in the Active-Space  
-n_mo         =  6   #   Number of molecular orbital
+nelec_active =  8   #   Number of active electrons in the Active-Space  
+n_mo         =  8   #   Number of molecular orbital
 
 # Dimension of the many-body space 
 dim_H  = math.comb( 2*n_mo, nelec_active ) 
 
 # Building the Many-body basis            
-nbody_basis = qnb.fermionic.tools.build_nbody_basis( n_mo, nelec_active )
+nbody_basis = qnb.fermionic.tools.build_nbody_basis( n_mo, nelec_active, S_z_cleaning=True )
 
 # Building the matrix representation of the adagger_a operator in the many-body basis                       
 a_dagger_a  = qnb.fermionic.tools.build_operator_a_dagger_a( nbody_basis )
@@ -38,7 +38,7 @@ S_2, s_z, s_plus = qnb.fermionic.tools.build_s2_sz_splus_operator( a_dagger_a )
 #%%
   
 list_U = np.linspace(0, 6, 20)
-
+ 
 # Hopping terms
 h_MO = np.zeros((n_mo,n_mo))
 for site in range(n_mo-1): 
@@ -56,17 +56,14 @@ for U in  list_U :
     for site in range(n_mo):
         U_MO[site,site,site,site] = U
     
+    print('OK')
     # Building the matrix representation of the Hamiltonian operators 
-    H  = qnb.fermionic.tools.build_hamiltonian_fermi_hubbard(h_MO,
-                                                   U_MO,
-                                                   nbody_basis,
-                                                   a_dagger_a, 
-                                                   S_2=S_2,
-                                                   S_2_target=0,
-                                                   penalty=100,
-                                                   v_term=None )
-
-    eig_en, eig_vec = scipy.linalg.eigh( H.A )
+    H  = qnb.fermionic.tools.build_hamiltonian_fermi_hubbard(  h_MO,
+                                                               U_MO,
+                                                               nbody_basis,
+                                                               a_dagger_a  )
+    print('OK')
+    eig_en, eig_vec = scipy.sparse.linalg.eigsh( H,   which='SA' ) 
     E_0_qnb += [ eig_en[0]  ]
     E_1_qnb += [ eig_en[1]  ]
  
