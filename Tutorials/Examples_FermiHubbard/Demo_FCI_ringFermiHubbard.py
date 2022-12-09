@@ -56,13 +56,12 @@ for U in  list_U :
     for site in range(n_mo):
         U_MO[site,site,site,site] = U
     
-    print('OK')
     # Building the matrix representation of the Hamiltonian operators 
     H  = qnb.fermionic.tools.build_hamiltonian_fermi_hubbard(  h_MO,
                                                                U_MO,
                                                                nbody_basis,
                                                                a_dagger_a  )
-    print('OK')
+    
     eig_en, eig_vec = scipy.sparse.linalg.eigsh( H,   which='SA' ) 
     E_0_qnb += [ eig_en[0]  ]
     E_1_qnb += [ eig_en[1]  ]
