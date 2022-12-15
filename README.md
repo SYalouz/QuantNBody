@@ -4,8 +4,10 @@
    
 </div>
    
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04759/status.svg)](https://doi.org/10.21105/joss.04759)
  
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 
 ## QuantNBody :  a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
 
