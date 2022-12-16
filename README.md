@@ -92,10 +92,10 @@ If you are having issues, please let us know by posting the issue on our Github 
 ## How to cite
 
 When using QuantNBody for research projects, please cite:
+
     Yalouz et al., (2022). QuantNBody: a Python package for quantum chemistry and physics to build and manipulate many-body operators and wave functions..     Journal of Open Source Software, 7(80), 4759, https://doi.org/10.21105/joss.04759 
 
-We are happy to include future contributors as authors on later releases.
-If you use the package for a scientific production, please cite our reference paper :
+We are happy to include future contributors as authors on later releases. 
 
 
 
