@@ -4,16 +4,15 @@
    
 </div>
     
-
+Yalouz et al., (2022). QuantNBody: a Python package for quantum chemistry and physics to build and manipulate many-body operators and wave functions.. Journal of Open Source Software, 7(80), 4759, https://doi.org/10.21105/joss.04759
 
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04759/status.svg)](https://doi.org/10.21105/joss.04759) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
 ## QuantNBody :  a python package for quantum chemistry/physics to manipulate many-body operators and wave functions.
 
-If you use the packge for a paper, please cite :
 
-Yalouz et al., (2022). QuantNBody: a Python package for quantum chemistry and physics to build and manipulate many-body operators and wave functions.. Journal of Open Source Software, 7(80), 4759, https://doi.org/10.21105/joss.04759
+
 
 
 
