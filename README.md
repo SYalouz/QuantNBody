@@ -16,6 +16,10 @@
                                                                                         
 </div>
 
+To cite QuantNBody, see our reference paper :
+Yalouz et al., (2022). QuantNBody: a Python package for quantum chemistry and physics to build and manipulate many-body operators and wave functions.. Journal of Open Source Software, 7(80), 4759, https://doi.org/10.21105/joss.04759
+
+
 QuantNBody is a python package facilitating the implementation and manipulation of quantum many-body systems
 composed of fermions or bosons.
 It provides a quick and easy way to build many-body operators and wavefunctions and get access
