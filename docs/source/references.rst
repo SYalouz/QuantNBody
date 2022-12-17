@@ -1,4 +1,4 @@
-How to  cite the package
+How to cite
 =======================
 
 When using QuantNBody for research projects, please cite our reference paper :

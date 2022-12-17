@@ -47,7 +47,7 @@ This tool also can be of a great help for pedagogical purpose and to help illust
 
 .. toctree::
    :maxdepth: 6
-   :caption: References to QuantNBody
+   :caption: How to cite 
 
    references.rst
 
