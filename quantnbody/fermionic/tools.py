@@ -1408,10 +1408,10 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
 
 
-def build_s2_local( a_dagger_a, list_mo_local ):
+def build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local ):
     """
-    Create a matrix representation of the local spin operators s_2 in the many-body basis
-    for a local set of  orbitals attached to a "molecular fragment".
+    Create a matrix representation of the local spin operators s_2, s_z and s_plus
+    in the many-body basis for a local set of  orbitals attached to a "molecular fragment".
 
     Parameters
     ----------
@@ -1434,7 +1434,7 @@ def build_s2_local( a_dagger_a, list_mo_local ):
         s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
     s2_local = s_plus @ s_plus.T + s_z @ s_z - s_z
 
-    return s2_local
+    return s2_local, s_z, s_plus
 
 
 def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):

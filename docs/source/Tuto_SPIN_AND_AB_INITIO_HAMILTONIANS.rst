@@ -95,7 +95,7 @@ Then we can build the PES of the molecule with a loop
     Energies_FCI_QNB = np.zeros((dim_parameter,dim_H))
 
     a_dagger_a  = qnb.fermionic.tools.build_operator_a_dagger_a(nbody_basis)
-    S_2, S_plus, S_z =  qnb.fermionic.tools.build_s2_sz_splus_operator(a_dagger_a)
+    S_2, S_z, S_plus =  qnb.fermionic.tools.build_s2_sz_splus_operator(a_dagger_a)
     # for r in tqdm(list_r):
     elem = 0
     for theta in (list_theta):
@@ -269,7 +269,7 @@ term and thus obtain singlet in :math:`H_4`.
     Energies_FCI_QNB = np.zeros((dim_parameter,dim_H))
 
     a_dagger_a  = qnb.fermionic.tools.build_operator_a_dagger_a(nbody_basis)
-    S_2, S_plus, S_z =  qnb.fermionic.tools.build_s2_sz_splus_operator(a_dagger_a)
+    S_2, S_z, S_plus  =  qnb.fermionic.tools.build_s2_sz_splus_operator(a_dagger_a)
     # for r in tqdm(list_r):
     elem = 0
     for theta in (list_theta):
