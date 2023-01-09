@@ -46,7 +46,7 @@ Spin operators
 .. autofunction:: build_s2_sz_splus_operator
 
 
-.. autofunction:: build_s2_local
+.. autofunction:: build_local_s2_sz_splus_operator
 
 
 .. autofunction:: build_sAsB_coupling
