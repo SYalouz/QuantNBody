@@ -3183,9 +3183,16 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
         2-electron integral given in basis B2
 
     """
-    h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1, optimize=True)
-    g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
-
+    # Case of complex transformation
+    if( np.iscomplexobj(C) ):
+        h_b2 = np.einsum('pi,qj,pq->ij', C.conj(), C, h_b1, optimize=True)
+        g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C.conj(), C.conj(), C, C, g_b1, optimize=True)
+    
+    # Case of real transformation
+    else: 
+        h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1, optimize=True)
+        g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
+    
     return h_b2, g_b2
 
 
