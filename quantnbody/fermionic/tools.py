@@ -1874,7 +1874,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
 
     list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
 
-    return_string = f'\n\t{"-" * 11}\n\t Coeff.      N-body state\n\t{"-" * 7}     {"-" * 13}\n'
+    return_string = f'\n\t{"-" * 11}\n\t Coeff.     N-body state and index \n\t{"-" * 7}     {"-" * 22}\n'
     for index in list_sorted_index[0:8]:
         state = states[index]
 
@@ -1882,7 +1882,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
             ket = get_ket_in_atomic_orbitals(state, bra=False)
         else:
             ket = '|' + "".join([str(elem) for elem in state]) + '⟩'
-        return_string += f'\t{coefficients[index]:+1.5f}\t{ket}\n'
+        return_string += f'\t{coefficients[index]:+1.5f}   {ket}    #{index} \n'
     print(return_string)
     return return_string
 
