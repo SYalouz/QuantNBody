@@ -194,6 +194,8 @@ def make_number_out_of_vector( ref_state ):
 
     return number
 
+
+
 def my_state(fockstate, nbodybasis):
     """
     Translate a fockstate (occupation number list) into a many-body

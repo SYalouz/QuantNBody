@@ -51,7 +51,7 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
             fock_state[index] += 1
         nbody_basis += [fock_state]
 
-        # In case we want to get rid of states with s_z != 0
+    # In case we want to get rid of states with s_z != 0
     if S_z_cleaning:
         nbody_basis_cleaned = nbody_basis.copy()
         for i in range(np.shape(nbody_basis)[0]):
