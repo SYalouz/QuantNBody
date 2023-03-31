@@ -52,10 +52,8 @@ def build_nbody_basis( n_mode, list_N_boson, n_mo, n_electron, S_z_cleaning=Fals
                 
             for fock_state_fermion in nbody_basis_fermions:
                 nbody_basis_boson_and_fermion += [ fock_state_boson + fock_state_fermion ]
-    
-   
-        
-    # In case we want onely one electron, we simplify the states
+      
+    # In case we want only one electron, we simplify the states
     if n_electron == 1:
         nbody_basis_cleaned = nbody_basis_boson_and_fermion.copy()
         for i in range(np.shape(nbody_basis_boson_and_fermion)[0]): 
@@ -63,7 +61,8 @@ def build_nbody_basis( n_mode, list_N_boson, n_mo, n_electron, S_z_cleaning=Fals
                 nbody_basis_cleaned.remove(nbody_basis_boson_and_fermion[i])
         nbody_basis_boson_and_fermion = nbody_basis_cleaned
         
-    return np.array( nbody_basis_boson_and_fermion )   
+    return np.array( nbody_basis_boson_and_fermion )
+
 
 def check_sz(ref_state):
     """
@@ -385,7 +384,20 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
         for q in range(p, 2 * n_mo):
             a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
             a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
-
+    
+    test_nbody_basis_fermions = []
+    for combination in combinations(range(2 * n_mo), n_elec):
+        fock_state_fermion = [0] * (2 * n_mo)
+        for index in list(combination):
+            fock_state_fermion[index] += 1
+        test_nbody_basis_fermions += [fock_state_fermion]
+    test_nbody_basis_fermions = np.array( test_nbody_basis_fermions )    
+    
+    include_broken_spin = False
+    if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:,n_mode:]) ):
+        include_broken_spin = True 
+     
+    
     for MO_q in (range(n_mo)): 
         for MO_p in range(MO_q, n_mo): 
             for kappa in range(dim_H):
@@ -399,7 +411,7 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
                     kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q, nbody_basis.tolist(), n_mode)
                     a_dagger_a[p-n_mode, q-n_mode][kappa_, kappa] = a_dagger_a[q-n_mode, p-n_mode][kappa, kappa_] = p1 * p2
                 
-                if n_elec != 1:
+                if n_elec > 1:
                     
                     # Single excitation : spin beta -- beta
                     p, q = 2 * MO_p + 1 + n_mode, 2 * MO_q + 1  + n_mode
@@ -409,8 +421,8 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
                         kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q, nbody_basis.tolist(), n_mode)
                         a_dagger_a[p-n_mode, q-n_mode][kappa_, kappa] = a_dagger_a[q-n_mode, p-n_mode][kappa, kappa_] = p1 * p2
     
-                    if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
-    
+                    if include_broken_spin and MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
+                        
                         # Single excitation : spin beta -- alpha
                         p, q = 2 * MO_p + 1 + n_mode, 2 * MO_p + n_mode
                         if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
@@ -451,7 +463,8 @@ def build_hamiltonian_hubbard_holstein(h_fermion,
                                         S_2=None,
                                         S_2_target=None,
                                         penalty=100,
-                                        v_term=None):
+                                        v_term=None,
+                                        cut_off_integral=1e-8):
     """
     Create a matrix representation of the Fermi-Hubbard Hamiltonian in the
     many-body basis.
@@ -488,25 +501,45 @@ def build_hamiltonian_hubbard_holstein(h_fermion,
      
     # global E_
     E_ = np.empty((n_mo, n_mo), dtype=object)
-    
-    # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
-    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mo):
         for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
-            H_fermi_hubbard += E_[p, q] * h_fermion[p, q]
-            for r in range(n_mo):
-                for s in range(n_mo):
-                    if U_fermion[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-                        H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_fermion[p, q, r, s]
-                        
+        
+    # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
+    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
+    
+    indices_one_electron_integrals = np.transpose((abs(h_fermion)>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices  
+        H_fermi_hubbard += E_[p, q] * h_fermion[p, q]
+    
+    indices_two_electron_integrals = np.transpose((abs(U_fermion)>cut_off_integral).nonzero())
+    for indices in indices_two_electron_integrals:
+        p, q, r, s = indices  
+        H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_fermion[p, q, r, s]
+    
     if v_term is not None:
-        for p in range(n_mo):
-            for q in range(n_mo):
-                for r in range(n_mo):
-                    for s in range(n_mo):
-                        if v_term[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-                            H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
+        indices_two_electron_integrals = np.transpose((abs(v_term)>cut_off_integral).nonzero())
+        for indices in indices_two_electron_integrals:
+            p, q, r, s = indices  
+            H_fermi_hubbard +=  E_[p, q] @ E_[r, s] * v_term[p, q, r, s] 
+    
+    # for p in range(n_mo):
+    #     for q in range(n_mo):
+    #         E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+    #         H_fermi_hubbard += E_[p, q] * h_fermion[p, q]
+    #         for r in range(n_mo):
+    #             for s in range(n_mo):
+    #                 if U_fermion[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
+    #                     H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_fermion[p, q, r, s]
+                        
+    # if v_term is not None:
+    #     for p in range(n_mo):
+    #         for q in range(n_mo):
+    #             for r in range(n_mo):
+    #                 for s in range(n_mo):
+    #                     if v_term[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
+    #                         H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
 
     # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1
     # with S = the number of unpaired electrons x 1/2
@@ -533,6 +566,389 @@ def build_hamiltonian_hubbard_holstein(h_fermion,
 
 
 
+def build_hamiltonian_pauli_fierz ( h_fermion,
+                                    g_fermion, 
+                                    dipole_vec_integrals,
+                                    State_ref_mean_dipole,
+                                    a_dagger_a,
+                                    omega_cav,
+                                    b,
+                                    lambda_coupling,
+                                    nbody_basis,
+                                    E_,
+                                    e_,
+                                    S_2=None,
+                                    S_2_target=None,
+                                    penalty=100, 
+                                    cut_off_integral=1e-8):
+ 
+    # # Dimension of the problem
+    dim_H       = len(nbody_basis)  
+    H_chemistry = scipy.sparse.csr_matrix((dim_H, dim_H))
+    indices_one_electron_integrals = np.transpose((abs(h_fermion)>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices 
+        H_chemistry += E_[p, q] * h_fermion[p, q]
+    
+    indices_two_electron_integrals = np.transpose((abs(g_fermion)>cut_off_integral).nonzero())
+    for indices in indices_two_electron_integrals:
+        p, q, r, s = indices 
+        e_pqrs = E_[p, q] @ E_[r, s] 
+        if q == r: 
+            e_pqrs += - E_[p, s]
+        H_chemistry += e_pqrs * g_fermion[p, q, r, s] / 2. 
+    
+    dipole_operator_X  = scipy.sparse.csr_matrix((dim_H, dim_H))
+    dipole_operator_Y  = scipy.sparse.csr_matrix((dim_H, dim_H))
+    dipole_operator_Z  = scipy.sparse.csr_matrix((dim_H, dim_H))
+    indices_one_electron_integrals = np.transpose((abs(dipole_vec_integrals[0])>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices
+        dipole_operator_X  +=  E_[p, q] * dipole_vec_integrals[0][p, q]
+    
+    indices_one_electron_integrals = np.transpose((abs(dipole_vec_integrals[1])>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices
+        dipole_operator_Y  +=  E_[p, q] * dipole_vec_integrals[1][p, q]
+        
+    indices_one_electron_integrals = np.transpose((abs(dipole_vec_integrals[2])>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices
+        dipole_operator_Z  +=  E_[p, q] * dipole_vec_integrals[2][p, q]
+                 
+    mean_dipole_op = State_ref_mean_dipole.T @ ( dipole_operator_X + dipole_operator_Y  + dipole_operator_Z ) @ State_ref_mean_dipole
+    fluc_dip_op_X =  dipole_operator_X - mean_dipole_op * scipy.sparse.identity(dim_H) 
+    fluc_dip_op_Y =  dipole_operator_Y - mean_dipole_op *  scipy.sparse.identity(dim_H)
+    fluc_dip_op_Z =  dipole_operator_Z - mean_dipole_op *  scipy.sparse.identity(dim_H)
+    
+    # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
+    # with S = the number of unpaired electrons x 1/2
+    # singlet    =>  S=0    and  S_2=0
+    # doublet    =>  S=1/2  and  S_2=3/4
+    # triplet    =>  S=1    and  S_2=2
+    # quadruplet =>  S=3/2  and  S_2=15/4
+    # quintet    =>  S=2    and  S_2=6
+    if S_2 is not None and S_2_target is not None:
+        s_2_minus_target = S_2 - S_2_target *  scipy.sparse.identity(dim_H)
+        H_chemistry += s_2_minus_target @ s_2_minus_target * penalty
+    
+    p = 0 
+    H_boson = scipy.sparse.csr_matrix((dim_H, dim_H)) 
+    H_boson =  b[p].T @ b[p] * omega_cav 
+    
+    H_fermion_boson = scipy.sparse.csr_matrix((dim_H, dim_H)) 
+    H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[0] * fluc_dip_op_X @ ( b[p].T + b[p] )  
+    H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[1] * fluc_dip_op_Y @ ( b[p].T + b[p] )  
+    H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[2] * fluc_dip_op_Z @ ( b[p].T + b[p] )   
+    
+    H_fermion_boson += 0.5 * ( lambda_coupling[0] * fluc_dip_op_X )**2. 
+    H_fermion_boson += 0.5 * ( lambda_coupling[1] * fluc_dip_op_Y )**2. 
+    H_fermion_boson += 0.5 * ( lambda_coupling[2] * fluc_dip_op_Z )**2. 
+    
+    return H_chemistry + H_boson + H_fermion_boson
 
 
 
+
+def new_build_hamiltonian_pauli_fierz ( h_fermion,
+                                        g_fermion, 
+                                        dipole_vec_integrals,
+                                        mean_dipole_op,
+                                        a_dagger_a,
+                                        omega_cav,
+                                        b,
+                                        lambda_coupling,
+                                        nbody_basis,
+                                        S_2=None,
+                                        S_2_target=None,
+                                        penalty=100,
+                                        v_term=None):
+ 
+    # # Dimension of the problem
+    dim_H = len(nbody_basis)
+    n_mo = np.shape(h_fermion)[0] 
+    
+    E_ = np.empty((n_mo, n_mo), dtype=object)
+    e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object) 
+     
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+      
+    H_chemistry         = scipy.sparse.csr_matrix((dim_H, dim_H))
+    dipole_operator_X  = scipy.sparse.csr_matrix((dim_H, dim_H))
+    dipole_operator_Y  = scipy.sparse.csr_matrix((dim_H, dim_H))
+    dipole_operator_Z  = scipy.sparse.csr_matrix((dim_H, dim_H))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            H_chemistry += E_[p, q] * h_fermion[p, q]
+            dipole_operator_X  +=  E_[p, q] * dipole_vec_integrals[0][p, q]
+            dipole_operator_Y  +=  E_[p, q] * dipole_vec_integrals[1][p, q]
+            dipole_operator_Z  +=  E_[p, q] * dipole_vec_integrals[2][p, q]
+                
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    e_[p, q, r, s] = E_[p, q] @ E_[r, s]
+                    if q == r:
+                        e_[p, q, r, s] += - E_[p, s] 
+                    H_chemistry += e_[p, q, r, s] * g_fermion[p, q, r, s] / 2.
+                    
+    fluc_dip_op_X =  dipole_operator_X - mean_dipole_op * scipy.sparse.identity(dim_H) 
+    fluc_dip_op_Y =  dipole_operator_Y - mean_dipole_op *  scipy.sparse.identity(dim_H)
+    fluc_dip_op_Z =  dipole_operator_Z - mean_dipole_op *  scipy.sparse.identity(dim_H)
+    
+    # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
+    # with S = the number of unpaired electrons x 1/2
+    # singlet    =>  S=0    and  S_2=0
+    # doublet    =>  S=1/2  and  S_2=3/4
+    # triplet    =>  S=1    and  S_2=2
+    # quadruplet =>  S=3/2  and  S_2=15/4
+    # quintet    =>  S=2    and  S_2=6
+    if S_2 is not None and S_2_target is not None:
+        s_2_minus_target = S_2 - S_2_target *  scipy.sparse.identity(dim_H)
+        H_chemistry += s_2_minus_target @ s_2_minus_target * penalty
+    
+    p = 0
+    
+    H_boson = scipy.sparse.csr_matrix((dim_H, dim_H)) 
+    H_boson =  b[p].T @ b[p] * omega_cav 
+    
+    H_fermion_boson = scipy.sparse.csr_matrix((dim_H, dim_H)) 
+    H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[0] * fluc_dip_op_X @ ( b[p].T + b[p] )  
+    H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[1] * fluc_dip_op_Y @ ( b[p].T + b[p] )  
+    H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[2] * fluc_dip_op_Z @ ( b[p].T + b[p] )   
+    
+    H_fermion_boson += 0.5 * ( lambda_coupling[0] * fluc_dip_op_X )**2. 
+    H_fermion_boson += 0.5 * ( lambda_coupling[1] * fluc_dip_op_Y )**2. 
+    H_fermion_boson += 0.5 * ( lambda_coupling[2] * fluc_dip_op_Z )**2. 
+    
+    return H_chemistry + H_boson + H_fermion_boson
+
+
+# =============================================================================
+#   SPIN OPERATORS
+# =============================================================================
+
+def build_s2_sz_splus_operator(a_dagger_a):
+    """
+    Create a matrix representation of the spin operators s_2, s_z and s_plus
+    in the many-body basis.
+
+    Parameters
+    ----------
+    a_dagger_a : array
+        matrix representation of the a_dagger_a operator in the many-body basis.
+
+    Returns
+    -------
+    s_2 : array
+        matrix representation of the s_2 operator in the many-body basis.
+    s_plus : array
+        matrix representation of the s_plus operator in the many-body basis.
+    s_z :  array
+        matrix representation of the  s_z operator in the many-body basis.
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
+    s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
+    for p in range(n_mo):
+        s_plus += a_dagger_a[2 * p, 2 * p + 1]
+        s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
+
+    s_2 = s_plus @ s_plus.T + s_z @ s_z - s_z
+
+    return s_2, s_z, s_plus
+
+
+
+# =============================================================================
+#   FUNCTIONS TO CREAT PERSONALIZED MANY_BODY STATES AND PROJECTORS
+# =============================================================================
+
+def my_state( many_body_state, nbody_basis ):
+    """
+    Translate a many_body_state (occupation number list) into a many-body
+    state referenced into a given Many-body basis.
+
+    Parameters
+    ----------
+    many_body_state  : array
+        occupation number list
+    nbody_basis         : array
+        List of many-body states (occupation number states)
+
+    Returns
+    -------
+    state :  array
+        The many body state translated into the "kappa" many-body basis
+
+    """
+    kappa = np.flatnonzero((nbody_basis == many_body_state).all(1))[0]  # nbody_basis.index(slater_determinant)
+    state = np.zeros(np.shape(nbody_basis)[0])
+    state[kappa] = 1.
+
+    return state
+
+
+# =============================================================================
+#  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
+# =============================================================================
+
+def visualize_wft(WFT, nbody_basis, n_mode, cutoff=0.005, atomic_orbitals=False):
+    """
+    Print the decomposition of a given input wavefunction in a many-body basis.
+
+    Parameters
+    ----------
+    WFT              : array
+        Reference wave function
+    nbody_basis      : array
+        List of many-body states (occupation number states)
+    cutoff           : array
+        Cut off for the amplitudes retained (default is 0.005)
+    atomic_orbitals  : Boolean
+        If True then instead of 0/1 for spin orbitals we get 0/alpha/beta/2 for atomic orbitals
+
+    Returns
+    -------
+        Terminal printing of the wavefunction
+
+    """
+    list_index = np.where(abs(WFT) > cutoff)[0]
+
+    states = []
+    coefficients = []
+    for index in list_index:
+        coefficients += [WFT[index]]
+        states += [nbody_basis[index]]
+
+    list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
+
+    return_string = f'\n\t{"-" * 11}\n\t Coeff.     N-body state and index \n\t{"-" * 7}     {"-" * 22}\n'
+    for index in list_sorted_index[0:8]:
+        state = states[index]
+        True_index_state =  np.flatnonzero((nbody_basis == state).all(1))[0]
+        ket = '|' + "".join([str(elem) for elem in state[0:n_mode]]) + '⟩ ⊗ '
+
+        if atomic_orbitals:
+            ket += get_ket_in_atomic_orbitals(state[n_mode:], bra=False)
+        else:
+            ket += '|' + "".join([str(elem) for elem in state[n_mode:]]) + '⟩'
+        return_string += f'\t{coefficients[index]:+1.5f}   {ket}    #{True_index_state} \n'
+    print( return_string )
+    return return_string
+
+
+
+
+def get_ket_in_atomic_orbitals(state, bra=False):
+
+    ret_string = ""
+    for i in range(len(state) // 2):
+        if state[i * 2] == 1:
+            if state[i * 2 + 1] == 1:
+                ret_string += '2'
+            else:
+                ret_string += '\u03B1'
+        elif state[i * 2 + 1] == 1:
+            ret_string += '\u03B2'
+        else:
+            ret_string += '0'
+    if bra:
+        ret_string = '⟨' + ret_string + '|'
+    else:
+        ret_string = '|' + ret_string + '⟩'
+    return ret_string
+
+# =============================================================================
+# INTEGRAL TRANSFORMATIONS
+# =============================================================================
+
+def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
+    """
+    Transform electronic integrals from an initial basis "B1" to a new basis "B2".
+    The transformation is realized thanks to a passage matrix noted "C" linking
+    both basis like
+    
+    .. math::
+        
+        | B2_l \\rangle =  \sum_p | B1_p \\rangle C_{pl} 
+
+    with :math:`| B2_l \\rangle` and :math:`| B2_p \\rangle` are vectors of the
+    basis B1 and B2 respectively.
+
+    Parameters
+    ----------
+    h_b1 : array
+        1-electron integral given in basis B1
+    g_b1 : array
+        2-electron integral given in basis B1
+    C    : array
+        Transfer matrix from the B1 to the B2 basis
+
+    Returns
+    -------
+    h_b2 : array
+        1-electron integral given in basis B2
+    g_b2 : array
+        2-electron integral given in basis B2
+
+    """
+    # Case of complex transformation
+    if( np.iscomplexobj(C) ):
+        h_b2 = np.einsum('pi,qj,pq->ij', C.conj(), C, h_b1, optimize=True)
+        g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C.conj(), C.conj(), C, C, g_b1, optimize=True)
+    
+    # Case of real transformation
+    else: 
+        h_b2 = np.einsum('pi,qj,pq->ij', C, C, h_b1, optimize=True)
+        g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
+    
+    return h_b2, g_b2
+
+
+
+
+def build_E_and_e_operators( a_dagger_a, n_mo ):
+    """
+    Build the spin-free "E" and "e" excitation many-body operators for quantum chemistry
+
+    Parameters
+    ----------
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+    n_mo : int
+        Number of molecular orbitals considered
+
+    Returns
+    -------
+    E_ : array
+        Spin-free "E" many-body operators
+
+    e_ : array
+        Spin-free "e" many-body operators
+
+    Examples
+    ________
+    >>> nbody_basis = qnb.build_nbody_basis(2, 2)
+    >>> a_dagger_a = qnb.build_operator_a_dagger_a(nbody_basis)
+    >>> build_E_and_e_operators(a_dagger_a, 2)
+
+    """
+    E_ = np.empty((n_mo, n_mo), dtype=object)
+    e_ = np.empty((n_mo, n_mo, n_mo, n_mo), dtype=object)
+
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    e_[p, q, r, s] = E_[p, q] @ E_[r, s]
+                    if q == r:
+                        e_[p, q, r, s] += - E_[p, s]
+    return E_, e_

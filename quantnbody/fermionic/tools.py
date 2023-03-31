@@ -145,7 +145,7 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
                     kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
-                    # Single excitation : spin beta -- beta
+                # Single excitation : spin beta -- beta
                 p, q = 2 * MO_p + 1, 2 * MO_q + 1
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
@@ -343,7 +343,8 @@ def build_hamiltonian_quantum_chemistry(h_,
                                         a_dagger_a,
                                         S_2=None,
                                         S_2_target=None,
-                                        penalty=100):
+                                        penalty=100,
+                                        cut_off_integral=1e-8):
     """
     Create a matrix representation of the electronic structure Hamiltonian in the
     many-body basis
@@ -385,18 +386,30 @@ def build_hamiltonian_quantum_chemistry(h_,
     for p in range(n_mo):
         for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
-
-    for p in range(n_mo):
-        for q in range(n_mo):
-            H_chemistry += E_[p, q] * h_[p, q]
-            for r in range(n_mo):
-                for s in range(n_mo):
-                    e_[p, q, r, s] = E_[p, q] @ E_[r, s]
-                    if q == r:
-                        e_[p, q, r, s] += - E_[p, s]
-
-                    H_chemistry += e_[p, q, r, s] * g_[p, q, r, s] / 2.
-
+            
+    # for p in range(n_mo):
+    #     for q in range(n_mo):
+    #         H_chemistry += E_[p, q] * h_[p, q]
+    #         for r in range(n_mo):
+    #             for s in range(n_mo):
+    #                 e_[p, q, r, s] = E_[p, q] @ E_[r, s]
+    #                 if q == r:
+    #                     e_[p, q, r, s] += - E_[p, s] 
+    #                 H_chemistry += e_[p, q, r, s] * g_[p, q, r, s] / 2.
+    
+    indices_one_electron_integrals = np.transpose((abs(h_)>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices 
+        H_chemistry += E_[p, q] * h_[p, q]
+    
+    indices_two_electron_integrals = np.transpose((abs(g_)>cut_off_integral).nonzero())
+    for indices in indices_two_electron_integrals:
+        p, q, r, s = indices 
+        e_pqrs = E_[p, q] @ E_[r, s] 
+        if q == r: 
+            e_pqrs += - E_[p, s]
+        H_chemistry += e_pqrs * g_[p, q, r, s] / 2. 
+        
     # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
     # with S = the number of unpaired electrons x 1/2
     # singlet    =>  S=0    and  S_2=0
