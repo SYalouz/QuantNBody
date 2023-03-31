@@ -431,7 +431,8 @@ def build_hamiltonian_fermi_hubbard(h_,
                                     S_2=None,
                                     S_2_target=None,
                                     penalty=100,
-                                    v_term=None):
+                                    v_term=None,
+                                    cut_off_integral=1e-8):
     """
     Create a matrix representation of the Fermi-Hubbard Hamiltonian in the
     many-body basis.
@@ -464,28 +465,52 @@ def build_hamiltonian_fermi_hubbard(h_,
     # # Dimension of the problem
     dim_H = len(nbody_basis)
     n_mo = np.shape(h_)[0]
-
-    global E_
+    
     E_ = np.empty((n_mo, n_mo), dtype=object)
-
-    # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
-    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mo):
         for q in range(n_mo):
             E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
-            H_fermi_hubbard += E_[p, q] * h_[p, q]
-            for r in range(n_mo):
-                for s in range(n_mo):
-                    if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-                        H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
-
+        
+    # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
+    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
+    
+    indices_one_electron_integrals = np.transpose((abs(h_)>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices  
+        H_fermi_hubbard += E_[p, q] * h_[p, q]
+    
+    indices_two_electron_integrals = np.transpose((abs(U_)>cut_off_integral).nonzero())
+    for indices in indices_two_electron_integrals:
+        p, q, r, s = indices  
+        H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
+    
     if v_term is not None:
-        for p in range(n_mo):
-            for q in range(n_mo):
-                for r in range(n_mo):
-                    for s in range(n_mo):
-                        if v_term[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-                            H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
+        indices_two_electron_integrals = np.transpose((abs(v_term)>cut_off_integral).nonzero())
+        for indices in indices_two_electron_integrals:
+            p, q, r, s = indices  
+            H_fermi_hubbard +=  E_[p, q] @ E_[r, s] * v_term[p, q, r, s] 
+            
+    # global E_
+    # E_ = np.empty((n_mo, n_mo), dtype=object)
+
+    # # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
+    # H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
+    # for p in range(n_mo):
+    #     for q in range(n_mo):
+    #         E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+    #         H_fermi_hubbard += E_[p, q] * h_[p, q]
+    #         for r in range(n_mo):
+    #             for s in range(n_mo):
+    #                 if U_[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
+    #                     H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_[p, q, r, s]
+
+    # if v_term is not None:
+    #     for p in range(n_mo):
+    #         for q in range(n_mo):
+    #             for r in range(n_mo):
+    #                 for s in range(n_mo):
+    #                     if v_term[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
+    #                         H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
 
     # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1
     # with S = the number of unpaired electrons x 1/2
