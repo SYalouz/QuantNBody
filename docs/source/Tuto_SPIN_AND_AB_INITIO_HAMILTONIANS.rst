@@ -1,4 +1,4 @@
-*QuantNbody* tutorials : electronic structure Hamiltonian and spin operators
+*Tuto 3:* electronic structure Hamiltonian and spin operators
 ============================================================================
 
 **Dr. Saad Yalouz**
