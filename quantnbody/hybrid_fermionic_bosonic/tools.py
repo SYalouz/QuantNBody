@@ -3,6 +3,8 @@ import numpy as np
 from itertools import combinations_with_replacement, combinations
 from numba import njit, prange
 import scipy.sparse
+import psi4
+
 
 # =============================================================================
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
@@ -355,7 +357,7 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
 def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
     """
     Create a matrix representation of the a_dagger_a operator in the many-body basis
-
+    
     Parameters
     ----------
     nbody_basis : array
@@ -393,16 +395,24 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
         test_nbody_basis_fermions += [fock_state_fermion]
     test_nbody_basis_fermions = np.array( test_nbody_basis_fermions )    
     
-    include_broken_spin = False
-    if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:,n_mode:]) ):
-        include_broken_spin = True 
-     
+    # include_broken_spin = False
+    # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:,n_mode:]) ):
+    #     include_broken_spin = True 
+    
+    # SEEMS TO WORK : TO BE BETTER CHECKED !!!
+    Full_spin_basis = True
+    if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:test_nbody_basis_fermions.shape[0],n_mode:]) ):
+        Full_spin_basis = False
+        # print("DONC ? ", Full_spin_basis) 
+    # print(test_nbody_basis_fermions)
+    # print()
+    # print(nbody_basis[:test_nbody_basis_fermions.shape[0],n_mode:])
     
     for MO_q in (range(n_mo)): 
         for MO_p in range(MO_q, n_mo): 
-            for kappa in range(dim_H):
+            for kappa in range(dim_H): 
                 ref_state = nbody_basis[kappa]
-
+                
                 # Single excitation : spin alpha -- alpha
                 p, q = 2 * MO_p  + n_mode, 2 * MO_q + n_mode
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
@@ -421,7 +431,7 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
                         kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q, nbody_basis.tolist(), n_mode)
                         a_dagger_a[p-n_mode, q-n_mode][kappa_, kappa] = a_dagger_a[q-n_mode, p-n_mode][kappa, kappa_] = p1 * p2
     
-                    if include_broken_spin and MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
+                    if Full_spin_basis and MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
                         
                         # Single excitation : spin beta -- alpha
                         p, q = 2 * MO_p + 1 + n_mode, 2 * MO_p + n_mode
@@ -523,23 +533,6 @@ def build_hamiltonian_hubbard_holstein(h_fermion,
         for indices in indices_two_electron_integrals:
             p, q, r, s = indices  
             H_fermi_hubbard +=  E_[p, q] @ E_[r, s] * v_term[p, q, r, s] 
-    
-    # for p in range(n_mo):
-    #     for q in range(n_mo):
-    #         E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
-    #         H_fermi_hubbard += E_[p, q] * h_fermion[p, q]
-    #         for r in range(n_mo):
-    #             for s in range(n_mo):
-    #                 if U_fermion[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-    #                     H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_fermion[p, q, r, s]
-                        
-    # if v_term is not None:
-    #     for p in range(n_mo):
-    #         for q in range(n_mo):
-    #             for r in range(n_mo):
-    #                 for s in range(n_mo):
-    #                     if v_term[p, q, r, s] != 0:  # if U is 0, it doesn't make sense to multiply matrices
-    #                         H_fermi_hubbard += E_[p, q] @ E_[r, s] * v_term[p, q, r, s]
 
     # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1
     # with S = the number of unpaired electrons x 1/2
@@ -558,10 +551,106 @@ def build_hamiltonian_hubbard_holstein(h_fermion,
         H_fermion_boson += E_[p,p] @ ( b[p].T + b[p] ) * Coupling_fermion_boson[p] #* h_boson[p,p]
         for q in range(n_mode): 
             H_boson +=  b[p].T @ b[q] * h_boson[p,q]
-     
             
     return H_fermi_hubbard + H_boson + H_fermion_boson
 
+
+
+def build_hamiltonian_hubbard_QED(  h_fermion,
+                                    U_fermion, 
+                                    a_dagger_a, 
+                                    omega_cav, 
+                                    lambda_coupling, 
+                                    dipole_integrals, 
+                                    b, 
+                                    nbody_basis,
+                                    S_2=None,
+                                    S_2_target=None,
+                                    penalty=100,
+                                    v_term=None,
+                                    cut_off_integral=1e-8 ):
+    """
+    Create a matrix representation of the Fermi-Hubbard Hamiltonian in the
+    many-body basis.
+
+    Parameters
+    ----------
+    h_ : array
+        One-body integrals
+    U_ : array
+        Two-body integrals
+    nbody_basis :  array
+        List of many-body states (occupation number states)
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+    S_2 : array, default=None)
+        Matrix representation of the S_2 operator (default is None)
+    S_2_target : float, default=None
+        Value of the S_2 mean value we want to target (default is None)
+    penalty : float, default=100
+        Value of the penalty term to penalize the states that do not respect the spin symmetry (default is 100).
+    v_term : array, default=None
+        dipolar interactions.
+
+    Returns
+    -------
+    H_fermi_hubbard : array
+        Matrix representation of the Fermi-Hubbard Hamiltonian in the many-body basis
+
+    """
+    # # Dimension of the problem
+    dim_H = len(nbody_basis)
+    n_mo = np.shape(h_fermion)[0] 
+     
+    # global E_
+    E_ = np.empty((n_mo, n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+        
+    # Building the N-electron Fermi-Hubbard matrix hamiltonian (Sparse)
+    H_fermi_hubbard = scipy.sparse.csr_matrix((dim_H, dim_H))
+    
+    indices_one_electron_integrals = np.transpose((abs(h_fermion)>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p, q = indices  
+        H_fermi_hubbard += E_[p, q] * h_fermion[p, q]
+    
+    indices_two_electron_integrals = np.transpose((abs(U_fermion)>cut_off_integral).nonzero())
+    for indices in indices_two_electron_integrals:
+        p, q, r, s = indices  
+        H_fermi_hubbard += a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] * U_fermion[p, q, r, s]
+    
+    if v_term is not None:
+        indices_two_electron_integrals = np.transpose((abs(v_term)>cut_off_integral).nonzero())
+        for indices in indices_two_electron_integrals:
+            p, q, r, s = indices  
+            H_fermi_hubbard +=  E_[p, q] @ E_[r, s] * v_term[p, q, r, s] 
+
+    # Reminder : S_2 = S(S+1) and the total  spin multiplicity is 2S+1
+    # with S = the number of unpaired electrons x 1/2
+    # singlet    =>  S=0    and  S_2=0
+    # doublet    =>  S=1/2  and  S_2=3/4
+    # triplet    =>  S=1    and  S_2=2
+    # quadruplet =>  S=3/2  and  S_2=15/4
+    # quintet    =>  S=2    and  S_2=6
+    if S_2 is not None and S_2_target is not None:
+        s_2_minus_target = S_2 - S_2_target *  scipy.sparse.identity(dim_H)
+        H_fermi_hubbard += s_2_minus_target @ s_2_minus_target * penalty
+    
+    H_boson =  b[0].T @ b[0] * omega_cav
+        
+    dipole_op = scipy.sparse.csr_matrix((dim_H, dim_H)) 
+    indices_one_electron_integrals = np.transpose((abs(dipole_integrals)>cut_off_integral).nonzero())
+    for indices in indices_one_electron_integrals:
+        p = indices[0]
+        # print('TEST ', indices)
+        dipole_op += dipole_integrals[p] * (a_dagger_a[2*p,2*p] + a_dagger_a[2*p+1,2*p+1]) 
+ 
+    H_fermion_boson = lambda_coupling * omega_cav * dipole_op @ ( b[0].T + b[0] ) + lambda_coupling**2. * omega_cav * dipole_op**2.
+            
+    return H_fermi_hubbard + H_boson + H_fermion_boson
+    
 
 
 
@@ -569,6 +658,7 @@ def build_hamiltonian_hubbard_holstein(h_fermion,
 def build_hamiltonian_pauli_fierz ( h_fermion,
                                     g_fermion, 
                                     dipole_vec_integrals,
+                                    nuclear_dipole_XYZ,
                                     State_ref_mean_dipole,
                                     a_dagger_a,
                                     omega_cav,
@@ -615,7 +705,12 @@ def build_hamiltonian_pauli_fierz ( h_fermion,
     for indices in indices_one_electron_integrals:
         p, q = indices
         dipole_operator_Z  +=  E_[p, q] * dipole_vec_integrals[2][p, q]
-                 
+    
+    # Need to add the nuclear term to the sum over the electronic dipole integrals
+    dipole_operator_X += nuclear_dipole_XYZ[0] *  scipy.sparse.identity(dim_H)
+    dipole_operator_Y += nuclear_dipole_XYZ[1] *  scipy.sparse.identity(dim_H)
+    dipole_operator_Z += nuclear_dipole_XYZ[2] *  scipy.sparse.identity(dim_H)
+            
     mean_dipole_op = State_ref_mean_dipole.T @ ( dipole_operator_X + dipole_operator_Y  + dipole_operator_Z ) @ State_ref_mean_dipole
     fluc_dip_op_X =  dipole_operator_X - mean_dipole_op * scipy.sparse.identity(dim_H) 
     fluc_dip_op_Y =  dipole_operator_Y - mean_dipole_op *  scipy.sparse.identity(dim_H)
@@ -725,6 +820,283 @@ def new_build_hamiltonian_pauli_fierz ( h_fermion,
     return H_chemistry + H_boson + H_fermion_boson
 
 
+
+def cqed_rhf(lambda_vector, molecule_string, psi4_options_dict):
+    """Computes the QED-RHF energy and density
+
+    Arguments
+    ---------
+    lambda_vector : 1 x 3 array of floats
+        the electric field vector, see e.g. Eq. (1) in [DePrince:2021:094112]
+        and (15) in [Haugland:2020:041043]
+
+    molecule_string : string
+        specifies the molecular geometry
+
+    options_dict : dictionary
+        specifies the psi4 options to be used in running the canonical RHF
+
+    Returns
+    -------
+    cqed_rhf_dictionary : dictionary
+        Contains important quantities from the cqed_rhf calculation, with keys including:
+            'RHF ENERGY' -> result of canonical RHF calculation using psi4 defined by molecule_string and psi4_options_dict
+            'CQED-RHF ENERGY' -> result of CQED-RHF calculation, see Eq. (13) of [McTague:2021:ChemRxiv]
+            'CQED-RHF C' -> orbitals resulting from CQED-RHF calculation
+            'CQED-RHF DENSITY MATRIX' -> density matrix resulting from CQED-RHF calculation
+            'CQED-RHF EPS'  -> orbital energies from CQED-RHF calculation
+            'PSI4 WFN' -> wavefunction object from psi4 canonical RHF calcluation
+            'CQED-RHF DIPOLE MOMENT' -> total dipole moment from CQED-RHF calculation (1x3 numpy array)
+            'NUCLEAR DIPOLE MOMENT' -> nuclear dipole moment (1x3 numpy array)
+            'DIPOLE ENERGY' -> See Eq. (14) of [McTague:2021:ChemRxiv]
+            'NUCLEAR REPULSION ENERGY' -> Total nuclear repulsion energy
+
+    Example
+    -------
+    >>> cqed_rhf_dictionary = cqed_rhf([0., 0., 1e-2], '''\nMg\nH 1 1.7\nsymmetry c1\n1 1\n''', psi4_options_dictionary)
+
+    """
+    # define geometry using the molecule_string
+    mol = psi4.geometry(molecule_string)
+    # define options for the calculation
+    psi4.set_options(psi4_options_dict)
+    # run psi4 to get ordinary scf energy and wavefunction object
+    psi4_rhf_energy, wfn = psi4.energy("scf", return_wfn=True)
+
+    # Create instance of MintsHelper class
+    mints = psi4.core.MintsHelper(wfn.basisset())
+
+    # Grab data from wavfunction
+    # number of doubly occupied orbitals
+    ndocc = wfn.nalpha()
+
+    # grab all transformation vectors and store to a numpy array
+    C = np.asarray(wfn.Ca())
+
+    # use canonical RHF orbitals for guess CQED-RHF orbitals
+    Cocc = C[:, :ndocc]
+
+    # form guess density
+    D = np.einsum("pi,qi->pq", Cocc, Cocc)  # [Szabo:1996] Eqn. 3.145, pp. 139
+
+    # Integrals required for CQED-RHF
+    # Ordinary integrals first
+    V = np.asarray(mints.ao_potential())
+    T = np.asarray(mints.ao_kinetic())
+    I = np.asarray(mints.ao_eri())
+
+    # Extra terms for Pauli-Fierz Hamiltonian
+    # nuclear dipole
+    mu_nuc_x = mol.nuclear_dipole()[0]
+    mu_nuc_y = mol.nuclear_dipole()[1]
+    mu_nuc_z = mol.nuclear_dipole()[2]
+
+    # electronic dipole integrals in AO basis
+    mu_ao_x = np.asarray(mints.ao_dipole()[0])
+    mu_ao_y = np.asarray(mints.ao_dipole()[1])
+    mu_ao_z = np.asarray(mints.ao_dipole()[2])
+
+    # \lambda \cdot \mu_el (see within the sum of line 3 of Eq. (9) in [McTague:2021:ChemRxiv])
+    l_dot_mu_el =  lambda_vector[0] * mu_ao_x
+    l_dot_mu_el += lambda_vector[1] * mu_ao_y
+    l_dot_mu_el += lambda_vector[2] * mu_ao_z
+
+    # compute electronic dipole expectation value with
+    # canonincal RHF density
+    mu_exp_x = np.einsum("pq,pq->", 2 * mu_ao_x, D)
+    mu_exp_y = np.einsum("pq,pq->", 2 * mu_ao_y, D)
+    mu_exp_z = np.einsum("pq,pq->", 2 * mu_ao_z, D)
+
+    # need to add the nuclear term to the sum over the electronic dipole integrals
+    mu_exp_x += mu_nuc_x
+    mu_exp_y += mu_nuc_y
+    mu_exp_z += mu_nuc_z
+
+    rhf_dipole_moment = np.array([mu_exp_x, mu_exp_y, mu_exp_z])
+
+    # We need to carry around the electric field dotted into the nuclear dipole moment
+    # and the electric field dotted into the RHF electronic dipole expectation value
+    # see prefactor to sum of Line 3 of Eq. (9) in [McTague:2021:ChemRxiv]
+
+    # \lambda_vector \cdot \mu_{nuc}
+    l_dot_mu_nuc = (  lambda_vector[0] * mu_nuc_x
+                    + lambda_vector[1] * mu_nuc_y
+                    + lambda_vector[2] * mu_nuc_z )
+    
+    # \lambda_vecto \cdot < \mu > where <\mu> contains electronic and nuclear contributions
+    l_dot_mu_exp = (  lambda_vector[0] * mu_exp_x
+                    + lambda_vector[1] * mu_exp_y
+                    + lambda_vector[2] * mu_exp_z )
+
+    # dipole energy, Eq. (14) in [McTague:2021:ChemRxiv]
+    #  0.5 * (\lambda_vector \cdot \mu_{nuc})** 2
+    #      - (\lambda_vector \cdot <\mu> ) ( \lambda_vector\cdot \mu_{nuc})
+    # +0.5 * (\lambda_vector \cdot <\mu>) ** 2
+    d_c = 0.5 * l_dot_mu_nuc ** 2 - l_dot_mu_nuc * l_dot_mu_exp + 0.5 * l_dot_mu_exp ** 2
+
+    # quadrupole arrays
+    Q_ao_xx = np.asarray(mints.ao_quadrupole()[0])
+    Q_ao_xy = np.asarray(mints.ao_quadrupole()[1])
+    Q_ao_xz = np.asarray(mints.ao_quadrupole()[2])
+    Q_ao_yy = np.asarray(mints.ao_quadrupole()[3])
+    Q_ao_yz = np.asarray(mints.ao_quadrupole()[4])
+    Q_ao_zz = np.asarray(mints.ao_quadrupole()[5])
+
+    # Pauli-Fierz 1-e quadrupole terms, Line 2 of Eq. (9) in [McTague:2021:ChemRxiv]
+    Q_PF = -0.5 * lambda_vector[0] * lambda_vector[0] * Q_ao_xx
+    Q_PF -= 0.5 * lambda_vector[1] * lambda_vector[1] * Q_ao_yy
+    Q_PF -= 0.5 * lambda_vector[2] * lambda_vector[2] * Q_ao_zz
+
+    # accounting for the fact that Q_ij = Q_ji
+    # by weighting Q_ij x 2 which cancels factor of 1/2
+    Q_PF -= lambda_vector[0] * lambda_vector[1] * Q_ao_xy
+    Q_PF -= lambda_vector[0] * lambda_vector[2] * Q_ao_xz
+    Q_PF -= lambda_vector[1] * lambda_vector[2] * Q_ao_yz
+
+    # Pauli-Fierz 1-e dipole terms scaled by
+    # (\lambda_vector \cdot \mu_{nuc} - \lambda_vector \cdot <\mu>)
+    # Line 3 in full of Eq. (9) in [McTague:2021:ChemRxiv]
+    d_PF = ( l_dot_mu_nuc - l_dot_mu_exp ) * l_dot_mu_el
+
+    # ordinary H_core
+    H_0 = T + V
+
+    # Add Pauli-Fierz terms to H_core. Eq. (11) in [McTague:2021:ChemRxiv]
+    H = H_0 + Q_PF + d_PF
+
+    # Overlap for DIIS
+    S = mints.ao_overlap()
+    # Orthogonalizer A = S^(-1/2) using Psi4's matrix power.
+    A = mints.ao_overlap()
+    A.power(-0.5, 1.0e-16)
+    A = np.asarray(A)
+
+    print("\nStart SCF iterations:\n")  
+    Enuc = mol.nuclear_repulsion_energy()
+    Eold = 0.0
+    E_1el_crhf = np.einsum("pq,pq->", H_0 + H_0, D)
+    E_1el = np.einsum("pq,pq->", H + H, D)
+    print("Canonical RHF One-electron energy = %4.16f" % E_1el_crhf)
+    print("CQED-RHF One-electron energy      = %4.16f" % E_1el)
+    print("Nuclear repulsion energy          = %4.16f" % Enuc)
+    print("Dipole energy                     = %4.16f" % d_c)
+
+    # Set convergence criteria from psi4_options_dict
+    if "e_convergence" in psi4_options_dict:
+        E_conv = psi4_options_dict["e_convergence"]
+    else:
+        E_conv = 1.0e-7
+    if "d_convergence" in psi4_options_dict:
+        D_conv = psi4_options_dict["d_convergence"]
+    else:
+        D_conv = 1.0e-5 
+
+    # maxiter
+    maxiter = 500
+    for SCF_ITER in range(1, maxiter + 1):
+
+        # Build fock matrix: [Szabo:1996] Eqn. 3.154, pp. 141
+        J = np.einsum("pqrs,rs->pq", I, D)
+        K = np.einsum("prqs,rs->pq", I, D)
+
+        # Pauli-Fierz 2-e dipole-dipole terms, line 2 of Eq. (12) in [McTague:2021:ChemRxiv]
+        M = np.einsum("pq,rs,rs->pq", l_dot_mu_el, l_dot_mu_el, D)
+        N = np.einsum("pr,qs,rs->pq", l_dot_mu_el, l_dot_mu_el, D)
+
+        # Build fock matrix: [Szabo:1996] Eqn. 3.154, pp. 141
+        # plus Pauli-Fierz terms Eq. (12) in [McTague:2021:ChemRxiv]
+        F = H + J * 2 - K + 2 * M - N
+
+        diis_e = np.einsum("ij,jk,kl->il", F, D, S) - np.einsum("ij,jk,kl->il", S, D, F)
+        diis_e = A.dot(diis_e).dot(A)
+        dRMS   = np.mean(diis_e ** 2) ** 0.5
+
+        # SCF energy and update: [Szabo:1996], Eqn. 3.184, pp. 150
+        # Pauli-Fierz terms Eq. 13 of [McTague:2021:ChemRxiv]
+        SCF_E = np.einsum("pq,pq->", F + H, D) + Enuc + d_c
+
+        print( "SCF Iteration %3d: Energy = %4.16f   dE = % 1.5E   dRMS = %1.5E"
+               % (SCF_ITER, SCF_E, (SCF_E - Eold), dRMS) )
+        
+        if (abs(SCF_E - Eold) < E_conv) and (dRMS < D_conv):
+            break
+
+        Eold = SCF_E
+
+        # Diagonalize Fock matrix: [Szabo:1996] pp. 145
+        Fp = A.dot(F).dot(A)  # Eqn. 3.177
+        e, C2 = np.linalg.eigh(Fp)  # Solving Eqn. 1.178
+        C = A.dot(C2)  # Back transform, Eqn. 3.174
+        Cocc = C[:, :ndocc]
+        D = np.einsum("pi,qi->pq", Cocc, Cocc)  # [Szabo:1996] Eqn. 3.145, pp. 139
+
+        # update electronic dipole expectation value
+        mu_exp_x = np.einsum("pq,pq->", 2 * mu_ao_x, D)
+        mu_exp_y = np.einsum("pq,pq->", 2 * mu_ao_y, D)
+        mu_exp_z = np.einsum("pq,pq->", 2 * mu_ao_z, D)
+
+        mu_exp_x += mu_nuc_x
+        mu_exp_y += mu_nuc_y
+        mu_exp_z += mu_nuc_z
+
+        # update \lambda \cdot <\mu>
+        l_dot_mu_exp = (  lambda_vector[0] * mu_exp_x
+                        + lambda_vector[1] * mu_exp_y
+                        + lambda_vector[2] * mu_exp_z )
+        
+        # Line 3 in full of Eq. (9) in [McTague:2021:ChemRxiv]
+        d_PF = (l_dot_mu_nuc - l_dot_mu_exp) * l_dot_mu_el
+
+        # update Core Hamiltonian
+        H = H_0 + Q_PF + d_PF
+
+        # update dipole energetic contribution, Eq. (14) in [McTague:2021:ChemRxiv]
+        d_c = 0.5 * l_dot_mu_nuc ** 2 - l_dot_mu_nuc * l_dot_mu_exp + 0.5 * l_dot_mu_exp ** 2 
+
+        if SCF_ITER == maxiter:
+            psi4.core.clean()
+            raise Exception("Maximum number of SCF cycles exceeded.")
+
+    # print("Total time for SCF iterations: %.3f seconds \n" % (time.time() - t))
+    print("QED-RHF   energy: %.8f hartree" % SCF_E)
+    print("Psi4  SCF energy: %.8f hartree" % psi4_rhf_energy)
+
+    rhf_one_e_cont = 2 * H_0   # note using H_0 which is just T + V, and does not include Q_PF and d_PF
+    rhf_two_e_cont = J * 2 - K # note using just J and K that would contribute to ordinary RHF 2-electron energy
+    pf_two_e_cont  = 2 * M - N
+
+    SCF_E_One = np.einsum("pq,pq->", rhf_one_e_cont, D)
+    SCF_E_Two = np.einsum("pq,pq->", rhf_two_e_cont, D)
+    CQED_SCF_E_Two = np.einsum("pq,pq->", pf_two_e_cont, D)
+
+    CQED_SCF_E_D_PF = np.einsum("pq,pq->", 2 * d_PF, D)
+    CQED_SCF_E_Q_PF = np.einsum("pq,pq->", 2 * Q_PF, D)
+
+    assert np.isclose(  SCF_E_One + SCF_E_Two + CQED_SCF_E_D_PF + CQED_SCF_E_Q_PF + CQED_SCF_E_Two,
+                        SCF_E - d_c - Enuc )
+
+    cqed_rhf_dict = {
+        "RHF ENERGY": psi4_rhf_energy,
+        "CQED-RHF ENERGY": SCF_E,
+        "1E ENERGY": SCF_E_One,
+        "2E ENERGY": SCF_E_Two,
+        "1E DIPOLE ENERGY": CQED_SCF_E_D_PF,
+        "1E QUADRUPOLE ENERGY": CQED_SCF_E_Q_PF,
+        "2E DIPOLE ENERGY": CQED_SCF_E_Two,
+        "CQED-RHF C": C,
+        "CQED-RHF DENSITY MATRIX": D,
+        "CQED-RHF EPS": e,
+        "PSI4 WFN": wfn,
+        "RHF DIPOLE MOMENT": rhf_dipole_moment,
+        "CQED-RHF DIPOLE MOMENT": np.array([mu_exp_x, mu_exp_y, mu_exp_z]),
+        "NUCLEAR DIPOLE MOMENT": np.array([mu_nuc_x, mu_nuc_y, mu_nuc_z]),
+        "DIPOLE ENERGY": d_c,
+        "NUCLEAR REPULSION ENERGY": Enuc,
+    }
+
+    return cqed_rhf_dict
+
+
 # =============================================================================
 #   SPIN OPERATORS
 # =============================================================================
@@ -827,7 +1199,7 @@ def visualize_wft(WFT, nbody_basis, n_mode, cutoff=0.005, atomic_orbitals=False)
     list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
 
     return_string = f'\n\t{"-" * 11}\n\t Coeff.     N-body state and index \n\t{"-" * 7}     {"-" * 22}\n'
-    for index in list_sorted_index[0:8]:
+    for index in list_sorted_index[0:15]:
         state = states[index]
         True_index_state =  np.flatnonzero((nbody_basis == state).all(1))[0]
         ket = '|' + "".join([str(elem) for elem in state[0:n_mode]]) + '⟩ ⊗ '
@@ -952,3 +1324,471 @@ def build_E_and_e_operators( a_dagger_a, n_mo ):
                     if q == r:
                         e_[p, q, r, s] += - E_[p, s]
     return E_, e_
+
+
+
+# =============================================================================
+#  DIFFERENT TYPES OF REDUCED DENSITY-MATRICES
+# =============================================================================
+
+# BOSONIC =======
+
+def build_bosonic_anihilation_rdm(WFT, b):
+    """
+    Create a hybrid alpha-beta 1 RDM for a given wave function
+    (Note : alpha for the lines, and beta for the columns)
+
+    Parameters
+    ----------
+    WFT        : array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm_alpha_beta :  array
+        spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)
+
+    """
+    n_mode = np.shape(b)[0] 
+    one_rdm = np.zeros((n_mode))
+    for p in range(n_mode): 
+        one_rdm[p] = WFT.T @ b[p] @ WFT
+
+    return one_rdm
+
+
+
+def build_bosonic_1rdm(WFT, b):
+    """
+    Create a hybrid alpha-beta 1 RDM for a given wave function
+    (Note : alpha for the lines, and beta for the columns)
+
+    Parameters
+    ----------
+    WFT        : array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm_alpha_beta :  array
+        spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)
+
+    """
+    n_mode = np.shape(b)[0] 
+    one_rdm = np.zeros((n_mode, n_mode))
+    for p in range(n_mode):
+        for q in range(n_mode):
+            one_rdm[p, q] = WFT.T @ b[p].T @ b[q] @ WFT
+
+    return one_rdm
+
+
+
+
+# FERMIONIC =======
+def build_fermionic_1rdm_alpha(WFT, a_dagger_a):
+    """
+    Create a spin-alpha 1 RDM for a given wave function
+
+    Parameters
+    ----------
+    WFT : array
+        Wave function for which we want to build the 1-RDM (expressed in the numerical basis)
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm_alpha : array
+        spin-alpha 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm_alpha = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(p, n_mo):
+            one_rdm_alpha[p, q] = WFT.T @ a_dagger_a[2 * p, 2 * q] @ WFT
+            one_rdm_alpha[q, p] = one_rdm_alpha[p, q]
+    return one_rdm_alpha
+
+
+def build_fermionic_1rdm_beta(WFT, a_dagger_a):
+    """
+    Create a spin-beta 1 RDM for a given wave function
+
+    Parameters
+    ----------
+    WFT : array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm_beta : array
+        Spin-beta 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm_beta = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(p, n_mo):
+            one_rdm_beta[p, q] = WFT.T @ a_dagger_a[2 * p + 1, 2 * q + 1] @ WFT
+            one_rdm_beta[q, p] = one_rdm_beta[p, q]
+    return one_rdm_beta
+
+
+def build_fermionic_1rdm_spin_free(WFT, a_dagger_a):
+    """
+    Create a spin-free 1 RDM for a given wave function
+
+    Parameters
+    ----------
+    WFT : array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm : array
+        Spin-free 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(p, n_mo):
+            E_pq = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+            one_rdm[p, q] = WFT.T @ E_pq @ WFT
+            one_rdm[q, p] = one_rdm[p, q]
+    return one_rdm
+
+
+def build_fermionic_2rdm_fh_on_site_repulsion(WFT, a_dagger_a, mask=None):
+    """
+    Create a 2-RDM for a given wave function following the structure of the Fermi Hubbard
+    on-site repulsion operator (u[i,j,k,l] corresponds to a^+_i↑ a_j↑ a^+_k↓ a_l↓)
+
+    Parameters
+    ----------
+    WFT : array
+        Wave function for which we want to build the 2-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+    mask :  array, default=None
+        4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+        For default None the whole 2RDM is calculated.
+        If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+        array that ensures that we won't calculate elements that are not going to be used in calculation of
+        2-electron interactions.
+    Returns
+    -------
+        two_rdm_fh : array
+            2-RDM associated to the on-site-repulsion operator
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    if mask is None or mask[p, q, r, s] != 0:
+                        two_rdm_fh[p, q, r, s] += WFT.T @ a_dagger_a[2 * p, 2 * q] @ a_dagger_a[2 * r + 1, 2 * s + 1] \
+                                                  @ WFT
+    return two_rdm_fh
+
+
+def build_fermionic_2rdm_fh_dipolar_interactions(WFT, a_dagger_a, mask=None):
+    """
+    Create a spin-free 2 RDM for a given Fermi Hubbard wave function for dipolar interaction operator
+    it corresponds to <psi|(a^+_i↑ a_j↑ + a^+_i↓ a_j↓)(a^+_k↑ a_l↑ + a^+_k↓ a_l↓)|psi>
+
+    Parameters
+    ----------
+    WFT        :  array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a :  array
+        Matrix representation of the a_dagger_a operator
+    mask       :  array
+        4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+        For default None the whole 2RDM is calculated.
+        If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+        array that ensures that we won't calculate elements that are not going to be used in calculation of
+        2-electron interactions.
+    Returns
+    -------
+    two_rdm_fh : array
+        2-RDM associated to the dipolar interaction operator
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    two_rdm_fh = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    big_E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            big_E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    if mask is None or mask[p, q, r, s] != 0:
+                        two_rdm_fh[p, q, r, s] = WFT.T @ big_E_[p, q] @ big_E_[r, s] @ WFT
+    return two_rdm_fh
+
+
+def build_fermionic_2rdm_spin_free(WFT, a_dagger_a):
+    """
+    Create a spin-free 2 RDM for a given wave function
+
+    Parameters
+    ----------
+    WFT        : array:
+        Wave function for which we want to build the spin-free 2-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    two_rdm : array
+        Spin-free 2-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    two_rdm[:] = np.nan
+    global E_
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+
+    for p in range(n_mo):
+        for q in range(p, n_mo):
+            for r in range(p, n_mo):
+                for s in range(p, n_mo):
+                    if np.isnan(two_rdm[p, q, r, s]):
+                        two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
+                        if q == r:
+                            two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+
+                        # Symmetry operations:
+                        two_rdm[r, s, p, q] = two_rdm[p, q, r, s]
+                        two_rdm[q, p, s, r] = two_rdm[p, q, r, s]
+                        two_rdm[s, r, q, p] = two_rdm[p, q, r, s]
+
+    return two_rdm
+
+
+def build_fermionic_1rdm_and_2rdm_spin_free(WFT, a_dagger_a):
+    """
+    Create both spin-free 1- and 2-RDMs for a given wave function
+
+    Parameters
+    ----------
+    WFT        : array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm : array
+        Spin-free 1-RDM
+    two_rdm : array
+        Spin-free 2-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm = np.zeros((n_mo, n_mo))
+    two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    two_rdm[:] = np.nan
+    global E_
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+
+    for p in range(n_mo):
+        for q in range(p, n_mo):
+            one_rdm[p, q] = WFT.T @ E_[p, q] @ WFT
+            one_rdm[q, p] = one_rdm[p, q]
+            for r in range(p, n_mo):
+                for s in range(p, n_mo):
+                    if np.isnan(two_rdm[p, q, r, s]):
+                        two_rdm[p, q, r, s] = WFT.T @ E_[p, q] @ E_[r, s] @ WFT
+                        if q == r:
+                            two_rdm[p, q, r, s] += - WFT.T @ E_[p, s] @ WFT
+
+                        # Symmetry operations:
+                        two_rdm[r, s, p, q] = two_rdm[p, q, r, s]
+                        two_rdm[q, p, s, r] = two_rdm[p, q, r, s]
+                        two_rdm[s, r, q, p] = two_rdm[p, q, r, s]
+
+    return one_rdm, two_rdm
+
+
+
+def build_fermionic_hybrid_1rdm_alpha_beta(WFT, a_dagger_a):
+    """
+    Create a hybrid alpha-beta 1 RDM for a given wave function
+    (Note : alpha for the lines, and beta for the columns)
+
+    Parameters
+    ----------
+    WFT        : array
+        Wave function for which we want to build the 1-RDM
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    one_rdm_alpha_beta :  array
+        spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    one_rdm_alpha_beta = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            one_rdm_alpha_beta[p, q] = WFT.T @ a_dagger_a[2 * p, 2 * q + 1] @ WFT
+
+    return one_rdm_alpha_beta
+
+
+
+def build_fermionic_transition_1rdm_alpha(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-alpha transition 1 RDM for a given wave function
+
+    Parameters
+    ----------
+    WFT_A      :  array
+        Left Wave function will be used for the Bra
+    WFT_B      : array
+        Right Wave function will be used for the Ket
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_one_rdm_alpha : array
+        transition spin-alpha 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    transition_one_rdm_alpha = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            transition_one_rdm_alpha[p, q] = WFT_A.T @ a_dagger_a[2 * p, 2 * q] @ WFT_B
+
+    return transition_one_rdm_alpha
+
+
+
+def build_fermionic_transition_1rdm_beta(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-beta transition 1 RDM for a given wave function
+
+    Parameters
+    ----------
+    WFT_A      : array
+        Left Wave function will be used for the Bra
+    WFT_B      : array
+        Right Wave function will be used for the Ket
+    a_dagger_a :  array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_one_rdm_beta : array
+        transition spin-beta 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    transition_one_rdm_beta = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            transition_one_rdm_beta[p, q] = WFT_A.T @ a_dagger_a[2 * p+1, 2 * q+1] @ WFT_B
+
+    return transition_one_rdm_beta
+
+
+
+def build_fermionic_transition_1rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-free transition 1 RDM out of two given wave functions
+
+    Parameters
+    ----------
+    WFT_A      :  array
+        Left Wave function will be used for the Bra
+    WFT_B      :  array
+        Right Wave function will be used for the Ket
+    a_dagger_a :  array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_one_rdm : array
+        spin-free transition 1-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    global E_
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+
+    transition_one_rdm = np.zeros((n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            transition_one_rdm[p, q] = WFT_A.T @ E_[p,q] @ WFT_B
+
+    return transition_one_rdm
+
+
+def build_fermionic_transition_2rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
+    """
+    Create a spin-free transition 2 RDM out of two given wave functions
+
+    Parameters
+    ----------
+    WFT_A      :  array
+        Left Wave function will be used for the Bra
+    WFT_B      :  array
+        Right Wave function will be used for the Ket
+    a_dagger_a :  array
+        Matrix representation of the a_dagger_a operator
+
+    Returns
+    -------
+    transition_two_rdm : array
+        Spin-free transition 2-RDM
+
+    """
+    n_mo = np.shape(a_dagger_a)[0] // 2
+    global E_
+    E_ = np.empty((2 * n_mo, 2 * n_mo), dtype=object)
+    for p in range(n_mo):
+        for q in range(n_mo):
+            E_[p, q] = a_dagger_a[2 * p, 2 * q] + a_dagger_a[2 * p + 1, 2 * q + 1]
+
+    transition_two_rdm = np.zeros((n_mo, n_mo, n_mo, n_mo))
+    for p in range(n_mo):
+        for q in range(n_mo):
+            for r in range(n_mo):
+                for s in range(n_mo):
+                    transition_two_rdm[p, q, r, s] = WFT_A.T @ E_[p, q] @ E_[r, s] @ WFT_B
+                    if q == r:
+                        transition_two_rdm[p, q, r, s] += - WFT_A.T @ E_[p, s] @ WFT_B
+
+    return transition_two_rdm
+
+
