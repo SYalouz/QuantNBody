@@ -123,8 +123,8 @@ Then we can build the PES of the molecule with a loop
         
         elem += 1 
 
-Plotting the resulting :math:`H_4` PES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Plotting the resulting H\ :math:`_4` PES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: ipython3
 
