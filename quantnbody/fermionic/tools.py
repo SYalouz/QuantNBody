@@ -135,8 +135,8 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
     for MO_q in (range(n_mo)):
         for MO_p in range(MO_q, n_mo):
             for kappa in range(dim_H):
-                ref_state = nbody_basis[kappa]
-
+                ref_state = nbody_basis[kappa] 
+                
                 # Single excitation : spin alpha -- alpha
                 p, q = 2 * MO_p, 2 * MO_q
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
@@ -153,43 +153,21 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
                     kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
-                if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
+                # Single excitation : spin beta -- alpha
+                p, q = 2 * MO_p + 1, 2 * MO_q
+                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
+                    pass
+                elif ref_state[q] == 1:
+                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
+                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
 
-                    # Single excitation : spin beta -- alpha
-                    p, q = 2 * MO_p + 1, 2 * MO_p
-                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                        pass
-                    elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                        # Single excitation : spin alpha -- beta
-                    p, q = 2 * MO_p, 2 * MO_p + 1
-
-                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                        pass
-                    elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-                
-                if MO_p != MO_q:  # <=== Necessary to build the L operators but not really for Hamiltonians
-
-                    # Single excitation : spin beta -- alpha
-                    p, q = 2 * MO_p + 1, 2 * MO_q
-                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                        pass
-                    elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                        # Single excitation : spin alpha -- beta
-                    p, q = 2 * MO_p, 2 * MO_q + 1
-
-                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                        pass
-                    elif ref_state[q] == 1:
-                        kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
+                # Single excitation : spin alpha -- beta
+                p, q = 2 * MO_p, 2 * MO_q + 1 
+                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
+                    pass
+                elif ref_state[q] == 1:
+                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
+                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
                         
     if not silent:
         print()
