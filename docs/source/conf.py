@@ -20,7 +20,7 @@ release = '1.0.1'
 
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
-              'sphinx_rtd_theme',
+              # 'sphinx_rtd_theme',
               'nbsphinx',
               'sphinxemoji.sphinxemoji',
               'IPython.sphinxext.ipython_console_highlighting']
