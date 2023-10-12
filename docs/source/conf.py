@@ -16,11 +16,11 @@ author = 'Saad Yalouz'
 release = '1.0.1'
 
 # -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+# 
 
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
-              # 'sphinx_rtd_theme',
+               'sphinx_rtd_theme',
               'nbsphinx',
               'sphinxemoji.sphinxemoji',
               'IPython.sphinxext.ipython_console_highlighting']
