@@ -2,7 +2,7 @@
 .. figure:: logo_shadow.png
     :width: 800
 
-What is QuantNBody ? ?
+What is QuantNBody ?
 =====================
 
 The **QuantNBody** package is a Python toolkit for quantum chemists/physicists interested in methods development to study
