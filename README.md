@@ -22,7 +22,7 @@
                                                                                         
 </div>
 
-
+UPDATE : WE ARE CURRENTLY UPDATING THE API IN THE DOCUMENTATION. THE LATTER IS NOT SHOWN FOR THE MOMENT, BUT IT WILL BE RESTORED VERY SOON !
 
 QuantNBody is a python package facilitating the implementation and manipulation of quantum many-body systems
 composed of fermions or bosons.
