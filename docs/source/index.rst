@@ -40,7 +40,7 @@ This tool also can be of a great help for pedagogical purpose and to help illust
 
 .. toctree::
    :maxdepth: 6
-   :caption: List of functions implemented
+   :caption: List of implemented functions 
 
    remarks_structure.rst
    api.rst
