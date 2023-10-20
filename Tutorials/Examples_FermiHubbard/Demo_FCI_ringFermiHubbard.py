@@ -20,8 +20,8 @@ import quantnbody as qnb
  
 #========================================================|
 # Parameters for the simulation 
-nelec_active =  8   #   Number of active electrons in the Active-Space  
-n_mo         =  8   #   Number of molecular orbital
+nelec_active =  4   #   Number of active electrons in the Active-Space  
+n_mo         =  3   #   Number of molecular orbital
 
 # Dimension of the many-body space 
 dim_H  = math.comb( 2*n_mo, nelec_active ) 

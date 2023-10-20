@@ -549,8 +549,10 @@ def build_hamiltonian_hubbard_holstein(h_fermion,
     H_fermion_boson = scipy.sparse.csr_matrix((dim_H, dim_H)) 
     for p in range(n_mode):
         H_fermion_boson += E_[p,p] @ ( b[p].T + b[p] ) * Coupling_fermion_boson[p] #* h_boson[p,p]
+        # H_boson +=   h_boson[p,p] * ( b[p].T @ b[p]  + 0.5* scipy.sparse.identity(dim_H) )
         for q in range(n_mode): 
-            H_boson +=  b[p].T @ b[q] * h_boson[p,q]
+            # if p == q:
+                H_boson +=  b[p].T @ b[q] * h_boson[p,q] 
             
     return H_fermi_hubbard + H_boson + H_fermion_boson
 
