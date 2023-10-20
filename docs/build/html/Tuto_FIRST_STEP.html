@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tuto 1: first steps with the package &mdash; QuantNBody 1.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tuto 2: playing with many-body wavefunctions" href="Tuto_PLAYING_WITH_STATES.html" />
+    <link rel="prev" title="A few remarks" href="remarks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QuantNBody
+              <img src="_static/logo2.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ? ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Running</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="remarks.html">A few remarks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Tuto 1:</em> first steps with the package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#philosophy-of-the-package">Philosophy of the package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#let-us-first-import-the-package">Let us first import the package !</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-many-body-basis">Building a many-body basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-and-storing-the-a-dagger-p-sigma-a-q-tau-operators">Building and storing the <span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-our-first-many-body-hamiltonian-a-fermi-hubbard-molecule">Building our first many-body Hamiltonian : a fermi-Hubbard molecule</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">List of functions implemented</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QuantNBody</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><em>Tuto 1:</em> first steps with the package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Tuto_FIRST_STEP.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="tuto-1-first-steps-with-the-package">
+<h1><em>Tuto 1:</em> first steps with the package<a class="headerlink" href="#tuto-1-first-steps-with-the-package" title="Permalink to this heading"></a></h1>
+<p><strong>Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
+France - July 2022</strong></p>
+<section id="philosophy-of-the-package">
+<h2>Philosophy of the package<a class="headerlink" href="#philosophy-of-the-package" title="Permalink to this heading"></a></h2>
+<p>The philosophy of the <strong>QuantNBody</strong> package is to facilitate the
+implementation and manipulation of quantum many-body systems composed of
+electrons or bosons. To achieve this goal, the package has been designed
+to provide a fast and easy way to construct many-body operators and wave
+functions in a given many-body basis. In this way, it becomes possible
+to access quantities/objects of interest in a few lines of python to
+speed up and facilitate methodology development.</p>
+<p>To that purpose, the package works with two fundamental ingredients.</p>
+<ol class="upperalpha simple">
+<li><p>The first is the <strong>creation of a many-body basis</strong> (based on a total
+number of quantum particles and modes/orbitals to be filled) in which
+each operator can be represented.</p></li>
+<li><p>The second is the creation of the set of <span class="math notranslate nohighlight">\(a^\dagger_p a_q\)</span>
+hopping operators that are needed to construct any many-body operator
+that conserves the number of particles.</p></li>
+</ol>
+<p>Once these two ingredients are created, the user can use predefined
+functions to construct different types of many-body operators
+(e.g. Hamiltonians, spin operators), and manipulate/view many-body
+quantum states. Note that the QuantNBody package has also been designed
+to provide flexibility for users to also create their own operators and
+functions based on the provided tools.</p>
+<p><strong>Nota Bene:</strong> For sake of simplicity, we will focus in these
+tutorials on fermionic systems.</p>
+</section>
+<section id="let-us-first-import-the-package">
+<h2>Let us first import the package !<a class="headerlink" href="#let-us-first-import-the-package" title="Permalink to this heading"></a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quantnbody</span> <span class="k">as</span> <span class="nn">qnb</span>   <span class="c1"># &lt;==== General import</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</section>
+<section id="building-a-many-body-basis">
+<h2>Building a many-body basis<a class="headerlink" href="#building-a-many-body-basis" title="Permalink to this heading"></a></h2>
+<p>To build a many-body basis for a fermionic system, the QuantNBody
+package generates a list of many-body states which describe the
+repartition of <span class="math notranslate nohighlight">\(N_{elec}\)</span> electrons in <span class="math notranslate nohighlight">\(2N_{MO}\)</span>
+spin-orbitals. These states are numerically referenced by a list of
+kappa indices such that</p>
+<div class="math notranslate nohighlight">
+\[\Big\lbrace |\kappa \rangle \Big\rbrace_{\textstyle \kappa=1}^{\textstyle \dim_H}\]</div>
+<p>The dimension <span class="math notranslate nohighlight">\(\dim_H\)</span> of the many-body basis depends on the
+number of electron <span class="math notranslate nohighlight">\(N_{elec}\)</span> and spatial orbital <span class="math notranslate nohighlight">\(N_{MO}\)</span>
+via a binomial law such that</p>
+<div class="math notranslate nohighlight">
+\[\dim_H = \binom{2N_{MO}}{N_{elec}}\]</div>
+<p><strong>A little example with</strong> <span class="math notranslate nohighlight">\(N_{MO}=N_{elec}=2\)</span>: in this case, we
+should have <strong>6 many-body states.</strong></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N_MO</span> <span class="o">=</span> <span class="n">N_elec</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># We define the number of MO and electrons</span>
+
+<span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span> <span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span> <span class="p">)</span> <span class="c1"># Building the nbody_basis</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape  of the kappa states&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;| kappa=</span><span class="si">{}</span><span class="s1"> &gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="n">nbody_basis</span><span class="p">[</span><span class="n">s</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Shape  of the kappa states
+| kappa=0 &gt; = [1 1 0 0]
+| kappa=1 &gt; = [1 0 1 0]
+| kappa=2 &gt; = [1 0 0 1]
+| kappa=3 &gt; = [0 1 1 0]
+| kappa=4 &gt; = [0 1 0 1]
+| kappa=5 &gt; = [0 0 1 1]
+</pre></div>
+</div>
+<p><strong>What is the meaning of these six bit strings ?</strong></p>
+<p>Here, each bit string represents a many-body state. As an example, let
+us check the first state for which we have</p>
+<div class="math notranslate nohighlight">
+\[| \kappa  = 0\rangle = | \underbrace{   \overbrace{1}^{ \textstyle  {\alpha}}, \; \; \;\overbrace{1}^{ \textstyle  {\beta}},}_{\textstyle 1st \ MO}\; \; \underbrace{\overbrace{0}^{ \textstyle  {\alpha}}, \; \; \; \overbrace{0}^{ \textstyle  {\beta}}}_{\textstyle 2nd \ MO} \rangle\]</div>
+<p>Here we choose to structure the occupation numbers as follows</p>
+<ul class="simple">
+<li><p>Each couple of terms refer to <strong>a same spatial orbital</strong></p></li>
+<li><p><strong>Even</strong> indices refer to <span class="math notranslate nohighlight">\(\alpha\)</span>-spin-orbitals</p></li>
+<li><p><strong>Odd</strong> indices refer to <span class="math notranslate nohighlight">\(\beta\)</span>-spin-orbitals</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Building a matrix representation of a many-body operator, what does it mean ?
+For each configuration, we associate a unique <span class="math notranslate nohighlight">\(\kappa\)</span> index which
+defines a unique “numerical” vector. In practice, any numerical
+representation of a given many-body operator will be given in the numerical many-body basis
+indexed by the <span class="math notranslate nohighlight">\(\kappa\)</span>. As an example, let us imagine we want to
+encode numerically a second quantization operator <span class="math notranslate nohighlight">\(O\)</span>. In practice, this means
+that we create a matrix representation of this operator in the many-body
+basis such that</p>
+<div class="math notranslate nohighlight">
+\[O = \sum_{\kappa, \kappa'
+=1}^{\dim_H}  \langle \kappa' | O | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |\]</div>
+<p>In practice, this indexing is realized by the QuantNBody package and
+then used as a central tool to build every matrix element of a given
+many-body operators.</p>
+</div>
+</section>
+<section id="building-and-storing-the-a-dagger-p-sigma-a-q-tau-operators">
+<h2>Building and storing the <span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators<a class="headerlink" href="#building-and-storing-the-a-dagger-p-sigma-a-q-tau-operators" title="Permalink to this heading"></a></h2>
+<p>Once the list of many-body states is created, the next crucial point in
+the <strong>QuantNBody</strong> package consists in building the
+<span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> many-body operators.</p>
+<p>In practice, these operators play a central role in many cases of study
+as soon as we have to deal with <strong>systems that are particle-number
+conserving.</strong> In this case, one can show that many objects
+(i.e. excitation operators, spin operators, reduced density matrices …)
+are built in practice using series of
+<span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators.</p>
+<p>With the QuantNBody package, we build the
+<span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators once and for all and
+store them via a very simple command line. In this way, we will be able to
+use them later on for any type of developments.</p>
+<p>The command line is simple and only requires the list of many-body states
+we built previously :</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a_dagger_a</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_operator_a_dagger_a</span><span class="p">(</span> <span class="n">nbody_basis</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>How to get access to these operators once stored ?</strong></p>
+<p>The way each operator is stored follows the way we order the
+spin-orbitals in our many-body states. As an illustrative example,
+taking the following elements will return the associated many-body
+operators :</p>
+<center><p>a_dagger_a[0,0] <span class="math notranslate nohighlight">\(\longrightarrow a^\dagger_{0,\alpha} a_{0,\alpha}\)</span></p>
+</center><center><p>a_dagger_a[1,0] <span class="math notranslate nohighlight">\(\longrightarrow a^\dagger_{0,\beta} a_{0,\alpha}\)</span></p>
+</center><center><p>a_dagger_a[10,1]  <span class="math notranslate nohighlight">\(\longrightarrow a^\dagger_{5,\alpha} a_{0,\beta}\)</span></p>
+</center><p>In practice, the resulting many-body operators we get access to are
+expressed in the numerical many-body basis (<em>i.e.</em> the <span class="math notranslate nohighlight">\(\kappa\)</span> indices).
+To better illustrate that, let us consider <code class="code docutils literal notranslate"><span class="pre">a_dagger_a[0,0]</span></code>. As explained before, this numerical object encodes
+<span class="math notranslate nohighlight">\(a^\dagger_{0,\alpha} a_{0,\alpha}\)</span> which can theoretically be expressed in the many-body basis as follows</p>
+<div class="math notranslate nohighlight">
+\[a^\dagger_{0,\alpha} a_{0,\alpha} = \sum_{\kappa, \kappa'
+=1}^{\dim_H}  \langle \kappa' | a^\dagger_{0,\alpha} a_{0,\alpha} | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |,\]</div>
+<p>As the effect of this operator is simply to count the number of electrons in
+the first spin-orbital, we can simplify the previous expression as follows</p>
+<div class="math notranslate nohighlight">
+\[a^\dagger_{0,\alpha} a_{0,\alpha} =   | 1100    \rangle\langle 1100 |  +  | 1010    \rangle\langle 1010 | + | 1001    \rangle\langle 1001 |.\]</div>
+<p>In terms of encoding in the numerical <span class="math notranslate nohighlight">\(\kappa\)</span> many-body basis, this operator can be rewritten as follows</p>
+<div class="math notranslate nohighlight">
+\[a^\dagger_{0,\alpha} a_{0,\alpha} =   | \kappa=0    \rangle\langle \kappa=0 |  +  | \kappa=1    \rangle\langle \kappa=1 | + | \kappa=2    \rangle\langle \kappa=2 |.\]</div>
+<p>With <strong>QuantNBody</strong>, the object <code class="code docutils literal notranslate"><span class="pre">a_dagger_a[0,0]</span></code> can be seen as the table (<em>i.e.</em> matrix) encoding all the matrix elements <span class="math notranslate nohighlight">\(\langle \kappa' | a^\dagger_{0,\alpha} a_{0,\alpha} | \kappa  \rangle\)</span>
+of the associated many-body operator <span class="math notranslate nohighlight">\(a^\dagger_{0,\alpha} a_{0,\alpha}\)</span>. This encoding is realized in practice via a <em>sparse matrix representation</em> which can be made dense as shown below</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span>  <span class="s2">&quot;Sparse representation of a_dagger_a[0,0]&quot;</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="n">a_dagger_a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;Dense representation of a_dagger_a[0,0]&quot;</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="n">a_dagger_a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">A</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Sparse representation of a_dagger_a[0,0]
+  (0, 0)    1.0
+  (1, 1)    1.0
+  (2, 2)    1.0
+
+Dense representation of a_dagger_a[0,0]
+[[1. 0. 0. 0. 0. 0.]
+ [0. 1. 0. 0. 0. 0.]
+ [0. 0. 1. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0.]]
+</pre></div>
+</div>
+<p>Here, we see here that the effect of this operator is simply to count the number of electrons in
+the first spin-orbital. This explains why we only have ones on the three
+first elements of the diagonal !</p>
+</section>
+<section id="building-our-first-many-body-hamiltonian-a-fermi-hubbard-molecule">
+<h2>Building our first many-body Hamiltonian : a fermi-Hubbard molecule<a class="headerlink" href="#building-our-first-many-body-hamiltonian-a-fermi-hubbard-molecule" title="Permalink to this heading"></a></h2>
+<p>In this final part of the tutorial we will use the previously built
+<code class="code docutils literal notranslate"><span class="pre">a_dagger_a</span></code> variable to implement a fermi-Hubbard molecule. In the local
+site basis, the model Hamiltonian is usually expressed such that:</p>
+<div class="math notranslate nohighlight">
+\[\hat{H} = \color{blue}{\sum_{\langle i,j \rangle}^{N_{MO}} -t_{ij} \sum_{\sigma=\uparrow,\downarrow} (\hat{a}^\dagger_{j,\sigma}\hat{a}_{i,\sigma}+\hat{a}^\dagger_{i,\sigma}\hat{a}_{j,\sigma})}
++ \color{red}{\sum_i^{N_{MO}} \mu_{ii} \sum_{\sigma=\uparrow,\downarrow} \hat{a}^\dagger_{i,\sigma}\hat{a}_{i,\sigma} }
++ \color{black}{
+\sum_i^{N_{MO}} U_{iiii} \hat{a}^\dagger_{i,\uparrow}\hat{a}_{i,\uparrow} \hat{a}^\dagger_{i,\downarrow}\hat{a}_{i,\downarrow}
+}\]</div>
+<div class="line-block">
+<div class="line">with :</div>
+</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t_{ij}\)</span> the hopping terms between the pair of
+connected sites <span class="math notranslate nohighlight">\(\langle i, j \rangle\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu_{ii}\)</span> the local chemical potential on site “<span class="math notranslate nohighlight">\(i\)</span>”.</p></li>
+<li><p><span class="math notranslate nohighlight">\(U_{iiii}\)</span> the local coulombic repulsion on site “<span class="math notranslate nohighlight">\(i\)</span>”.</p></li>
+</ul>
+<dl>
+<dt>We illustrate the shape of the system below</dt><dd><a class="reference internal image-reference" href="_images/graph.png"><img alt="_images/graph.png" class="align-center" src="_images/graph.png" style="width: 300px;" /></a>
+</dd>
+</dl>
+<p>In a more general basis (not necessarily local) we have</p>
+<div class="math notranslate nohighlight">
+\[\hat{H} =\sum_{\langle p,q \rangle}^{N_{MO}} -h_{pq} \sum_{\sigma=\uparrow,\downarrow} (\hat{a}^\dagger_{p,\sigma}\hat{a}_{q,\sigma}+\hat{a}^\dagger_{q,\sigma}\hat{a}_{p,\sigma}) + \sum_i^{N_{MO}} U_{p,q,r,s} \hat{a}^\dagger_{p,\uparrow}\hat{a}_{q,\uparrow} \hat{a}^\dagger_{r,\downarrow}\hat{a}_{s,\downarrow} ,\]</div>
+<p>where, for commodity, we have introduced the one-body integrals
+<span class="math notranslate nohighlight">\(h_{pq}\)</span> which embed the hopping terms and the chemical potentials
+such as</p>
+<div class="math notranslate nohighlight">
+\[h_{pq} = \sum_{i,j}^{N_{MO}} (-t_{ij} + \delta_{ij}\mu_{ii}) C_{i,p} C_{j,q},\]</div>
+<p>and the “delocalized version” of the coulombic repulsion term</p>
+<div class="math notranslate nohighlight">
+\[U_{pqrs} = \sum_{i}^{N_{MO}}  U_{i,i,i,i} C_{i,p} C_{i,q} C_{i,r} C_{i,s},\]</div>
+<p>where the matrix <span class="math notranslate nohighlight">\({\bf C}\)</span> encodes the Molecular Orbital
+coefficients (used if we want for example to express the Hamiltonian in
+a delocalized basis).</p>
+<p><strong>Building the Hamiltonian :</strong> To initiate the construction of the
+matrix representation of the operator in the many-body basis, we first
+define the hopping term <span class="math notranslate nohighlight">\(t\)</span> between the sites, the chemical
+potentials <span class="math notranslate nohighlight">\(\mu\)</span> and the electronic repulsion <span class="math notranslate nohighlight">\(U\)</span>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup for the simulation ========</span>
+<span class="n">N_MO</span>   <span class="o">=</span> <span class="n">N_elec</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">t_</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_MO</span><span class="p">,</span><span class="n">N_MO</span><span class="p">))</span>
+<span class="n">U_</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_MO</span><span class="p">,</span><span class="n">N_MO</span><span class="p">,</span><span class="n">N_MO</span><span class="p">,</span><span class="n">N_MO</span><span class="p">))</span>
+<span class="n">Mu_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_MO</span><span class="p">,</span><span class="n">N_MO</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_MO</span><span class="p">):</span>
+    <span class="n">U_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span>  <span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">i</span><span class="p">)</span>  <span class="c1"># Local coulombic repulsion</span>
+    <span class="n">Mu_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span>     <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">i</span><span class="p">)</span>  <span class="c1"># Local chemical potential</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">N_MO</span><span class="p">):</span>
+        <span class="n">t_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># hopping</span>
+
+<span class="n">h_</span> <span class="o">=</span> <span class="n">t_</span>  <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">Mu_</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># Global one-body matrix = hoppings + chemical potentials</span>
+
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;t_=</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">t_</span> <span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Mu_=</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">Mu_</span> <span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;h_=</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">h_</span> <span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>t_=
+ [[ 0. -1.]
+ [-1.  0.]]
+
+Mu_=
+ [[-1.  0.]
+ [ 0. -2.]]
+
+h_=
+ [[-1. -1.]
+ [-1. -2.]]
+</pre></div>
+</div>
+<p>To build the Hamiltonian, we simply have to pass the three following
+ingredients to an already built function:</p>
+<ul class="simple">
+<li><p>Parameters of the model</p></li>
+<li><p>The Many-body basis</p></li>
+<li><p>The <span class="math notranslate nohighlight">\(a^\dagger a\)</span> operators</p></li>
+</ul>
+<p>as shown below</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">H_fermi_hubbard</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_hamiltonian_fermi_hubbard</span><span class="p">(</span> <span class="n">h_</span><span class="p">,</span>
+                                                                       <span class="n">U_</span><span class="p">,</span>
+                                                                       <span class="n">nbody_basis</span><span class="p">,</span>
+                                                                       <span class="n">a_dagger_a</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Similarily to the <span class="math notranslate nohighlight">\(a^\dagger a\)</span> operators, the Hamiltonian <span class="math notranslate nohighlight">\(H\)</span> is
+represented in the many-body basis with a native sparse representation
+(which can be made dense):</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;H (SPARSE) =&#39;</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">H_fermi_hubbard</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;H (DENSE) =&#39;</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">H_fermi_hubbard</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>H (SPARSE) =
+  (0, 0)    -1.0
+  (0, 2)    -1.0
+  (0, 3)    1.0
+  (1, 1)    -3.0
+  (2, 0)    -1.0
+  (2, 2)    -3.0
+  (2, 5)    -1.0
+  (3, 0)    1.0
+  (3, 3)    -3.0
+  (3, 5)    1.0
+  (4, 4)    -3.0
+  (5, 2)    -1.0
+  (5, 3)    1.0
+  (5, 5)    -2.0
+
+H (DENSE) =
+[[-1.  0. -1.  1.  0.  0.]
+ [ 0. -3.  0.  0.  0.  0.]
+ [-1.  0. -3.  0.  0. -1.]
+ [ 1.  0.  0. -3.  0.  1.]
+ [ 0.  0.  0.  0. -3.  0.]
+ [ 0.  0. -1.  1.  0. -2.]]
+</pre></div>
+</div>
+<p>Once <span class="math notranslate nohighlight">\(H\)</span> is built, we can diagonalize the resulting matrix using
+for example the numpy library.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eig_energies</span><span class="p">,</span> <span class="n">eig_vectors</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">H_fermi_hubbard</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Energies =&#39;</span><span class="p">,</span> <span class="n">eig_energies</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Energies = [-4.41421356 -3.         -3.         -3.        ]
+</pre></div>
+</div>
+<p>And finally, we can call a very useful function from the QuantNBody
+package that help visualizing the shape of a wavefunction as shown
+below. This function lists the most important many-body states
+contributing to the wavefunction with the associated coefficients in
+front.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">WFT_to_analyse</span> <span class="o">=</span> <span class="n">eig_vectors</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Visualizing the groundstate in the many-body basis</span>
+<span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">visualize_wft</span><span class="p">(</span> <span class="n">WFT_to_analyse</span><span class="p">,</span> <span class="n">nbody_basis</span> <span class="p">)</span> <span class="c1"># &lt;=== FCT IN THE PACKAGE</span>
+<span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-----------
+ Coeff.      N-body state
+-------     -------------
+-0.57454        |0110⟩
++0.57454        |1001⟩
++0.47596        |0011⟩
++0.33656        |1100⟩
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="remarks.html" class="btn btn-neutral float-left" title="A few remarks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Tuto_PLAYING_WITH_STATES.html" class="btn btn-neutral float-right" title="Tuto 2: playing with many-body wavefunctions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Saad Yalouz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

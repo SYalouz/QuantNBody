@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A few remarks &mdash; QuantNBody 1.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tuto 1: first steps with the package" href="Tuto_FIRST_STEP.html" />
+    <link rel="prev" title="Installation and Running" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QuantNBody
+              <img src="_static/logo2.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ? ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Running</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">A few remarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_FIRST_STEP.html"><em>Tuto 1:</em> first steps with the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">List of functions implemented</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QuantNBody</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">A few remarks</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/remarks.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="a-few-remarks">
+<h1>A few remarks<a class="headerlink" href="#a-few-remarks" title="Permalink to this heading"></a></h1>
+<p>In the following <strong>QuantNBody tutorials</strong>, we will detail how the package can be used in practice to manipulate and create many-body operators and wavefunctions for fermionic and bosonic systems.
+We encourage the new users to follow the tutorials in the following order:</p>
+<dl class="simple">
+<dt><em>Tuto 1:</em> first steps with the package</dt><dd><p>This tutorial explains the basics of the QuantNBody package. Focusing on fermionic systems,
+we explain how the encoding of a many-body basis  is realized in practice in the code (spin orbitals occupied by electrons).
+We also detail how we encode the single-body hopping operators. The latter being a central tool for the creation of any particle number conserving operators later on.</p>
+</dd>
+<dt><em>Tuto 2:</em> playing with many-body wavefunctions</dt><dd><p>This second tutorial illustrates how to easily manipulate many-body states. Here we detail how to create our own state (step by step) with native functions from QuantNBody. We also show how to apply excitation on these states in order to modify them and also how to visualize the resulting decomposition in the many-body basis.</p>
+</dd>
+<dt><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</dt><dd><p>This third tutorial focuses on the construction of different spin operators (<em>e.g.</em> <span class="math notranslate nohighlight">\(\hat{S}_2\)</span>) and <em>ab initio</em> electronic structure Hamiltonians. We show here how to easily build both types of operator. Furthermore, we demonstrate how to combine these operators together to find specific eigenstates with a desired spin symmetry and compare the results to Psi4.</p>
+</dd>
+<dt><em>Tuto 4:</em> the Bose-Hubbard system</dt><dd><p>For those interested in bosonic systems, we also describe here equivalent features/functions to build operators, see and manipulate wavefunctions.</p>
+</dd>
+</dl>
+<p><strong>Enjoy the tutorials !</strong>  😉 👍</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In addition to what is presented here,  we refer the interested user to our Github page where we provide a series of <a class="reference external" href="https://github.com/SYalouz/QuantNBody/tree/main/Tutorials">Jupyter-notebooks
+and Python scripts</a> illustrating different types of many-body calculations.
+All these methods are implemented from scratch with the QuantNBody packages.
+The folders are named according to the type of system used as a study case:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/SYalouz/QuantNBody/tree/main/Tutorials/Examples_BoseHubbard">/Examples_BoseHubbard/:</a> contains script for FCI calculations on small-sized Bose-Hubbard systems.</p></li>
+<li><p><a class="reference external" href="https://github.com/SYalouz/QuantNBody/tree/main/Tutorials/Examples_FermiHubbard">/Examples_FermiHubbard/:</a> contains scripts for CAS-CI and FCI calculations on small-sized Fermi-Hubbard systems.</p></li>
+<li><p><a class="reference external" href="https://github.com/SYalouz/QuantNBody/tree/main/Tutorials/Examples_chemistry">/Examples_chemistry/:</a> contains scripts for CAS-CI, SA-CASSCF and FCI calculation on small-sized molecular systems.</p></li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation and Running" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Tuto_FIRST_STEP.html" class="btn btn-neutral float-right" title="Tuto 1: first steps with the package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Saad Yalouz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

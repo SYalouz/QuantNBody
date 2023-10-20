@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tuto 3: electronic structure Hamiltonian and spin operators &mdash; QuantNBody 1.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tuto 4: the Bose-Hubbard system" href="Tuto_BOSE_HUBBARD.html" />
+    <link rel="prev" title="Tuto 2: playing with many-body wavefunctions" href="Tuto_PLAYING_WITH_STATES.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QuantNBody
+              <img src="_static/logo2.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ? ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Running</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="remarks.html">A few remarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_FIRST_STEP.html"><em>Tuto 1:</em> first steps with the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#electronic-structure-hamiltonian">Electronic structure Hamiltonian</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-the-resulting-h-4-pes">Plotting the resulting H<span class="math notranslate nohighlight">\(_4\)</span> PES</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#building-spin-operators-to-check-the-spin-symmetry-of-the-states">Building spin operators to check the spin symmetry of the states</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">List of functions implemented</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QuantNBody</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="tuto-3-electronic-structure-hamiltonian-and-spin-operators">
+<h1><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators<a class="headerlink" href="#tuto-3-electronic-structure-hamiltonian-and-spin-operators" title="Permalink to this heading"></a></h1>
+<p><strong>Dr. Saad Yalouz</strong></p>
+<p><strong>Laboratoire de Chimie Quantique de Strasbourg, France</strong></p>
+<p><strong>July 2022</strong></p>
+<p>In this QuantNBody tutorial, we will focus on the construction of spin
+operators like <span class="math notranslate nohighlight">\({S}^2\)</span> and <span class="math notranslate nohighlight">\(S_z\)</span> and ab initio electronic
+structure Hamiltonians <span class="math notranslate nohighlight">\(H\)</span>. We will show how easily we can build
+these operators and use them.</p>
+<p>Let us first import our package and some additional libraries</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quantnbody</span> <span class="k">as</span> <span class="nn">qnb</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">psi4</span>
+<span class="kn">import</span> <span class="nn">math</span>
+</pre></div>
+</div>
+<section id="electronic-structure-hamiltonian">
+<h2>Electronic structure Hamiltonian<a class="headerlink" href="#electronic-structure-hamiltonian" title="Permalink to this heading"></a></h2>
+<p>The ab initio electronic structure Hamiltonian describes how a
+collection of <span class="math notranslate nohighlight">\(N_e\)</span> electrons rearrange around a set of positively
+charged nuclei in a molecule. This operator is defined like:</p>
+<div class="math notranslate nohighlight">
+\[{H} = \sum_{p,q} h_{pq} {E}_{pq} + \frac{1}{2} \sum_{pqrs} g_{pqrs} {e}_{pqrs} + \mathcal{E}_{nuc.\ rep.}\]</div>
+<p>where we have the one- and two-electron integrals <span class="math notranslate nohighlight">\(h_{pq}\)</span> and
+<span class="math notranslate nohighlight">\(g_{pqrs}\)</span> (and the nuclear repulsion energy
+<span class="math notranslate nohighlight">\(\mathcal{E}_{nuc.\ rep.}\)</span>) associated to the one- and
+two-electron spin-free excitation operators defined like</p>
+<div class="math notranslate nohighlight">
+\[{E}_{pq} = \sum_{\sigma=\uparrow,\downarrow} a^\dagger_{p,\sigma}a_{q,\sigma}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[e_{pqrs} = E_{pq}E_{rs} - \delta_{rs} E_{ps} .\]</div>
+<p>Here again, we see that all these operators can be defined in terms of
+the <span class="math notranslate nohighlight">\(a_{p,\sigma}^\dagger a_{q,\tau}\)</span> operators.</p>
+<p>Below, we show how to create such a Hamiltonian for the H<span class="math notranslate nohighlight">\(_4\)</span>
+molecule in the STO-3G basis, and how to (easily) compute a ground state
+potential energy surface. In this case, we need to get access to the
+electronic integrals of the system. We use for this Psi4 (but note that
+Pyscf could have been used too !)</p>
+<p>First we build the essential many-body basis and a_Dagger_a operators</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N_elec</span> <span class="o">=</span> <span class="n">N_MO</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># Number of MOs and electrons in the system</span>
+
+<span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span> <span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span> <span class="p">)</span>
+<span class="n">a_dagger_a</span>  <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_operator_a_dagger_a</span><span class="p">(</span> <span class="n">nbody_basis</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Then we can build the PES of the molecule with a loop</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">RUN_FCI_PSI4</span><span class="p">(</span> <span class="n">string_geo</span><span class="p">,</span> <span class="n">basisset</span><span class="p">,</span> <span class="n">num_roots</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A function to run a FCI method with the Psi4 package</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">psi4</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span> <span class="n">string_geo</span> <span class="p">)</span>
+    <span class="n">psi4</span><span class="o">.</span><span class="n">set_options</span><span class="p">({</span>  <span class="s1">&#39;basis&#39;</span>       <span class="p">:</span> <span class="n">basisset</span><span class="p">,</span>
+                        <span class="s1">&#39;num_roots&#39;</span>   <span class="p">:</span> <span class="n">num_roots</span><span class="p">,</span>
+                        <span class="s1">&#39;S&#39;</span>           <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="s1">&#39;DIAG_METHOD&#39;</span> <span class="p">:</span> <span class="s1">&#39;SEM&#39;</span> <span class="p">})</span>
+    <span class="n">fci</span><span class="p">,</span> <span class="n">fcici_wfn</span> <span class="o">=</span> <span class="n">psi4</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="s1">&#39;fci&#39;</span><span class="p">,</span><span class="n">return_wfn</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">E_FCI</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_roots</span><span class="p">):</span>
+        <span class="n">E_FCI</span> <span class="o">+=</span> <span class="p">[</span> <span class="n">psi4</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s1">&#39;CI ROOT </span><span class="si">{}</span><span class="s1"> TOTAL ENERGY&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root</span><span class="p">))</span> <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">E_FCI</span>
+
+<span class="n">E_HF</span>  <span class="o">=</span> <span class="p">[]</span>
+<span class="n">E_FCI</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">E_FCI_QNB</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">N_elec</span>   <span class="o">=</span> <span class="n">N_MO</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">basisset</span> <span class="o">=</span> <span class="s1">&#39;sto-3g&#39;</span>
+<span class="n">MAX_ROOT</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">list_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">20.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">160.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">dim_H</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span> <span class="p">)</span>
+<span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span> <span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span> <span class="p">)</span>
+
+<span class="n">dim_parameter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_theta</span><span class="p">)</span>
+<span class="n">Energies_FCI</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim_parameter</span><span class="p">,</span><span class="n">MAX_ROOT</span><span class="p">))</span>
+<span class="n">Energies_FCI_QNB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim_parameter</span><span class="p">,</span><span class="n">dim_H</span><span class="p">))</span>
+
+<span class="n">a_dagger_a</span>  <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_operator_a_dagger_a</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">)</span>
+<span class="n">S_2</span><span class="p">,</span> <span class="n">S_plus</span><span class="p">,</span> <span class="n">S_z</span> <span class="o">=</span>  <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_s2_sz_splus_operator</span><span class="p">(</span><span class="n">a_dagger_a</span><span class="p">)</span>
+<span class="c1"># for r in tqdm(list_r):</span>
+<span class="n">elem</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="p">(</span><span class="n">list_theta</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="n">XYZ_geometry</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; H   </span><span class="si">{0}</span><span class="s2">   </span><span class="si">{1}</span><span class="s2">  0.</span>
+<span class="s2">                       H   </span><span class="si">{0}</span><span class="s2">  -</span><span class="si">{1}</span><span class="s2">  0.</span>
+<span class="s2">                       H  -</span><span class="si">{0}</span><span class="s2">   </span><span class="si">{1}</span><span class="s2">  0.</span>
+<span class="s2">                       H  -</span><span class="si">{0}</span><span class="s2">  -</span><span class="si">{1}</span><span class="s2">  0.  &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">r</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.</span><span class="p">),</span> <span class="n">r</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">overlap_AO</span><span class="p">,</span> <span class="n">h_AO</span><span class="p">,</span> <span class="n">g_AO</span><span class="p">,</span> <span class="n">C_RHF</span><span class="p">,</span> <span class="n">E_HF</span><span class="p">,</span> <span class="n">E_rep_nuc</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">get_info_from_psi4</span><span class="p">(</span> <span class="n">XYZ_geometry</span><span class="p">,</span>
+                                                                                             <span class="n">basisset</span> <span class="p">)</span>
+    <span class="n">h_MO</span><span class="p">,</span> <span class="n">g_MO</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">transform_1_2_body_tensors_in_new_basis</span><span class="p">(</span> <span class="n">h_AO</span><span class="p">,</span> <span class="n">g_AO</span><span class="p">,</span> <span class="n">C_RHF</span> <span class="p">)</span>
+
+    <span class="n">H</span>           <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_hamiltonian_quantum_chemistry</span><span class="p">(</span> <span class="n">h_MO</span><span class="p">,</span>
+                                                                           <span class="n">g_MO</span><span class="p">,</span>
+                                                                           <span class="n">nbody_basis</span><span class="p">,</span>
+                                                                           <span class="n">a_dagger_a</span> <span class="p">)</span>
+    <span class="n">eig_energies</span><span class="p">,</span> <span class="n">eig_vectors</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span> <span class="n">H</span><span class="o">.</span><span class="n">A</span> <span class="p">)</span>
+    <span class="n">E_FCI_QNB</span> <span class="o">+=</span> <span class="p">[</span> <span class="n">E_rep_nuc</span> <span class="o">+</span> <span class="n">eig_energies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">]</span>
+    <span class="n">Energies_FCI_QNB</span><span class="p">[</span><span class="n">elem</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">[</span> <span class="n">E_rep_nuc</span> <span class="o">+</span> <span class="n">eig_energies</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>  <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim_H</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">Energies_FCI</span><span class="p">[</span><span class="n">elem</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">RUN_FCI_PSI4</span><span class="p">(</span> <span class="n">XYZ_geometry</span>  <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;symmetry c1&#39;</span><span class="p">,</span> <span class="n">basisset</span><span class="p">,</span> <span class="n">MAX_ROOT</span> <span class="p">)</span>
+
+    <span class="n">elem</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<section id="plotting-the-resulting-h-4-pes">
+<h3>Plotting the resulting H<span class="math notranslate nohighlight">\(_4\)</span> PES<a class="headerlink" href="#plotting-the-resulting-h-4-pes" title="Permalink to this heading"></a></h3>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span>  <span class="n">family</span><span class="o">=</span><span class="s1">&#39;serif&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span>  <span class="n">serif</span><span class="o">=</span><span class="s1">&#39;Times New Roman&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span>  <span class="n">size</span><span class="o">=</span><span class="s1">&#39;14&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;xtick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="s1">&#39;x-large&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;ytick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="s1">&#39;x-large&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plotting the resulting energies</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span> <span class="n">ax1</span> <span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span> <span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Psi4 (Singlet states only)&#39;</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span>   <span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI_QNB</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span> <span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;QuantNBody package&#39;</span>    <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI_QNB</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span>   <span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Energy (Ha)&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle (rad.)&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/output_8_0.png" src="_images/output_8_0.png" />
+<p>We see here that QuantNBody produces more states than Psi4 which is
+restricted to singlets. This is linked to the spin symmetries which has
+not been defined. As a results, we find here all the states including
+singlet, triplet, quintet etc.</p>
+<p>In the following we show how to build spin operators and restrict our
+calculations to particular spin symmetries.</p>
+</section>
+</section>
+<section id="building-spin-operators-to-check-the-spin-symmetry-of-the-states">
+<h2>Building spin operators to check the spin symmetry of the states<a class="headerlink" href="#building-spin-operators-to-check-the-spin-symmetry-of-the-states" title="Permalink to this heading"></a></h2>
+<p>With QuantNBdoy, one can easily build spin operators as the latter are
+also naturally defined with <span class="math notranslate nohighlight">\(a^\dagger a\)</span> elementary bricks. For
+example, we can build the global <span class="math notranslate nohighlight">\({S}^2\)</span> operator</p>
+<div class="math notranslate nohighlight">
+\[{S}^2 = S_+ S_- + S_z(S_z-1) ,\]</div>
+<p>with the <span class="math notranslate nohighlight">\(S_z\)</span> contribution</p>
+<div class="math notranslate nohighlight">
+\[{S}_z =  \frac{1}{2}\sum_p ( a^\dagger_{p,\alpha} a_{p,\alpha} - a^\dagger_{p,\beta} a_{p,\beta} ) ,\]</div>
+<p>and the spin-up creation operator</p>
+<div class="math notranslate nohighlight">
+\[{S}_+ = \sum_p a^\dagger_{p,\alpha} a_{p,\beta}\]</div>
+<p>as we know that $ {S}<em>- = {S}</em>+^:raw-latex:<a href="#id1"><span class="problematic" id="id2">`</span></a>dagger`$.</p>
+<p>Below we show how to generate the matrix representation of these three
+operators with a single pre-made function.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">S_2</span><span class="p">,</span> <span class="n">S_z</span><span class="p">,</span> <span class="n">S_plus</span> <span class="o">=</span>  <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_s2_sz_splus_operator</span><span class="p">(</span><span class="n">a_dagger_a</span><span class="p">)</span> <span class="c1"># &lt;=== FCT IN THE PACKAGE</span>
+</pre></div>
+</div>
+<p>Now, we can use the <span class="math notranslate nohighlight">\({S}^2\)</span> operator to check the spin symmetry of
+the state produced by the QuantNBody. For this, nothing more simple : we
+compute the averaged value of this operator for the 10 first eigenstates
+of the ab initio Hamiltonian</p>
+<div class="math notranslate nohighlight">
+\[\langle {S}^2 \rangle_\Psi \equiv  \langle \Psi | {S}^2 | \Psi\rangle\]</div>
+<p>We show how to do that below.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Checking the value of S_2 for the 10 first eigenstates produced by QuantNBody &#39;</span> <span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Eigenstate #</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">,</span>  <span class="n">eig_vectors</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">S_2</span> <span class="o">@</span> <span class="n">eig_vectors</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Checking</span> <span class="n">the</span> <span class="n">value</span> <span class="n">of</span> <span class="n">S_2</span> <span class="k">for</span> <span class="n">the</span> <span class="mi">10</span> <span class="n">first</span> <span class="n">eigenstates</span> <span class="n">produced</span> <span class="n">by</span> <span class="n">QuantNBody</span>
+<span class="n">Eigenstate</span> <span class="c1">#0  -9.28450747276484e-21</span>
+<span class="n">Eigenstate</span> <span class="c1">#1  1.999999999999999</span>
+<span class="n">Eigenstate</span> <span class="c1">#2  2.000000000000001</span>
+<span class="n">Eigenstate</span> <span class="c1">#3  1.9999999999999984</span>
+<span class="n">Eigenstate</span> <span class="c1">#4  1.9999999999999938</span>
+<span class="n">Eigenstate</span> <span class="c1">#5  2.0000000000000018</span>
+<span class="n">Eigenstate</span> <span class="c1">#6  2.000000000000003</span>
+<span class="n">Eigenstate</span> <span class="c1">#7  8.535459286169437e-29</span>
+<span class="n">Eigenstate</span> <span class="c1">#8  1.8794697497391845e-28</span>
+<span class="n">Eigenstate</span> <span class="c1">#9  2.0000000000000004</span>
+</pre></div>
+</div>
+<p>Indeed ! We see here that the states generated are not all singlets,
+e.g. from #1 to #6 we have triplets (:-/) …</p>
+<p>To correct this, in QuantNBody we implemented a spin-penalty technique.
+The idea is here to augment the Hamiltonian of a system like</p>
+<div class="math notranslate nohighlight">
+\[{H} \longrightarrow {H} + penalty \times ({S}^2 - s^2_{target})^2.\]</div>
+<p>Redefining the Hamiltonian like this will change the spectrum of the
+operator such that every eigenstates <span class="math notranslate nohighlight">\(| \Psi \rangle\)</span> which don’t
+have a specific spin symmetry such that</p>
+<div class="math notranslate nohighlight">
+\[\langle \Psi  | {S}^2 | \Psi \rangle = s^2_{target}\]</div>
+<p>will take an “effective” positive energy penalty which will thus shift
+the state upper in the spectrum. The penalty term is chosen to be
+deliberatly large to ensure that these states are well discared. The
+value of the spin symmetry targeted <span class="math notranslate nohighlight">\(s^2_{target}\)</span> has to be
+defined by the user.</p>
+<p>This extension has been implemented for every fermionic Hamitlonian
+(model or ab initio ones). We show below the additional arguments we
+have to provide to the Hamiltonian function to generate this penalty
+term and thus obtain singlet in H<span class="math notranslate nohighlight">\(_4\)</span>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">list_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">num</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">20.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">160.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">E_HF</span>  <span class="o">=</span> <span class="p">[]</span>
+<span class="n">E_FCI_me</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">N_elec</span> <span class="o">=</span> <span class="n">N_MO</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">dim_H</span>  <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span> <span class="p">)</span>
+
+<span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span> <span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span> <span class="p">)</span>
+
+<span class="n">MAX_ROOT</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="n">dim_parameter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_theta</span><span class="p">)</span>
+<span class="n">Energies_FCI_QNB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim_parameter</span><span class="p">,</span><span class="n">dim_H</span><span class="p">))</span>
+
+<span class="n">a_dagger_a</span>  <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_operator_a_dagger_a</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">)</span>
+<span class="n">S_2</span><span class="p">,</span> <span class="n">S_plus</span><span class="p">,</span> <span class="n">S_z</span> <span class="o">=</span>  <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_s2_sz_splus_operator</span><span class="p">(</span><span class="n">a_dagger_a</span><span class="p">)</span>
+<span class="c1"># for r in tqdm(list_r):</span>
+<span class="n">elem</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="p">(</span><span class="n">list_theta</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="n">XYZ_geometry</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; H   </span><span class="si">{0}</span><span class="s2">   </span><span class="si">{1}</span><span class="s2">  0.</span>
+<span class="s2">                       H   </span><span class="si">{0}</span><span class="s2">  -</span><span class="si">{1}</span><span class="s2">  0.</span>
+<span class="s2">                       H  -</span><span class="si">{0}</span><span class="s2">   </span><span class="si">{1}</span><span class="s2">  0.</span>
+<span class="s2">                       H  -</span><span class="si">{0}</span><span class="s2">  -</span><span class="si">{1}</span><span class="s2">  0.  &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">r</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.</span><span class="p">),</span> <span class="n">r</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="n">overlap_AO</span><span class="p">,</span> <span class="n">h_AO</span><span class="p">,</span> <span class="n">g_AO</span><span class="p">,</span> <span class="n">C_RHF</span><span class="p">,</span> <span class="n">E_HF</span><span class="p">,</span> <span class="n">E_rep_nuc</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">get_info_from_psi4</span><span class="p">(</span> <span class="n">XYZ_geometry</span><span class="p">,</span>
+                                                                                             <span class="n">basisset</span> <span class="p">)</span>
+    <span class="n">h_MO</span><span class="p">,</span> <span class="n">g_MO</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">transform_1_2_body_tensors_in_new_basis</span><span class="p">(</span> <span class="n">h_AO</span><span class="p">,</span> <span class="n">g_AO</span><span class="p">,</span> <span class="n">C_RHF</span> <span class="p">)</span>
+
+    <span class="n">H</span>           <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_hamiltonian_quantum_chemistry</span><span class="p">(</span> <span class="n">h_MO</span><span class="p">,</span>
+                                                                   <span class="n">g_MO</span><span class="p">,</span>
+                                                                   <span class="n">nbody_basis</span><span class="p">,</span>
+                                                                   <span class="n">a_dagger_a</span><span class="p">,</span>
+                                                                   <span class="n">S_2</span> <span class="o">=</span> <span class="n">S_2</span><span class="p">,</span>    <span class="c1"># &lt;=== Here : S_2 operator</span>
+                                                                   <span class="n">S_2_target</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># &lt;=== Here : spin symmetry targeted</span>
+    <span class="n">eig_energies</span><span class="p">,</span> <span class="n">eig_vectors</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span> <span class="n">H</span><span class="o">.</span><span class="n">A</span> <span class="p">)</span>
+    <span class="n">E_FCI_me</span> <span class="o">+=</span> <span class="p">[</span> <span class="n">E_rep_nuc</span> <span class="o">+</span> <span class="n">eig_energies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">]</span>
+    <span class="n">Energies_FCI_QNB</span><span class="p">[</span><span class="n">elem</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">[</span> <span class="n">E_rep_nuc</span> <span class="o">+</span> <span class="n">eig_energies</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>  <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim_H</span><span class="p">)</span> <span class="p">]</span>
+
+    <span class="n">elem</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span>  <span class="n">family</span><span class="o">=</span><span class="s1">&#39;serif&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span>  <span class="n">serif</span><span class="o">=</span><span class="s1">&#39;Times New Roman&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span>  <span class="n">size</span><span class="o">=</span><span class="s1">&#39;14&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;xtick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="s1">&#39;x-large&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;ytick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="s1">&#39;x-large&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plotting the resulting energies</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span> <span class="n">ax1</span> <span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span> <span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Psi4 (Singlet states only)&#39;</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span>   <span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI_QNB</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span> <span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;QuantNBody with singlet spin penalty&#39;</span>    <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_theta</span><span class="p">,</span> <span class="n">Energies_FCI_QNB</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span> <span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span>  <span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Energy (Ha)&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Angle (rad.)&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/output_16_0.png" src="_images/output_16_0.png" />
+<p>Congrats ! Here we have totally solved the problem: the lowest
+eigenstates given by our code are indeed singlet ! To check this we can
+compute again the averaged <span class="math notranslate nohighlight">\(\langle S^2 \rangle\)</span> over the few
+first eigenstates as shown below.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Checking the value of S_2 for the 10 first eigenstates produced by QuantNBody &#39;</span> <span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Eigenstate #</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">,</span>  <span class="n">eig_vectors</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">S_2</span> <span class="o">@</span> <span class="n">eig_vectors</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Checking</span> <span class="n">the</span> <span class="n">value</span> <span class="n">of</span> <span class="n">S_2</span> <span class="k">for</span> <span class="n">the</span> <span class="mi">10</span> <span class="n">first</span> <span class="n">eigenstates</span> <span class="n">produced</span> <span class="n">by</span> <span class="n">QuantNBody</span>
+<span class="n">Eigenstate</span> <span class="c1">#0  7.211422253675881e-35</span>
+<span class="n">Eigenstate</span> <span class="c1">#1  2.4220494982141283e-30</span>
+<span class="n">Eigenstate</span> <span class="c1">#2  3.585503779835195e-30</span>
+<span class="n">Eigenstate</span> <span class="c1">#3  4.118252264590018e-30</span>
+<span class="n">Eigenstate</span> <span class="c1">#4  5.66521922848957e-30</span>
+<span class="n">Eigenstate</span> <span class="c1">#5  -1.3764367007004992e-17</span>
+<span class="n">Eigenstate</span> <span class="c1">#6  -3.441433200150141e-17</span>
+<span class="n">Eigenstate</span> <span class="c1">#7  3.386030493767104e-30</span>
+<span class="n">Eigenstate</span> <span class="c1">#8  1.243288016307383e-17</span>
+<span class="n">Eigenstate</span> <span class="c1">#9  5.035284097980329e-30</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Tuto_PLAYING_WITH_STATES.html" class="btn btn-neutral float-left" title="Tuto 2: playing with many-body wavefunctions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Tuto_BOSE_HUBBARD.html" class="btn btn-neutral float-right" title="Tuto 4: the Bose-Hubbard system" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Saad Yalouz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

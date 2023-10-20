@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is QuantNBody ? &mdash; QuantNBody 1.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation and Running" href="install.html" />
+    <link rel="prev" title="A Python package for quantum chemistry and physics." href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QuantNBody
+              <img src="_static/logo2.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What is QuantNBody ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#framework-of-the-package">Framework of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#support">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Running</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remarks.html">A few remarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_FIRST_STEP.html"><em>Tuto 1:</em> first steps with the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">List of functions implemented</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QuantNBody</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">What is QuantNBody ?</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/logo_shadow.png"><img alt="_images/logo_shadow.png" src="_images/logo_shadow.png" style="width: 800px;" /></a>
+</figure>
+<section id="what-is-quantnbody">
+<h1>What is QuantNBody ?<a class="headerlink" href="#what-is-quantnbody" title="Permalink to this heading"></a></h1>
+<p>The <strong>QuantNBody</strong> package is a Python toolkit for quantum chemists/physicists interested in methods development to study
+quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way
+to build matrix representations of bosonic and fermionic quantum many-body operators (<em>e.g.</em> Hamiltonians, spin or excitation
+operators) and get access to quantities/objects of interest (<em>e.g.</em> energies, reduced density matrices, many-body wavefunctions).
+The code includes various native functions and it is flexible enough to help users in building their own numerical tools to implement new methods.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<blockquote>
+<div><p><strong>QuantNBody: a package for whom ?</strong> 🧐</p>
+</div></blockquote>
+<figure class="align-left">
+<a class="reference internal image-reference" href="_images/research.png"><img alt="alternate text" src="_images/research.png" style="width: 108.5px; height: 80.5px;" /></a>
+</figure>
+<p><strong>A research-friendly package:</strong> with QuantNBody, we want to facilitate the implementation of quantum many-body systems
+composed of fermions or bosons for theoretical research and method developments. It provides a quick and easy way to build many-body operators and wavefunctions and get access
+to quantities and objects of interest (in a few python lines).</p>
+<figure class="align-left">
+<a class="reference internal image-reference" href="_images/teaching.png"><img alt="alternate text" src="_images/teaching.png" style="width: 109.19999999999999px; height: 80.5px;" /></a>
+</figure>
+<p><strong>A teaching-friendly package:</strong> with QuantNBody, we want to provide a tool to help teach theoretical concepts in chemistry and physics associated with quantum many-body systems.
+Indeed, we believe that this package can be useful for pedagogical purposes and to help illustrate numerical methods for fermionic or bosonic systems.</p>
+</div>
+</section>
+<section id="framework-of-the-package">
+<h1>Framework of the package<a class="headerlink" href="#framework-of-the-package" title="Permalink to this heading"></a></h1>
+<p>The framework of the <strong>QuantNbody</strong> package lies in two fundamental ingredients.
+The first one is the creation of a <strong>reference many-body vector basis</strong> (based on a total number of quantum particles and modes/orbitals to fill)
+in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any
+particle-number conserving many-body operator which is: <strong>the single-body hopping operators</strong> <span class="math notranslate nohighlight">\(a^\dagger_p a_q\)</span>.  Once these two ingredients have been created,
+the user can employ various pre-built functions in order to</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Construct different types of <strong>many-body operators</strong>.</p></li>
+<li><p>Manipulate/visualize <strong>quantum many-body states</strong>.</p></li>
+</ol>
+</div></blockquote>
+<p>Beyond this, the QuantNBody package has also been designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.</p>
+</section>
+<section id="brief-illustration-of-what-is-possible">
+<h1>Brief illustration of what is possible<a class="headerlink" href="#brief-illustration-of-what-is-possible" title="Permalink to this heading"></a></h1>
+<p>We provide below a non-exhaustive list of the various possibilities offered by the package:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Visualizing the structure of any wavefunction in a given many-body basis (for fermionic and bosonic systems)</p></li>
+<li><p>Building 1-body, 2-body (…) reduced density matrices (for fermionic and bosonic systems)</p></li>
+<li><p>Building Spin operators <span class="math notranslate nohighlight">\(\hat{S}^2, \hat{S}_Z, \hat{S}_+\)</span>  expressed in a many-body basis (for fermionic system)</p></li>
+<li><p>Building model Hamiltonians <span class="math notranslate nohighlight">\(\hat{H}\)</span> (<em>e.g.</em> Bose-Hubbard, Fermi-Hubbard)</p></li>
+<li><p>Building molecular <em>ab initio</em> Hamiltonians <span class="math notranslate nohighlight">\(\hat{H}\)</span> (Psi4 provides the electronic integrals)</p></li>
+</ul>
+</div></blockquote>
+<p>Below we show some results one can produce with QuantNBody for the hydrogen molecule, a Fermi-Hubbard dimer and a Bose-Hubbard dimer.
+To generate these data, the package was used to code (from scratch) each many-body Hamiltonian and to analyze their associated groundstate <span class="math notranslate nohighlight">\(|\Psi_0\rangle\)</span>.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="_images/figure_fermion.png"><img alt="_images/figure_fermion.png" src="_images/figure_fermion.png" style="width: 800px;" /></a>
+<figcaption>
+<p><span class="caption-text"><strong>Left column:</strong> Ground state energy and many-body decomposition of the hydrogen molecule groundstate in a minimal basis (STO-3G).
+<strong>Right column:</strong> similar properties for the Fermi-Hubbard dimer as a function of the on-site repulsion U (2 electrons on 2 sites).</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/figure_boson.png"><img alt="_images/figure_boson.png" src="_images/figure_boson.png" style="width: 800px;" /></a>
+<figcaption>
+<p><span class="caption-text"><strong>Left column:</strong> Bose-Hubbard dimer with two bosons.  <strong>Right column:</strong> ground state energy and many-body decomposition
+for the Bose-Hubbard dimer as a function of the on-site repulsion U.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To illustrate how to use the package, several tutorials are shown in the section ‘’Tutorials and examples’’.</p>
+</div>
+</section>
+<section id="how-to-contribute">
+<h1>How to contribute<a class="headerlink" href="#how-to-contribute" title="Permalink to this heading"></a></h1>
+<p>We’d love to accept your contributions and patches to QuantNBody. There are a few small guidelines you need to follow.</p>
+<p>All submissions require review. We use GitHub pull requests for this purpose. Consult GitHub Help for more information on using pull requests. Furthermore, please make sure your new code comes with documentation.</p>
+</section>
+<section id="support">
+<h1>Support<a class="headerlink" href="#support" title="Permalink to this heading"></a></h1>
+<p>If you are having issues, please let us know by posting the issue on our Github issue tracker.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="A Python package for quantum chemistry and physics." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="install.html" class="btn btn-neutral float-right" title="Installation and Running" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Saad Yalouz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
