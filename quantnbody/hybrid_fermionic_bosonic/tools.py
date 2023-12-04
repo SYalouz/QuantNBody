@@ -649,7 +649,7 @@ def build_hamiltonian_hubbard_QED(  h_fermion,
         # print('TEST ', indices)
         dipole_op += dipole_integrals[p] * (a_dagger_a[2*p,2*p] + a_dagger_a[2*p+1,2*p+1]) 
  
-    H_fermion_boson = lambda_coupling * omega_cav * dipole_op @ ( b[0].T + b[0] ) + lambda_coupling**2. * omega_cav * dipole_op**2.
+    H_fermion_boson = lambda_coupling * omega_cav * dipole_op @ ( b[0].T + b[0] ) + lambda_coupling**2. * omega_cav * dipole_op@dipole_op
             
     return H_fermi_hubbard + H_boson + H_fermion_boson
     
