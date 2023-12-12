@@ -62,7 +62,7 @@ e_ = False
 
 #     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
 
-def build_nbody_basis(n_mo, list_N_electron, S_z_cleaning=False):
+def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     """
     Create a many-body basis as a list of slater-determinants. Here, these states are
     occupation numbersvectors taking the form of bitstrings (*e.g.* \|1100⟩)
@@ -95,16 +95,15 @@ def build_nbody_basis(n_mo, list_N_electron, S_z_cleaning=False):
     """
     # Building the N-electron many-body basis
     nbody_basis = [] 
-    if type( list_N_electron ) is int :
-        N_electron = list_N_electron
+    if type( N_electron ) is int : 
         for combination in combinations(range(2 * n_mo), N_electron):
             fock_state = [0] * (2 * n_mo)
             for index in list(combination):
                 fock_state[index] += 1
             nbody_basis += [fock_state]  
     else:
-        for N_electron in list_N_electron: 
-            for combination in combinations(range(2 * n_mo), N_electron):
+        for N_elec in N_electron: 
+            for combination in combinations(range(2 * n_mo), N_elec):
                 fock_state = [0] * (2 * n_mo)
                 for index in list(combination):
                     fock_state[index] += 1
