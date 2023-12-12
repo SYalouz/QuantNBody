@@ -22,8 +22,8 @@ def build_nbody_basis(n_mo, list_N_electron):
     ----------
     n_mo : int
         Number of molecular orbitals
-    N_electron :  int
-        Number of electrons
+    list_N_electron :  int
+        List of number of electrons considered in the Fockspace, e.g. [0,1,2,3,4]
     S_z_cleaning : bool, default=False
         Option if we want to get rid of the s_z != 0 states (default is False)
 

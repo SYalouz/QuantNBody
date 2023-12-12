@@ -12,7 +12,57 @@ e_ = False
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
 
-def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
+# def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
+#     """
+#     Create a many-body basis as a list of slater-determinants. Here, these states are
+#     occupation numbersvectors taking the form of bitstrings (*e.g.* \|1100⟩)
+#     describing how the electrons occupy the spin-orbitals.
+
+#     Parameters
+#     ----------
+#     n_mo : int
+#         Number of molecular orbitals
+#     N_electron :  int
+#         Number of electrons
+#     S_z_cleaning : bool, default=False
+#         Option if we want to get rid of the s_z != 0 states (default is False)
+
+#     Returns
+#     -------
+#     nbody_basis : array
+#         List of many-body states (occupation number vectors).
+
+#     Examples
+#     ________
+#     >>> build_nbody_basis(2, 2, False)  # 2 electrons in 2 molecular orbitals
+#     array([[1, 1, 0, 0],
+#            [1, 0, 1, 0],
+#            [1, 0, 0, 1],
+#            [0, 1, 1, 0],
+#            [0, 1, 0, 1],
+#            [0, 0, 1, 1]])
+
+#     """
+#     # Building the N-electron many-body basis
+#     nbody_basis = []
+#     for combination in combinations(range(2 * n_mo), N_electron):
+#         fock_state = [0] * (2 * n_mo)
+#         for index in list(combination):
+#             fock_state[index] += 1
+#         nbody_basis += [fock_state]
+
+#     # In case we want to get rid of states with s_z != 0
+#     if S_z_cleaning:
+#         nbody_basis_cleaned = nbody_basis.copy()
+#         for i in range(np.shape(nbody_basis)[0]):
+#             s_z = check_sz(nbody_basis[i])
+#             if s_z != 0:
+#                 nbody_basis_cleaned.remove(nbody_basis[i])
+#         nbody_basis = nbody_basis_cleaned
+
+#     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
+
+def build_nbody_basis(n_mo, list_N_electron, S_z_cleaning=False):
     """
     Create a many-body basis as a list of slater-determinants. Here, these states are
     occupation numbersvectors taking the form of bitstrings (*e.g.* \|1100⟩)
@@ -22,8 +72,8 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     ----------
     n_mo : int
         Number of molecular orbitals
-    N_electron :  int
-        Number of electrons
+    N_electron :  int OR list
+        Number of electrons or list of number of electrons
     S_z_cleaning : bool, default=False
         Option if we want to get rid of the s_z != 0 states (default is False)
 
@@ -44,12 +94,21 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
 
     """
     # Building the N-electron many-body basis
-    nbody_basis = []
-    for combination in combinations(range(2 * n_mo), N_electron):
-        fock_state = [0] * (2 * n_mo)
-        for index in list(combination):
-            fock_state[index] += 1
-        nbody_basis += [fock_state]
+    nbody_basis = [] 
+    if type( list_N_electron ) is int :
+        N_electron = list_N_electron
+        for combination in combinations(range(2 * n_mo), N_electron):
+            fock_state = [0] * (2 * n_mo)
+            for index in list(combination):
+                fock_state[index] += 1
+            nbody_basis += [fock_state]  
+    else:
+        for N_electron in list_N_electron: 
+            for combination in combinations(range(2 * n_mo), N_electron):
+                fock_state = [0] * (2 * n_mo)
+                for index in list(combination):
+                    fock_state[index] += 1
+                nbody_basis += [fock_state]
 
     # In case we want to get rid of states with s_z != 0
     if S_z_cleaning:
@@ -61,7 +120,6 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
         nbody_basis = nbody_basis_cleaned
 
     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
-
 
 def check_sz(ref_state):
     """
