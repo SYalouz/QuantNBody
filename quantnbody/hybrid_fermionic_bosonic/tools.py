@@ -55,13 +55,13 @@ def build_nbody_basis( n_mode, list_N_boson, n_mo, n_electron, S_z_cleaning=Fals
             for fock_state_fermion in nbody_basis_fermions:
                 nbody_basis_boson_and_fermion += [ fock_state_boson + fock_state_fermion ]
       
-    # In case we want only one electron, we simplify the states
-    if n_electron == 1:
-        nbody_basis_cleaned = nbody_basis_boson_and_fermion.copy()
-        for i in range(np.shape(nbody_basis_boson_and_fermion)[0]): 
-            if i%2==1:
-                nbody_basis_cleaned.remove(nbody_basis_boson_and_fermion[i])
-        nbody_basis_boson_and_fermion = nbody_basis_cleaned
+    # # In case we want only one electron, we simplify the states
+    # if n_electron == 1:
+    #     nbody_basis_cleaned = nbody_basis_boson_and_fermion.copy()
+    #     for i in range(np.shape(nbody_basis_boson_and_fermion)[0]): 
+    #         if i%2==1:
+    #             nbody_basis_cleaned.remove(nbody_basis_boson_and_fermion[i])
+    #     nbody_basis_boson_and_fermion = nbody_basis_cleaned
         
     return np.array( nbody_basis_boson_and_fermion )
 
@@ -401,8 +401,8 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
     
     # SEEMS TO WORK : TO BE BETTER CHECKED !!!
     Full_spin_basis = True
-    if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:test_nbody_basis_fermions.shape[0],n_mode:]) ):
-        Full_spin_basis = False
+    # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:test_nbody_basis_fermions.shape[0],n_mode:]) ):
+    #     Full_spin_basis = False
         # print("DONC ? ", Full_spin_basis) 
     # print(test_nbody_basis_fermions)
     # print()
@@ -1125,7 +1125,7 @@ def build_s2_sz_splus_operator(a_dagger_a):
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
-    for p in range(n_mo):
+    for p in range(n_mo): 
         s_plus += a_dagger_a[2 * p, 2 * p + 1]
         s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
 
