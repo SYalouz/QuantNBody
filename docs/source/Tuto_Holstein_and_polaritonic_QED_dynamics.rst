@@ -1,8 +1,8 @@
-QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry
-===========================================================================================
+*Tuto 6:* QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry
+=====================================================================================================
 
-Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024
+**Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024**
 
 .. code:: ipython3
 
@@ -22,7 +22,9 @@ fermions and bosons interacting together.
 Example 1: Hubbard-Holstein model
 ---------------------------------
 
-
+   .. image:: Holstein.png
+      :width: 300
+      :align: center
 
 **Fermionic Hubbard model:**
 
@@ -358,13 +360,15 @@ occupancy number of each mode and fermionic molecular orbital.
 
 
 
-.. image:: Tuto_Holstein_and_polaritonic_QED_dynamics_files/Tuto_Holstein_and_polaritonic_QED_dynamics_32_1.png
+.. image:: Tuto_Holstein_and_polaritonic_QED_dynamics_32_1.png
 
 
 Example 2: Polaritonic chemistry
 ================================
 
-
+   .. image:: Cavity.png
+      :width: 300
+      :align: center
 
 The QuantNBody package makes it possible to simulate polaritonic
 chemistry: an electronic structure system (model or ab-initio) in
@@ -650,7 +654,7 @@ parameters define in the related legend.
 
 
 
-.. image:: Tuto_Holstein_and_polaritonic_QED_dynamics_files/Tuto_Holstein_and_polaritonic_QED_dynamics_52_0.png
+.. image:: Tuto_Holstein_and_polaritonic_QED_dynamics_52_0.png
 
 
 Here, we obtain the exact same spectrum than in the reference paper `U.

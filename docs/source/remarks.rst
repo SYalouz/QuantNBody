@@ -19,7 +19,11 @@ We encourage the new users to follow the tutorials in the following order:
 *Tuto 4:* the Bose-Hubbard system
   For those interested in bosonic systems, we also describe here equivalent features/functions to build operators, see and manipulate wavefunctions.
 
+*Tuto 5:* definition of hybrid fermions_bosons sytems
+  This fifth tutorial is an explanation about the (new !) extension of the QuantNBody package to the computation of an hybrid (fermions interacting with bosons) many-body basis. We also show how to encode fermionic and bosonic operators respectively, in this new hybrid many-body basis, and how to use them to visualize polaritonic states.
 
+*Tuto 6:* Holstein and polaritronic QED dynamics
+  This last tutorial is an application of the Tuto 4, where the new fermionic and bosonic operators (expressed in an hybrid many-body basis) are used as building blocks to encode both Holstein and polaritonic-QED Hamiltonians. Some observables, such as the ime-dependentpopulations of fermionic orbitals and bosonic modes (in the Holstein example) or optical spectra (in the QED system), are also computed.
 
 **Enjoy the tutorials !**  |:wink:| |:+1:|
 

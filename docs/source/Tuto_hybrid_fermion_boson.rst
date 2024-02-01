@@ -1,8 +1,8 @@
-Hybrid Fermion-Boson Systems in QuantNBody
-==========================================
+*Tuto 5:* Hybrid Fermion-Boson Systems in QuantNBody
+===================================================
 
-Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024
+**Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024**
 
 Hybrid quantum many-body systems are prevalent in nature and they
 originate from the intricate interplay between electrons and bosons.
@@ -18,7 +18,9 @@ of view, the total number of electrons :math:`N_{elec}` in these systems
 is conserved as constant, but this is not the case for the bosonic
 number :math:`N_{bos}`.
 
-
+   .. image:: Intro.png
+      :width: 300
+      :align: center
 
 The QuantNBody package provides all the necessary tools to simulate such
 hybrid quantum many-body systems. In the subsequent sections, we will

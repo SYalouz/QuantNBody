@@ -37,6 +37,8 @@ This tool also can be of a great help for pedagogical purpose and to help illust
    Tuto_PLAYING_WITH_STATES.rst
    Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.rst
    Tuto_BOSE_HUBBARD.rst
+   Tuto_hybrid_fermion_boson.rst
+   Tuto_Holstein_and_polaritonic_QED_dynamics.rst
 
 .. toctree::
    :maxdepth: 6
