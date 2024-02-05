@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tuto 5: Hybrid Fermion-Boson Systems in QuantNBody &mdash; QuantNBody 1.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" />
+    <link rel="prev" title="Tuto 4: the Bose-Hubbard system" href="Tuto_BOSE_HUBBARD.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QuantNBody
+              <img src="_static/logo2.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Running</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="remarks.html">A few remarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_FIRST_STEP.html"><em>Tuto 1:</em> first steps with the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#step-1-building-a-hybrid-many-body-basis">Step 1: Building a hybrid many-body basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-2-about-building-operators-in-the-hybrid-many-body-basis">Step 2: About building operators in the hybrid many-body basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis">Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis">Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QuantNBody</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Tuto_hybrid_fermion_boson.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="tuto-5-hybrid-fermion-boson-systems-in-quantnbody">
+<h1><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody<a class="headerlink" href="#tuto-5-hybrid-fermion-boson-systems-in-quantnbody" title="Permalink to this heading"></a></h1>
+<p><strong>Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024</strong></p>
+<p>Hybrid quantum many-body systems are prevalent in nature and they
+originate from the intricate interplay between electrons and bosons.
+These systems manifest, for example, when a molecular systems (or
+materials) interact with an external environment, incorporating photons
+and/or phonons. This is the case for exemple in polaritonic quantum
+chemistry (i.e., quantum electrodynamics), where the electronic
+structure of a molecule interacts with the photonic field of a cavity.
+Similarly, in condensed matter physics, the electronic degrees of
+freedom (or excitonic ones) experience perturbation owing to the
+presence of a vibrational phononic environment. From a theoretical point
+of view, the total number of electrons <span class="math notranslate nohighlight">\(N_{elec}\)</span> in these systems
+is conserved as constant, but this is not the case for the bosonic
+number <span class="math notranslate nohighlight">\(N_{bos}\)</span>.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/Intro.png"><img alt="_images/Intro.png" class="align-center" src="_images/Intro.png" style="width: 300px;" /></a>
+</div></blockquote>
+<p>The QuantNBody package provides all the necessary tools to simulate such
+hybrid quantum many-body systems. In the subsequent sections, we will
+provide a comprehensive, step-by-step breakdown of its functionality.
+Before starting, let us import the package ;-)</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the quantnbody package</span>
+<span class="kn">import</span> <span class="nn">quantnbody</span> <span class="k">as</span> <span class="nn">qnb</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<section id="step-1-building-a-hybrid-many-body-basis">
+<h2>Step 1: Building a hybrid many-body basis<a class="headerlink" href="#step-1-building-a-hybrid-many-body-basis" title="Permalink to this heading"></a></h2>
+<p>Hybrid quantum many-body systems can formally be described by a hybrid
+Hilbert space <span class="math notranslate nohighlight">\(\mathcal{H}_{hyb}\)</span> composed of a set of
+electron-boson configurations
+<span class="math notranslate nohighlight">\(\lbrace | \Phi_{hyb}^\kappa\rangle \rbrace_{\kappa=1}^{ \dim(\mathcal{H}_{hyb})}\)</span>
+expressed as:</p>
+<div class="math notranslate nohighlight">
+\[| \Phi_{hyb}^\kappa \rangle = | \Phi_{bos} \rangle \otimes | \Phi_{elec} \rangle.\]</div>
+<p>Here, the bosonic configuration <span class="math notranslate nohighlight">\(| \Psi_{bos} \rangle\)</span> describes
+how <span class="math notranslate nohighlight">\(N_{bos}\)</span> bosons occupy <span class="math notranslate nohighlight">\(N_{mode}\)</span> modes, while the
+electronic configuration <span class="math notranslate nohighlight">\(| \Psi_{elec} \rangle\)</span> is a Slater
+determinant describing how <span class="math notranslate nohighlight">\(N_{elec}\)</span> electrons occupy a
+collection of <span class="math notranslate nohighlight">\(2 N_{MO}\)</span> spin-orbitals (i.e. <span class="math notranslate nohighlight">\(N_{MO}\)</span>
+spatial orbitals).</p>
+<p>The total number of accessible fermion-boson configurations
+<span class="math notranslate nohighlight">\(\lbrace | \Phi_{hyb}^\kappa\rangle \rbrace_{\kappa=1}^{ \dim(\mathcal{H}_{hyb})}\)</span>
+is given by the dimension of the hybrid Hilbert space:</p>
+<div class="math notranslate nohighlight">
+\[\dim({\mathcal{H}_{hyb}}) =  \dim(\mathcal{H}_{bos}) \times \dim(\mathcal{H}_{elec}),\]</div>
+<p>with</p>
+<div class="math notranslate nohighlight">
+\[\dim({\mathcal{H}_{bos}}) = \sum_{N_{bos}=0}^{N_{bos}^{MAX}}\binom{N_{bos} + N_{mode} - 1 }{N_{mode}} \quad\quad \text{  AND} \quad\quad \dim({\mathcal{H}_{elec}}) = \binom{2N_{MO}}{N_{elec}} .\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\dim({\mathcal{H}_{bos}})\)</span> describes the dimension of the</p></li>
+</ul>
+<p>bosonic Fock-space. It includes all the possible distributions of
+<span class="math notranslate nohighlight">\(N_{bos}\)</span> bosons in <span class="math notranslate nohighlight">\(N_{modes}\)</span> modes (with $N_b = 0
+<a href="#id1"><span class="problematic" id="id2">:raw-latex:`\rightarrow `N\_{b}^{max} $). Note again that this space
+doesn’t preserve the total number of bosons! -
+:math:`</span></a>dim({mathcal{H}_{elec}})` describes the electronic space
+counting all the possibilites to distribute <span class="math notranslate nohighlight">\(N_{elec}\)</span> in
+<span class="math notranslate nohighlight">\(N_{MO}\)</span> spatial orbitals.</p>
+<p><strong>How to create such a many-body basis with QuantNBody ?</strong></p>
+<p>The QuantNBody package builds a numerical representation of such a
+hybrid many-body basis as a list of states describing the repartition of
+<span class="math notranslate nohighlight">\(N_{elec}\)</span> electrons in <span class="math notranslate nohighlight">\(2N_{MO}\)</span> spin-orbitals, combined
+with the repartition of <span class="math notranslate nohighlight">\(N_{b}\)</span> bosons in <span class="math notranslate nohighlight">\(N_{modes}\)</span> modes.
+These states are numerically referenced by a list of kappa indices such
+that :</p>
+<div class="math notranslate nohighlight">
+\[\Big\lbrace |\kappa \rangle \Big\rbrace_{\textstyle \kappa=1}^{\textstyle \dim_{\mathcal{H}_{bos/elec}}}\]</div>
+<p><strong>A little example with :math:`N_{MO}=N_{elec}=2` and
+:math:`N_{bos}=N_{modes}=2`: in this case, we should have 36 many-body
+states</strong></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================================</span>
+<span class="c1"># Define the fermionic system</span>
+<span class="c1"># ======================================</span>
+<span class="n">N_elec</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># number of fermions</span>
+<span class="n">N_MO</span>   <span class="o">=</span> <span class="mi">2</span> <span class="c1"># number of molecular orbitals</span>
+
+<span class="c1"># ======================================</span>
+<span class="c1"># Define the bosonic system</span>
+<span class="c1"># ======================================</span>
+<span class="n">N_b_max</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># maximal number of bosons in the whole system</span>
+<span class="n">N_mode</span>  <span class="o">=</span> <span class="mi">2</span> <span class="c1"># number of bosonic modes</span>
+<span class="n">list_bosons</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_b_max</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># list of all possible number of bosons that can be distributed in the bosonic modes</span>
+
+<span class="c1"># ======================================</span>
+<span class="c1"># Build the hybrid many-body basis</span>
+<span class="c1"># ======================================</span>
+<span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span><span class="n">N_mode</span><span class="p">,</span> <span class="n">list_bosons</span><span class="p">,</span> <span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span><span class="p">)</span>
+
+<span class="c1"># Print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Shape  of the hybrid kappa states&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;| kappa=</span><span class="si">{}</span><span class="s1"> &gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="n">nbody_basis</span><span class="p">[</span><span class="n">s</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Shape</span>  <span class="n">of</span> <span class="n">the</span> <span class="n">hybrid</span> <span class="n">kappa</span> <span class="n">states</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">1</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">3</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">4</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">5</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">6</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">7</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">8</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">9</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">10</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">11</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">12</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">13</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">14</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">15</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">16</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">17</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">18</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">19</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">20</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">21</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">22</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">23</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">24</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">25</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">26</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">27</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">28</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">29</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">30</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">31</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">32</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">33</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">34</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="o">|</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">35</span> <span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>What is the meaning of these 36 states ?</strong></p>
+<p>Here, each list of number string represents an hybrid many-body
+occupation number state. As an example, let’s check the first state for
+which we have :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}| \kappa  = 0\rangle = | \underbrace{0}_{\substack{\textstyle{ 1st }\\ \textstyle{ mode}}}, \; \; \;\underbrace{0}_{\substack{\textstyle{ 2nd}\\ \textstyle{ mode}}},\;\underbrace{   \overbrace{1}^{ \textstyle  {\alpha}}, \; \; \;\overbrace{1}^{ \textstyle  {\beta}},}_{\textstyle 1st \ MO}\; \; \underbrace{\overbrace{0}^{ \textstyle  {\alpha}}, \; \; \; \overbrace{0}^{ \textstyle  {\beta}}}_{\textstyle 2nd \ MO} \rangle\end{split}\]</div>
+<p>Here we choose to structure the occupation numbers as follows:</p>
+<ul class="simple">
+<li><p>Bosonic modes are expressed at the beginning of the list of numbers.
+Each value refers to the number of bosons in the associated bosonic
+mode.</p></li>
+<li><p>For the following fermionic part, each couple of terms refer to <strong>a
+same spatial orbital</strong>, with an alternation of <strong>:math:`alpha`-</strong>
+and <strong>:math:`beta`-spinorbitals</strong>.</p></li>
+</ul>
+<p>Considering the 36 states contained in the list, we see that the first
+set of 6 lines contains all the possible fermionic configurations, for a
+vacuum bosonic configuration. Then, the next following states describe
+all possible fermionic configurations, for another bosonic configuration
+where we consider 1 boson in the two modes, and so on… until all the
+possible repartitions of the $N_{bos} = 0
+:raw-latex:<a href="#id3"><span class="problematic" id="id4">`</span></a>rightarrow <a href="#id5"><span class="problematic" id="id6">`</span></a>N_{bos}^{max} $ bosons in the $ N_{mode}$
+modes have been scanned.</p>
+</section>
+<section id="step-2-about-building-operators-in-the-hybrid-many-body-basis">
+<h2>Step 2: About building operators in the hybrid many-body basis<a class="headerlink" href="#step-2-about-building-operators-in-the-hybrid-many-body-basis" title="Permalink to this heading"></a></h2>
+<p>In QuantNbody, to treat hybrid systems two types of many-body operators
+are considered as elementary bricks:</p>
+<p><strong>Fermionic hopping operators :math:`hat{a}^dagger hat{a}`:</strong> indeed,
+every operator conserving the total number of fermionic particles can be
+decomposed as a serie of electronic hopping operators
+<span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a} \otimes \mathbb{1}_{bos}\)</span> which only act
+on the fermionic part leave unchanged the bosonic part of the
+hybrid-states.</p>
+<p><strong>Bosonic creation/anihilation :math:`hat{b}^dagger/hat{b}`:</strong>
+indeed, every operator not conserving the total number of bosonic
+particles may be expressed as a series of anihilation (or creation)
+bosonic operators $ <a href="#id7"><span class="problematic" id="id8">:raw-latex:`\hat{b}`</span></a>
+<a href="#id9"><span class="problematic" id="id10">:raw-latex:`\otimes `:raw-latex:`</span></a>mathbb{1}`_{elec}$ that only act on
+the bosonic part of the states and leave the fermionic part unchanged.</p>
+<p>The QuantNbody package provides a matrix representation of these two
+central operators in the numerical hybrid-many body basis. If we
+generically call the latter operators by <span class="math notranslate nohighlight">\(\hat{O}\)</span>, this means in
+practice that we create a matrix representation such that</p>
+<div class="math notranslate nohighlight">
+\[\hat{O} = \sum_{\kappa, \kappa'
+=1}^{\dim(\mathcal{H}_{hyb})}  \langle \kappa' | \hat{O} | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |\]</div>
+</section>
+<section id="step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis">
+<h2>Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis<a class="headerlink" href="#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis" title="Permalink to this heading"></a></h2>
+<p>In the hybrid part of the QuanNBody package, the fermionic operators
+<span class="math notranslate nohighlight">\(\hat{a}^\dagger_{p,\sigma} \hat{a}_{q,\tau}\)</span> can be built with a
+simple command line:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a_dagger_a</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_fermion_operator_a_dagger_a</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">,</span> <span class="n">N_mode</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In practice, the way “a_dagger_a” will store each operator
+<span class="math notranslate nohighlight">\(\hat{a}^\dagger_{p,\sigma} \hat{a}_{q,\tau}\)</span> follows the way we
+order the spin-orbitals in our many-body states. As an illustrative
+example, taking the following elements will return the associated
+many-body operators:</p>
+<center><p>a_dagger_a[0,0] $
+<a href="#id11"><span class="problematic" id="id12">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{a}`^:raw-latex:<cite>dagger</cite><em>{0,:raw-latex:`alpha`}
+:raw-latex:`hat{a}`</em>{0,:raw-latex:<cite>alpha</cite>}$</p>
+</center><center><p>a_dagger_a[1,0] $
+<a href="#id13"><span class="problematic" id="id14">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{a}`^:raw-latex:<cite>dagger</cite><em>{0,:raw-latex:`beta`}
+:raw-latex:`hat{a}`</em>{0,:raw-latex:<cite>alpha</cite>}$</p>
+</center><center><p>a_dagger_a[10,1] $
+<a href="#id15"><span class="problematic" id="id16">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{a}`^:raw-latex:<cite>dagger</cite><em>{5,:raw-latex:`alpha`}
+:raw-latex:`hat{a}`</em>{0,:raw-latex:<cite>beta</cite>}$</p>
+</center><p><strong>Example of the matrix shape of the hopping operator
+:math:`hat{a}^dagger_{0,alpha} hat{a}_{1,alpha}`:</strong></p>
+<p>If we look at the element a_dagger_a[0,2], we get access to a sparse
+matrix representation of the fermionic operator
+<span class="math notranslate nohighlight">\(\hat{a}^\dagger_{0,\alpha} \hat{a}_{1,\alpha}\)</span> in the hybrid
+many-body basis which encodes the promotion of 1 electron from the the
+2nd spin orbital (second MO, spin up) to the oth spin orbital (first MO,
+spin up) of the fermionic sub-system:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">a_dagger_a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>    <span class="o">-</span><span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>    <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>    <span class="o">-</span><span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>   <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>  <span class="o">-</span><span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">17</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>  <span class="o">-</span><span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">27</span><span class="p">)</span>  <span class="o">-</span><span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">26</span><span class="p">,</span> <span class="mi">29</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">33</span><span class="p">)</span>  <span class="o">-</span><span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">35</span><span class="p">)</span>  <span class="mf">1.0</span>
+</pre></div>
+</div>
+<p>We observe here that the action of this operator is only possible
+between specific configurations. As an exemple, let us consider the
+first line that shows a connexion between the $ <a href="#id17"><span class="problematic" id="id18">:raw-latex:`\kappa  `$
+states $|0 :raw-latex:`</span></a>rangle  <cite>:raw-latex:</cite>leftrightarrow <cite>| 3
+:raw-latex:</cite>rangle <a href="#id19"><span class="problematic" id="id20">`</span></a>$. These two states are actually given by |
+kappa=0 &gt; = [0 0 1 1 0 0] and | kappa=3 &gt; = [0 0 0 1 1 0]. Here, we
+clearly see that the action of the operator is well encoded:</p>
+<ul class="simple">
+<li><p>The electron hops between the 0th and the 2nd spin-orbitals.</p></li>
+<li><p>There is no change in the occupation number of the bosonic modes
+between these two states.</p></li>
+</ul>
+</section>
+<section id="step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis">
+<h2>Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis<a class="headerlink" href="#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis" title="Permalink to this heading"></a></h2>
+<p>In the hybrid part of the QuanNBody package, the bosonic anihilation
+operators <span class="math notranslate nohighlight">\(\hat{b}_p\)</span> can be built with a simple command line:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We compute here the b operator</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_boson_anihilation_operator_b</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">,</span><span class="n">N_mode</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In practice, the way “b” will store each operator <span class="math notranslate nohighlight">\(\hat{b}_{p}\)</span>
+follows the way we order the modes in our many-body states. As an
+illustrative example, taking the following elements will return the
+associated many-body operators:</p>
+<center><p>b[p] $ <a href="#id21"><span class="problematic" id="id22">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{b}`_{p} $</p>
+</center><p>Note that we can easily build the associated creation operator by taking
+the tranposed version of each element such that</p>
+<center><p>b[p].T $
+<a href="#id23"><span class="problematic" id="id24">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{b}`_{p}^:raw-latex:<a href="#id25"><span class="problematic" id="id26">`</span></a>dagger  <a href="#id27"><span class="problematic" id="id28">`</span></a>$</p>
+</center><p><strong>Example of a bosonic anihilation operator :math:`hat{b}_0`:</strong></p>
+<p>If we look at the element b[0], we get access to a sparse matrix
+representation of the bosonic anihilation operator <span class="math notranslate nohighlight">\(\hat{b}_0\)</span> in
+the hybrid many-body basis which encodes the desctruction of 1 boson in
+the 0th mode:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>    <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>    <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>    <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>    <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>   <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>   <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>   <span class="mf">1.4142135623730951</span>
+<span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span>   <span class="mf">1.4142135623730951</span>
+<span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>   <span class="mf">1.4142135623730951</span>
+<span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>   <span class="mf">1.4142135623730951</span>
+<span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>  <span class="mf">1.4142135623730951</span>
+<span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>  <span class="mf">1.4142135623730951</span>
+<span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">26</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">27</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span>  <span class="mf">1.0</span>
+<span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">29</span><span class="p">)</span>  <span class="mf">1.0</span>
+</pre></div>
+</div>
+<p>We observe here that the action of this operator is only possible
+between specific configurations. As an exemple, let us consider the
+first element that shows a connexion between the $
+<a href="#id29"><span class="problematic" id="id30">:raw-latex:`\kappa  `$ states $|0
+:raw-latex:`</span></a>rangle  <cite>:raw-latex:</cite>leftrightarrow <cite>| 6
+:raw-latex:</cite>rangle <a href="#id31"><span class="problematic" id="id32">`</span></a>$. These two states are actually given by |
+kappa=0 &gt; = [0 0 1 1 0 0] and | kappa=6 &gt; = [1 0 1 1 0 0]. Here, we
+clearly see that the action of the operator is well encoded:</p>
+<ul class="simple">
+<li><p>The two states are related by the creation/anhihilation of one boson
+in the 0th mode.</p></li>
+<li><p>There is no change in the fermionic occupation numbers of the
+spin-orbitals between the two states.</p></li>
+</ul>
+<p><strong>Last exemple with a counting :math:`hat{b}_1^dagger hat{b}_1`
+operator:</strong></p>
+<p>Once all the <span class="math notranslate nohighlight">\(\hat{b}_p\)</span> are built, one can use these operators as
+building blocks for a wide possibilty of operators such as the
+<span class="math notranslate nohighlight">\(\hat{n}_p = \hat{b}^\dagger_p \hat{b}_p\)</span> counting one. As an
+exemple, let’s count the number of bosons in the second mode of the
+following state we want to target</p>
+<div class="math notranslate nohighlight">
+\[| \Phi_{bos} \rangle \otimes | \Phi_{elec} \rangle = |02\rangle \otimes |1100 \rangle\]</div>
+<p>QuantNBody provides a way to build our own state from a given occupation
+number list as follows</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1) Define the occupation number list of bosonic modes and fermionic spin-orbitals</span>
+<span class="n">LIST_OCC_NUMB</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># 2) Obtain the qnb traduction in the hybrid many-body basis</span>
+<span class="n">my_many_body_state</span> <span class="o">=</span>  <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">my_state</span><span class="p">(</span><span class="n">LIST_OCC_NUMB</span><span class="p">,</span> <span class="n">nbody_basis</span><span class="p">)</span>
+
+<span class="c1"># 2) Visualize the associated wavefunction</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Initial state :&#39;</span><span class="p">)</span>
+<span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">visualize_wft</span><span class="p">(</span><span class="n">my_many_body_state</span><span class="p">,</span>
+                                                 <span class="n">nbody_basis</span><span class="p">,</span>
+                                                 <span class="n">N_mode</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Initial state :
+
+    -----------
+     Coeff.     N-body state and index
+    -------     ----------------------
+    +1.00000   |02⟩ ⊗ |1100⟩    #30
+</pre></div>
+</div>
+<p>Let us now count the number of bosons in this state as follows:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_1</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="nd">@b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of boson in the targeted state</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">my_many_body_state</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n_1</span> <span class="o">@</span> <span class="n">my_many_body_state</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">boson</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">targeted</span> <span class="n">state</span>
+ <span class="mf">2.0000000000000004</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Tuto_BOSE_HUBBARD.html" class="btn btn-neutral float-left" title="Tuto 4: the Bose-Hubbard system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" class="btn btn-neutral float-right" title="Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Saad Yalouz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -65,6 +65,9 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul class="current">
@@ -87,6 +90,15 @@
 <li class="toctree-l2"><a class="reference internal" href="#id2">Creating/manipulating/visualizing many-body wavefunctions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">Reduced density matrices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#functions-to-manipulate-bosonic-integrals">Functions to manipulate bosonic integrals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-functions-for-the-creation-of-many-fermion-boson-hybrid-systems">Basic functions for the creation of many-fermion/boson hybrid systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Many-body Hamiltonians and excitations operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Spin operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">Creating/manipulating/visualizing many-body wavefunctions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Reduced density matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions-to-manipulate-fermionic-bosonic-hybrid-integrals">Functions to manipulate fermionic-bosonic hybrid integrals</a></li>
 </ul>
 </li>
 </ul>
@@ -160,7 +172,7 @@ describing how the electrons occupy the spin-orbitals.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_mo</strong> (<em>int</em>) – Number of molecular orbitals</p></li>
-<li><p><strong>N_electron</strong> (<em>int</em>) – Number of electrons</p></li>
+<li><p><strong>N_electron</strong> (<em>int OR list</em>) – Number of electrons or list of number of electrons</p></li>
 <li><p><strong>S_z_cleaning</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Option if we want to get rid of the s_z != 0 states (default is False)</p></li>
 </ul>
 </dd>
@@ -1678,6 +1690,594 @@ basis B1 and B2 respectively.</p>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>h_b2</strong> (<em>array</em>) – 1-boson integrals given in basis B2</p></li>
 <li><p><strong>g_b2</strong> (<em>array</em>) – 2-boson integrals given in basis B2</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<hr class="docutils" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+<section id="fermionic-bosonic-hybrid-systems">
+<h1>Fermionic-Bosonic hybrid systems<a class="headerlink" href="#fermionic-bosonic-hybrid-systems" title="Permalink to this heading"></a></h1>
+<p>In this subsection, we list a series of functions useful for fermionic-bosonic hybrid systems.</p>
+<section id="basic-functions-for-the-creation-of-many-fermion-boson-hybrid-systems">
+<h2>Basic functions for the creation of many-fermion/boson hybrid systems<a class="headerlink" href="#basic-functions-for-the-creation-of-many-fermion-boson-hybrid-systems" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_nbody_basis">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_nbody_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_N_boson</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_electron</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_z_cleaning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_nbody_basis" title="Permalink to this definition"></a></dt>
+<dd><p>Create a many-body basis formed by a list of fock-state with a conserved total
+number of bosons</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_mode</strong> (<em>int</em>) – Number of modes in total</p></li>
+<li><p><strong>N_boson</strong> (<em>int</em>) – Number of bosons in total</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>nbody_basis</strong> – List of many-body states (occupation number states)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_boson_anihilation_operator_b">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_boson_anihilation_operator_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbodybasis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_boson_anihilation_operator_b" title="Permalink to this definition"></a></dt>
+<dd><p>Create a matrix representation of the a_dagger_a operator
+in the many-body basis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nbody_basis</strong> (<em>array</em>) – List of many-body states (occupation number states) (occupation number states)</p></li>
+<li><p><strong>silent</strong> (<em>Boolean</em>) – If it is True, function doesn’t print anything when it generates a_dagger_a</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>a_dagger_a</strong> – Matrix representation of the a_dagger_a operator in the many-body basis</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermion_operator_a_dagger_a">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermion_operator_a_dagger_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbody_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermion_operator_a_dagger_a" title="Permalink to this definition"></a></dt>
+<dd><p>Create a matrix representation of the a_dagger_a operator in the many-body basis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nbody_basis</strong> (<em>array</em>) – List of many-body states (occupation number states)</p></li>
+<li><p><strong>silent</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If it is True, function doesn’t print anything when it generates a_dagger_a</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>a_dagger_a</strong> – Matrix representation of the a_dagger_a operators</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">nbody_basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_dagger_a</span> <span class="o">=</span> <span class="n">build_operator_a_dagger_a</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_dagger_a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Get access to the operator counting the electron in the first spinorbital</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_E_and_e_operators">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_E_and_e_operators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_E_and_e_operators" title="Permalink to this definition"></a></dt>
+<dd><p>Build the spin-free “E” and “e” excitation many-body operators for quantum chemistry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+<li><p><strong>n_mo</strong> (<em>int</em>) – Number of molecular orbitals considered</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>E_</strong> (<em>array</em>) – Spin-free “E” many-body operators</p></li>
+<li><p><strong>e_</strong> (<em>array</em>) – Spin-free “e” many-body operators</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_dagger_a</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">build_operator_a_dagger_a</span><span class="p">(</span><span class="n">nbody_basis</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">build_E_and_e_operators</span><span class="p">(</span><span class="n">a_dagger_a</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<hr class="docutils" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="id4">
+<h2>Many-body Hamiltonians and excitations operators<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_holstein">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_hamiltonian_hubbard_holstein</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h_fermion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U_fermion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_boson</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Coupling_fermion_boson</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbody_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_2_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_term</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_off_integral</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_holstein" title="Permalink to this definition"></a></dt>
+<dd><p>Create a matrix representation of the Fermi-Hubbard Hamiltonian in the
+many-body basis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> (<em>array</em>) – One-body integrals</p></li>
+<li><p><strong>U</strong> (<em>array</em>) – Two-body integrals</p></li>
+<li><p><strong>nbody_basis</strong> (<em>array</em>) – List of many-body states (occupation number states)</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+<li><p><strong>S_2</strong> (<em>array</em><em>, </em><em>default=None</em><em>)</em>) – Matrix representation of the S_2 operator (default is None)</p></li>
+<li><p><strong>S_2_target</strong> (<em>float</em><em>, </em><em>default=None</em>) – Value of the S_2 mean value we want to target (default is None)</p></li>
+<li><p><strong>penalty</strong> (<em>float</em><em>, </em><em>default=100</em>) – Value of the penalty term to penalize the states that do not respect the spin symmetry (default is 100).</p></li>
+<li><p><strong>v_term</strong> (<em>array</em><em>, </em><em>default=None</em>) – dipolar interactions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>H_fermi_hubbard</strong> – Matrix representation of the Fermi-Hubbard Hamiltonian in the many-body basis</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_QED">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_hamiltonian_hubbard_QED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h_fermion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U_fermion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega_cav</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_coupling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dipole_integrals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbody_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_2_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_term</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_off_integral</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_QED" title="Permalink to this definition"></a></dt>
+<dd><p>Create a matrix representation of the Fermi-Hubbard Hamiltonian in the
+many-body basis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> (<em>array</em>) – One-body integrals</p></li>
+<li><p><strong>U</strong> (<em>array</em>) – Two-body integrals</p></li>
+<li><p><strong>nbody_basis</strong> (<em>array</em>) – List of many-body states (occupation number states)</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+<li><p><strong>S_2</strong> (<em>array</em><em>, </em><em>default=None</em><em>)</em>) – Matrix representation of the S_2 operator (default is None)</p></li>
+<li><p><strong>S_2_target</strong> (<em>float</em><em>, </em><em>default=None</em>) – Value of the S_2 mean value we want to target (default is None)</p></li>
+<li><p><strong>penalty</strong> (<em>float</em><em>, </em><em>default=100</em>) – Value of the penalty term to penalize the states that do not respect the spin symmetry (default is 100).</p></li>
+<li><p><strong>v_term</strong> (<em>array</em><em>, </em><em>default=None</em>) – dipolar interactions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>H_fermi_hubbard</strong> – Matrix representation of the Fermi-Hubbard Hamiltonian in the many-body basis</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="id5">
+<h2>Spin operators<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_s2_sz_splus_operator">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_s2_sz_splus_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_s2_sz_splus_operator" title="Permalink to this definition"></a></dt>
+<dd><p>Create a matrix representation of the spin operators s_2, s_z and s_plus
+in the many-body basis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a_dagger_a</strong> (<em>array</em>) – matrix representation of the a_dagger_a operator in the many-body basis.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>s_2</strong> (<em>array</em>) – matrix representation of the s_2 operator in the many-body basis.</p></li>
+<li><p><strong>s_plus</strong> (<em>array</em>) – matrix representation of the s_plus operator in the many-body basis.</p></li>
+<li><p><strong>s_z</strong> (<em>array</em>) – matrix representation of the  s_z operator in the many-body basis.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="id6">
+<h2>Creating/manipulating/visualizing many-body wavefunctions<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.my_state">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">my_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">many_body_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbody_basis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.my_state" title="Permalink to this definition"></a></dt>
+<dd><p>Translate a many_body_state (occupation number list) into a many-body
+state referenced into a given Many-body basis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>many_body_state</strong> (<em>array</em>) – occupation number list</p></li>
+<li><p><strong>nbody_basis</strong> (<em>array</em>) – List of many-body states (occupation number states)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>state</strong> – The many body state translated into the “kappa” many-body basis</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.visualize_wft">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">visualize_wft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbody_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_orbitals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.visualize_wft" title="Permalink to this definition"></a></dt>
+<dd><p>Print the decomposition of a given input wavefunction in a many-body basis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Reference wave function</p></li>
+<li><p><strong>nbody_basis</strong> (<em>array</em>) – List of many-body states (occupation number states)</p></li>
+<li><p><strong>cutoff</strong> (<em>array</em>) – Cut off for the amplitudes retained (default is 0.005)</p></li>
+<li><p><strong>atomic_orbitals</strong> (<em>Boolean</em>) – If True then instead of 0/1 for spin orbitals we get 0/alpha/beta/2 for atomic orbitals</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Terminal printing of the wavefunction</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="id7">
+<h2>Reduced density matrices<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_anihilation_rdm">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_bosonic_anihilation_rdm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_anihilation_rdm" title="Permalink to this definition"></a></dt>
+<dd><p>Create a hybrid alpha-beta 1 RDM for a given wave function
+(Note : alpha for the lines, and beta for the columns)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_rdm_alpha_beta</strong> – spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_1rdm">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_bosonic_1rdm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_1rdm" title="Permalink to this definition"></a></dt>
+<dd><p>Create a hybrid alpha-beta 1 RDM for a given wave function
+(Note : alpha for the lines, and beta for the columns)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_rdm_alpha_beta</strong> – spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_alpha">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_1rdm_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_alpha" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-alpha 1 RDM for a given wave function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM (expressed in the numerical basis)</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_rdm_alpha</strong> – spin-alpha 1-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_beta">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_1rdm_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_beta" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-beta 1 RDM for a given wave function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_rdm_beta</strong> – Spin-beta 1-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_spin_free">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_1rdm_spin_free</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_spin_free" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-free 1 RDM for a given wave function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_rdm</strong> – Spin-free 1-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_on_site_repulsion">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_2rdm_fh_on_site_repulsion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_on_site_repulsion" title="Permalink to this definition"></a></dt>
+<dd><p>Create a 2-RDM for a given wave function following the structure of the Fermi Hubbard
+on-site repulsion operator (u[i,j,k,l] corresponds to a^+_i↑ a_j↑ a^+_k↓ a_l↓)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 2-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+<li><p><strong>mask</strong> (<em>array</em><em>, </em><em>default=None</em>) – 4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+For default None the whole 2RDM is calculated.
+If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+array that ensures that we won’t calculate elements that are not going to be used in calculation of
+2-electron interactions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>two_rdm_fh</strong> – 2-RDM associated to the on-site-repulsion operator</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_dipolar_interactions">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_2rdm_fh_dipolar_interactions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_dipolar_interactions" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-free 2 RDM for a given Fermi Hubbard wave function for dipolar interaction operator
+it corresponds to &lt;psi|(a^+_i↑ a_j↑ + a^+_i↓ a_j↓)(a^+_k↑ a_l↑ + a^+_k↓ a_l↓)|psi&gt;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+<li><p><strong>mask</strong> (<em>array</em>) – 4D array is expected. Function is going to calculate only elements of 2rdm where mask is not 0.
+For default None the whole 2RDM is calculated.
+If we expect 2RDM to be very sparse (has only a few non-zero elements) then it is better to provide
+array that ensures that we won’t calculate elements that are not going to be used in calculation of
+2-electron interactions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>two_rdm_fh</strong> – 2-RDM associated to the dipolar interaction operator</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_spin_free">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_2rdm_spin_free</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_spin_free" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-free 2 RDM for a given wave function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array:</em>) – Wave function for which we want to build the spin-free 2-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>two_rdm</strong> – Spin-free 2-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_and_2rdm_spin_free">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_1rdm_and_2rdm_spin_free</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_and_2rdm_spin_free" title="Permalink to this definition"></a></dt>
+<dd><p>Create both spin-free 1- and 2-RDMs for a given wave function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>one_rdm</strong> (<em>array</em>) – Spin-free 1-RDM</p></li>
+<li><p><strong>two_rdm</strong> (<em>array</em>) – Spin-free 2-RDM</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_hybrid_1rdm_alpha_beta">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_hybrid_1rdm_alpha_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_hybrid_1rdm_alpha_beta" title="Permalink to this definition"></a></dt>
+<dd><p>Create a hybrid alpha-beta 1 RDM for a given wave function
+(Note : alpha for the lines, and beta for the columns)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT</strong> (<em>array</em>) – Wave function for which we want to build the 1-RDM</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_rdm_alpha_beta</strong> – spin-alpha-beta 1-RDM (alpha for the lines, and beta for the columns)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_alpha">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_transition_1rdm_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WFT_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_alpha" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-alpha transition 1 RDM for a given wave function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT_A</strong> (<em>array</em>) – Left Wave function will be used for the Bra</p></li>
+<li><p><strong>WFT_B</strong> (<em>array</em>) – Right Wave function will be used for the Ket</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>transition_one_rdm_alpha</strong> – transition spin-alpha 1-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_beta">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_transition_1rdm_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WFT_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_beta" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-beta transition 1 RDM for a given wave function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT_A</strong> (<em>array</em>) – Left Wave function will be used for the Bra</p></li>
+<li><p><strong>WFT_B</strong> (<em>array</em>) – Right Wave function will be used for the Ket</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>transition_one_rdm_beta</strong> – transition spin-beta 1-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_spin_free">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_transition_1rdm_spin_free</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WFT_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_spin_free" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-free transition 1 RDM out of two given wave functions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT_A</strong> (<em>array</em>) – Left Wave function will be used for the Bra</p></li>
+<li><p><strong>WFT_B</strong> (<em>array</em>) – Right Wave function will be used for the Ket</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>transition_one_rdm</strong> – spin-free transition 1-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_2rdm_spin_free">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">build_fermionic_transition_2rdm_spin_free</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WFT_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WFT_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dagger_a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_2rdm_spin_free" title="Permalink to this definition"></a></dt>
+<dd><p>Create a spin-free transition 2 RDM out of two given wave functions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WFT_A</strong> (<em>array</em>) – Left Wave function will be used for the Bra</p></li>
+<li><p><strong>WFT_B</strong> (<em>array</em>) – Right Wave function will be used for the Ket</p></li>
+<li><p><strong>a_dagger_a</strong> (<em>array</em>) – Matrix representation of the a_dagger_a operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>transition_two_rdm</strong> – Spin-free transition 2-RDM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="functions-to-manipulate-fermionic-bosonic-hybrid-integrals">
+<h2>Functions to manipulate fermionic-bosonic hybrid integrals<a class="headerlink" href="#functions-to-manipulate-fermionic-bosonic-hybrid-integrals" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="quantnbody.hybrid_fermionic_bosonic.tools.transform_1_2_body_tensors_in_new_basis">
+<span class="sig-prename descclassname"><span class="pre">quantnbody.hybrid_fermionic_bosonic.tools.</span></span><span class="sig-name descname"><span class="pre">transform_1_2_body_tensors_in_new_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h_b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quantnbody.hybrid_fermionic_bosonic.tools.transform_1_2_body_tensors_in_new_basis" title="Permalink to this definition"></a></dt>
+<dd><p>Transform electronic integrals from an initial basis “B1” to a new basis “B2”.
+The transformation is realized thanks to a passage matrix noted “C” linking
+both basis like</p>
+<div class="math notranslate nohighlight">
+\[| B2_l \rangle =  \sum_p | B1_p \rangle C_{pl}\]</div>
+<p>with <span class="math notranslate nohighlight">\(| B2_l \rangle\)</span> and <span class="math notranslate nohighlight">\(| B2_p \rangle\)</span> are vectors of the
+basis B1 and B2 respectively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h_b1</strong> (<em>array</em>) – 1-electron integral given in basis B1</p></li>
+<li><p><strong>g_b1</strong> (<em>array</em>) – 2-electron integral given in basis B1</p></li>
+<li><p><strong>C</strong> (<em>array</em>) – Transfer matrix from the B1 to the B2 basis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>h_b2</strong> (<em>array</em>) – 1-electron integral given in basis B2</p></li>
+<li><p><strong>g_b2</strong> (<em>array</em>) – 2-electron integral given in basis B2</p></li>
 </ul>
 </p>
 </dd>

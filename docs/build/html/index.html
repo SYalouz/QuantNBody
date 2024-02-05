@@ -62,12 +62,16 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
@@ -191,6 +195,23 @@ This tool also can be of a great help for pedagogical purpose and to help illust
 <li class="toctree-l2"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html#checking-the-implementation-comparing-different-ways-to-estimate-the-groundstate-energy">Checking the implementation : comparing different ways to estimate the groundstate energy</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-1-building-a-hybrid-many-body-basis">Step 1: Building a hybrid many-body basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-2-about-building-operators-in-the-hybrid-many-body-basis">Step 2: About building operators in the hybrid many-body basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis">Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis">Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-1-hubbard-holstein-model">Example 1: Hubbard-Holstein model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#a-defining-the-parameters-and-finding-the-hamiltonian">1.A. Defining the parameters, and finding the Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#b-computing-time-independent-observables-of-interest">1.B. Computing time-independent observables of interest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#c-computing-time-dependent-observables-of-interest">1.C. Computing time-dependent observables of interest</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -215,6 +236,15 @@ This tool also can be of a great help for pedagogical purpose and to help illust
 <li class="toctree-l2"><a class="reference internal" href="api.html#id2">Creating/manipulating/visualizing many-body wavefunctions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#id3">Reduced density matrices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-bosonic-integrals">Functions to manipulate bosonic integrals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#basic-functions-for-the-creation-of-many-fermion-boson-hybrid-systems">Basic functions for the creation of many-fermion/boson hybrid systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id4">Many-body Hamiltonians and excitations operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Spin operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id6">Creating/manipulating/visualizing many-body wavefunctions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id7">Reduced density matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-fermionic-bosonic-hybrid-integrals">Functions to manipulate fermionic-bosonic hybrid integrals</a></li>
 </ul>
 </li>
 </ul>

@@ -301,3 +301,117 @@ Functions to manipulate bosonic integrals
 ------------------------------------------------
 
 .. autofunction:: transform_1_2_body_tensors_in_new_basis
+ 
+
+
+|
+|
+|
+
+_______________
+
+|
+
+
+
+Fermionic-Bosonic hybrid systems
+================================
+
+ .. currentmodule:: quantnbody.hybrid_fermionic_bosonic.tools
+
+In this subsection, we list a series of functions useful for fermionic-bosonic hybrid systems.
+
+
+
+Basic functions for the creation of many-fermion/boson hybrid systems
+----------------------------------------------------------------
+
+.. autofunction:: build_nbody_basis
+
+.. autofunction:: build_boson_anihilation_operator_b
+
+.. autofunction:: build_fermion_operator_a_dagger_a
+
+.. autofunction:: build_E_and_e_operators
+
+_______________
+
+|
+
+
+Many-body Hamiltonians and excitations operators
+--------------------------------------------------------
+
+.. autofunction:: build_hamiltonian_hubbard_holstein
+
+.. autofunction:: build_hamiltonian_hubbard_QED
+
+
+_______________
+
+|
+
+Spin operators
+--------------
+
+.. autofunction:: build_s2_sz_splus_operator
+
+
+______________
+
+|
+
+
+Creating/manipulating/visualizing many-body wavefunctions
+------------------------------------------------------------------------
+
+.. autofunction:: my_state
+
+.. autofunction:: visualize_wft
+
+_______________
+
+|
+
+Reduced density matrices
+--------------------------------
+
+.. autofunction:: build_bosonic_anihilation_rdm
+
+.. autofunction:: build_bosonic_1rdm
+
+.. autofunction:: build_fermionic_1rdm_alpha
+
+.. autofunction:: build_fermionic_1rdm_beta
+
+.. autofunction:: build_fermionic_1rdm_spin_free
+
+.. autofunction:: build_fermionic_2rdm_fh_on_site_repulsion
+
+.. autofunction:: build_fermionic_2rdm_fh_dipolar_interactions
+
+.. autofunction:: build_fermionic_2rdm_spin_free
+
+.. autofunction:: build_fermionic_1rdm_and_2rdm_spin_free
+
+.. autofunction:: build_fermionic_hybrid_1rdm_alpha_beta
+
+.. autofunction:: build_fermionic_transition_1rdm_alpha
+
+.. autofunction:: build_fermionic_transition_1rdm_beta
+
+.. autofunction:: build_fermionic_transition_1rdm_spin_free
+
+.. autofunction:: build_fermionic_transition_2rdm_spin_free
+
+
+
+_______________
+
+|
+
+
+Functions to manipulate fermionic-bosonic hybrid integrals
+------------------------------------------------
+
+.. autofunction:: transform_1_2_body_tensors_in_new_basis

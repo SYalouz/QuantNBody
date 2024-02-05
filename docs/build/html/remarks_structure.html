@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Fermionic systems" href="api.html" />
-    <link rel="prev" title="Tuto 4: the Bose-Hubbard system" href="Tuto_BOSE_HUBBARD.html" /> 
+    <link rel="prev" title="Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,12 +63,16 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Note on the structure of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
@@ -128,7 +132,7 @@
 <h1>Note on the structure of the package<a class="headerlink" href="#note-on-the-structure-of-the-package" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The package <strong>QuantNBody</strong> is stuctured in 2 subpackages <code class="code docutils literal notranslate"><span class="pre">quantnbody.fermionic</span></code> and <code class="code docutils literal notranslate"><span class="pre">quantnbody.bosonic</span></code> which are respectively dedicated to fermionic and bosonic systems.
+<p>The package <strong>QuantNBody</strong> is stuctured in 3 subpackages <code class="code docutils literal notranslate"><span class="pre">quantnbody.fermionic</span></code>, <code class="code docutils literal notranslate"><span class="pre">quantnbody.bosonic`and</span> <span class="pre">:code:`quantnbody.hybrid_fermionic_bosonic</span></code> which are respectively dedicated to fermionic, bosonic and fermionic-bosonic hybrid systems.
 Each subpackage contains a list of functions (encapsulated in a local <code class="code docutils literal notranslate"><span class="pre">tools</span></code>
 module) one can use for creating/manipulating many-body operators/wavefunctions.
 In practice, to access all the functions, one only needs to import the following modules from quantnbody:</p>
@@ -141,6 +145,10 @@ In practice, to access all the functions, one only needs to import the following
 </pre></div>
 </div>
 </dd>
+<dt>For fermionic-bosonic hybrid systems</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="kn">import</span> <span class="nn">quantnbody.hybrid_fermionic_bosonic.tools</span>
+</pre></div>
+</div>
+</dd>
 </dl>
 <p>In the following, we detail the list of relevant callable functions for each type of many-body system.</p>
 </div>
@@ -150,7 +158,7 @@ In practice, to access all the functions, one only needs to import the following
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Tuto_BOSE_HUBBARD.html" class="btn btn-neutral float-left" title="Tuto 4: the Bose-Hubbard system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" class="btn btn-neutral float-left" title="Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="api.html" class="btn btn-neutral float-right" title="Fermionic systems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

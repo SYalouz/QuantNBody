@@ -60,12 +60,16 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
@@ -140,7 +144,45 @@
 </li>
       <li><a href="api.html#quantnbody.fermionic.tools.build_2rdm_spin_free">build_2rdm_spin_free() (in module quantnbody.fermionic.tools)</a>
 </li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_boson_anihilation_operator_b">build_boson_anihilation_operator_b() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_1rdm">build_bosonic_1rdm() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_anihilation_rdm">build_bosonic_anihilation_rdm() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
       <li><a href="api.html#quantnbody.fermionic.tools.build_E_and_e_operators">build_E_and_e_operators() (in module quantnbody.fermionic.tools)</a>
+
+      <ul>
+        <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_E_and_e_operators">(in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      </ul></li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermion_operator_a_dagger_a">build_fermion_operator_a_dagger_a() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_alpha">build_fermionic_1rdm_alpha() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_and_2rdm_spin_free">build_fermionic_1rdm_and_2rdm_spin_free() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_beta">build_fermionic_1rdm_beta() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_spin_free">build_fermionic_1rdm_spin_free() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_dipolar_interactions">build_fermionic_2rdm_fh_dipolar_interactions() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_on_site_repulsion">build_fermionic_2rdm_fh_on_site_repulsion() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_spin_free">build_fermionic_2rdm_spin_free() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_hybrid_1rdm_alpha_beta">build_fermionic_hybrid_1rdm_alpha_beta() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_alpha">build_fermionic_transition_1rdm_alpha() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_beta">build_fermionic_transition_1rdm_beta() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_spin_free">build_fermionic_transition_1rdm_spin_free() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_2rdm_spin_free">build_fermionic_transition_2rdm_spin_free() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
 </li>
       <li><a href="api.html#quantnbody.fermionic.tools.build_full_mo_1rdm_and_2rdm_for_AS">build_full_mo_1rdm_and_2rdm_for_AS() (in module quantnbody.fermionic.tools)</a>
 </li>
@@ -150,9 +192,11 @@
 </li>
       <li><a href="api.html#quantnbody.bosonic.tools.build_hamiltonian_bose_hubbard">build_hamiltonian_bose_hubbard() (in module quantnbody.bosonic.tools)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#quantnbody.fermionic.tools.build_hamiltonian_fermi_hubbard">build_hamiltonian_fermi_hubbard() (in module quantnbody.fermionic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_holstein">build_hamiltonian_hubbard_holstein() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
+      <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_QED">build_hamiltonian_hubbard_QED() (in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
 </li>
       <li><a href="api.html#quantnbody.fermionic.tools.build_hamiltonian_quantum_chemistry">build_hamiltonian_quantum_chemistry() (in module quantnbody.fermionic.tools)</a>
 </li>
@@ -167,6 +211,8 @@
       <ul>
         <li><a href="api.html#quantnbody.fermionic.tools.build_nbody_basis">(in module quantnbody.fermionic.tools)</a>
 </li>
+        <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_nbody_basis">(in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
       </ul></li>
       <li><a href="api.html#quantnbody.bosonic.tools.build_operator_a_dagger_a">build_operator_a_dagger_a() (in module quantnbody.bosonic.tools)</a>
 
@@ -177,7 +223,11 @@
       <li><a href="api.html#quantnbody.fermionic.tools.build_projector_active_space">build_projector_active_space() (in module quantnbody.fermionic.tools)</a>
 </li>
       <li><a href="api.html#quantnbody.fermionic.tools.build_s2_sz_splus_operator">build_s2_sz_splus_operator() (in module quantnbody.fermionic.tools)</a>
+
+      <ul>
+        <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_s2_sz_splus_operator">(in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
 </li>
+      </ul></li>
       <li><a href="api.html#quantnbody.fermionic.tools.build_sAsB_coupling">build_sAsB_coupling() (in module quantnbody.fermionic.tools)</a>
 </li>
       <li><a href="api.html#quantnbody.fermionic.tools.build_spin_subspaces">build_spin_subspaces() (in module quantnbody.fermionic.tools)</a>
@@ -245,6 +295,8 @@
       <ul>
         <li><a href="api.html#quantnbody.fermionic.tools.my_state">(in module quantnbody.fermionic.tools)</a>
 </li>
+        <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.my_state">(in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -299,6 +351,8 @@
       <ul>
         <li><a href="api.html#quantnbody.fermionic.tools.transform_1_2_body_tensors_in_new_basis">(in module quantnbody.fermionic.tools)</a>
 </li>
+        <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.transform_1_2_body_tensors_in_new_basis">(in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -318,6 +372,8 @@
 
       <ul>
         <li><a href="api.html#quantnbody.fermionic.tools.visualize_wft">(in module quantnbody.fermionic.tools)</a>
+</li>
+        <li><a href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.visualize_wft">(in module quantnbody.hybrid_fermionic_bosonic.tools)</a>
 </li>
       </ul></li>
   </ul></td>

@@ -1,11 +1,8 @@
 *Tuto 3:* electronic structure Hamiltonian and spin operators
 ============================================================================
 
-**Dr. Saad Yalouz**
-
-**Laboratoire de Chimie Quantique de Strasbourg, France**
-
-**July 2022**
+**Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
+France - July 2022**
 
 In this QuantNBody tutorial, we will focus on the construction of spin
 operators like :math:`{S}^2` and :math:`S_z` and ab initio electronic
