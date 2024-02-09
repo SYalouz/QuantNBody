@@ -1,8 +1,8 @@
 *Tuto 6:* QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry
 =====================================================================================================
 
-**Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024**
+Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024
 
 .. code:: ipython3
 
@@ -22,8 +22,9 @@ fermions and bosons interacting together.
 Example 1: Hubbard-Holstein model
 ---------------------------------
 
+
    .. image:: Holstein.png
-      :width: 300
+      :width: 500
       :align: center
 
 **Fermionic Hubbard model:**
@@ -38,9 +39,11 @@ In the local site basis, the Fermionic-Hubbard model Hamiltonian
    \sum_i^{N_{MO}} U_{iiii} \hat{a}^\dagger_{i,\uparrow}\hat{a}_{i,\uparrow} \hat{a}^\dagger_{i,\downarrow}\hat{a}_{i,\downarrow} 
    }
 
-| with: - :math:`t_{ij}` the hopping terms between the pair of connected
-  sites :math:`\langle i, j \rangle`.
-| - :math:`U_{iiii}` the local coulombic repulsion on site “:math:`i`”.
+with
+ 
+-  :math:`t_{ij}` the hopping terms between the pair of connected sites :math:`\langle i, j \rangle`.
+
+-  :math:`U_{iiii}` the local coulombic repulsion on site “:math:`i`”.
 
 In contrast with the system presented in the tutoral ‘First Step’, we
 ignore here the expression of a chemical potential. This sub-part is
@@ -48,7 +51,7 @@ completely described via the a_dagger_a operator.
 
 **Adding the bosonic sub-part:**
 
-.. math::
+.. math:: 
 
 
    \hat{H}_{bos} = \sum_{s} \Omega_s \hat{b}^\dagger_{s} \hat{b}_{s}
@@ -216,8 +219,8 @@ degenerate.
 
 .. parsed-literal::
 
-    bosonic mode 1 = 0.01008950475957186
-    bosonic mode 2 = 0.010089504759571915
+    bosonic mode 1 = 0.010089504759571901
+    bosonic mode 2 = 0.010089504759571913
 
 
 **Visualizing the GS WF in the many-body-basis:**
@@ -236,20 +239,20 @@ degenerate.
     	-----------
     	 Coeff.     N-body state and index 
     	-------     ----------------------
-    	+0.68715   |00⟩ ⊗ |0110⟩    #3 
     	-0.68715   |00⟩ ⊗ |1001⟩    #2 
-    	-0.13356   |00⟩ ⊗ |1100⟩    #0 
+    	+0.68715   |00⟩ ⊗ |0110⟩    #3 
     	-0.13356   |00⟩ ⊗ |0011⟩    #5 
-    	-0.06871   |01⟩ ⊗ |0110⟩    #15 
-    	-0.06871   |10⟩ ⊗ |0110⟩    #9 
+    	-0.13356   |00⟩ ⊗ |1100⟩    #0 
     	+0.06871   |01⟩ ⊗ |1001⟩    #14 
     	+0.06871   |10⟩ ⊗ |1001⟩    #8 
-    	+0.01995   |01⟩ ⊗ |0011⟩    #17 
+    	-0.06871   |01⟩ ⊗ |0110⟩    #15 
+    	-0.06871   |10⟩ ⊗ |0110⟩    #9 
     	+0.01995   |10⟩ ⊗ |1100⟩    #6 
-    	+0.00683   |11⟩ ⊗ |0110⟩    #27 
+    	+0.01995   |01⟩ ⊗ |0011⟩    #17 
     	-0.00683   |11⟩ ⊗ |1001⟩    #26 
-    	+0.00676   |01⟩ ⊗ |1100⟩    #12 
+    	+0.00683   |11⟩ ⊗ |0110⟩    #27 
     	+0.00676   |10⟩ ⊗ |0011⟩    #11 
+    	+0.00676   |01⟩ ⊗ |1100⟩    #12 
     
 
 
@@ -364,10 +367,11 @@ occupancy number of each mode and fermionic molecular orbital.
 
 
 Example 2: Polaritonic chemistry
-================================
+--------------------------------
+
 
    .. image:: Cavity.png
-      :width: 300
+      :width: 500
       :align: center
 
 The QuantNBody package makes it possible to simulate polaritonic
@@ -387,22 +391,19 @@ Let’s first define the parameters of the total Hamiltonian of the system
 
 .. math::  \hat{H}_{elec} = - t_0  \sum_{i\sigma} ( \hat{a}^\dagger_{i+1,\sigma} \hat{a}_{i \sigma}  + \hat{a}^\dagger_{i \sigma} \hat{a}_{i+1,\sigma} ) + U \sum_{i}   \hat{n}_{i,\uparrow}\hat{n}_{i,\downarrow} 
 
-With in the local site basis: -
-$:raw-latex:`\hat{n}`\ *{i,:raw-latex:`\sigma`} =
-:raw-latex:`\hat{a}`^:raw-latex:`\dagger`*\ {i:raw-latex:`\sigma`}:raw-latex:`\hat{a}`\ *{i:raw-latex:`\sigma`}
-$ the density of a spin-:math:`\sigma` electron on site :math:`i`. -
-:math:`t_0` and :math:`U` the usual hopping and on-site repulsion
-constants. - The dipole operator of the system $:raw-latex:`\hat{d}` =
-:raw-latex:`\sum`\ i d_i (
-:raw-latex:`\hat{n}`\ {i,:raw-latex:`\uparrow`} +
-:raw-latex:`\hat{n}`*\ {i,:raw-latex:`\downarrow`} ) $
+With in the local site basis: 
+
+-  :math:`\hat{n}_{i,\sigma} = \hat{a}^\dagger_{i\sigma}\hat{a}_{i\sigma}` the density of a spin-:math:`\sigma` electron on site :math:`i`. 
+
+-  :math:`t_0` and :math:`U` the usual hopping and on-site repulsion constants. 
+
+-  The dipole operator of the system :math:`\hat{d} = \sum_i d_i ( \hat{n}_{i,\uparrow} + \hat{n}_{i,\downarrow} )`
 
 **Cavity as a bosonic bath:**
 
 .. math::  \hat{H}_{bos} =  \sum_{\alpha} \omega_{c,\alpha} \hat{b}^\dagger_{\alpha} \hat{b}_{\alpha} 
 
-Here, :math:`\hat{b}_{\alpha}` and
-$:raw-latex:`\hat{b}`^:raw-latex:`\dagger`\_{:raw-latex:`\alpha`} $
+Here, :math:`\hat{b}_{\alpha}` and :math:`\hat{b}^\dagger_{\alpha}`
 represents the creation and annihilation operators for a cavity mode
 with frequency :math:`\omega_{c,\alpha}`.
 
@@ -416,17 +417,17 @@ of the light-matter interaction; here we focus mostly on cases where
 to be in the strong-coupling regime. Note that in the following, every
 values will be expressed in :math:`t_0` units (i.e., :math:`t_0 = 1`).
 
-2.B. Defining the parameters, and finding the Hamiltonian
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2.A. Defining the parameters, and finding the Hamiltonian
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As a proof-of-principle, we consider as in the reference paper `U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020) <https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262>`__,
 a half-filled four site Hubbard chain with an additional dipole coupled
 to a single photon cavity mode with frequency
-:math:`\omega_{c,\alpha}= 1.028`. Here we consider $
-:raw-latex:`\gamma `= 0.2$ for the light-matter coupling parameter,
-representing an ultrastrong coupling.
+:math:`\omega_{c,\alpha}= 1.028`. Here we consider :math:`\gamma = 0.2`
+for the light-matter coupling parameter, representing an ultrastrong
+coupling.
 
 .. code:: ipython3
 
@@ -538,8 +539,8 @@ values obtained in reference `U. Mordovina et al., Phys. Rev. Res., 2,
 
 Here, we focus on the case of a half-filled four-site Hubbard chain with
 an additional dipole coupled to a single photon cavity mode with
-frequency :math:`\omega_{c,\alpha}= 1.028`. We consider here $
-:raw-latex:`\gamma `= 0.2$ for the light-matter coupling parameter,
+frequency :math:`\omega_{c,\alpha}= 1.028`. We consider here
+:math:`\gamma= 0.2` for the light-matter coupling parameter,
 representing ultra-strong coupling. For ultra-strong coupling, we have
 considered that the maximum number of bosons would be
 :math:`N_{B}^{max} = 7`. The values of the dipole in the site basis are
@@ -585,8 +586,8 @@ where different case of coupling (weak, strong, and ultrastrong) are
 indicated. Here, it has been shown that the FCI value of the bosonic
 mode occupation number for the ultrastrong coupling (computed here as an
 example) is 8.69 × 10−3. Let’s calculate this value with the QuantNBody
-package, using the computed :math:`\hat{b}` and
-$:raw-latex:`\hat{b}`^:raw-latex:`\dagger `$ operators :
+package, using the computed :math:`\hat{b}` and :math:`\hat{b}^\dagger`
+operators :
 
 .. code:: ipython3
 
@@ -597,7 +598,7 @@ $:raw-latex:`\hat{b}`^:raw-latex:`\dagger `$ operators :
 
 .. parsed-literal::
 
-    occ_number :  0.008692558807686284
+    occ_number :  0.008692558807686324
 
 
 Here we find again the FCI value of the FCI reference in `U. Mordovina
@@ -614,10 +615,9 @@ Phys. Rev. Res., 2, 023262
 
 .. math::  \sigma(\omega) = 4 \pi \frac{\omega}{c} Im \left( \sum_k \frac{ | \langle \psi_k | \hat{d}| \psi_0  \rangle |^2 } {(\omega_k - \omega_0) - \omega - i \eta }     \right)  
 
-where $\|:raw-latex:`\psi`\_k :raw-latex:`\rangle `$ are many-body
-eigenstates of :math:`\hat{H}` with energy
-$:raw-latex:`\hbar `:raw-latex:`\omega`\_k $ , :math:`\omega` is the
-frequency of incident light, and :math:`\eta = 0.005` is a (small)
+where :math:`|\psi_k \rangle` are many-body eigenstates of
+:math:`\hat{H}` with energy :math:`\hbar \omega_k` , :math:`\omega` is
+the frequency of incident light, and :math:`\eta= 0.005` is a (small)
 broadening parameter accounting for the finite lifetime of the state.
 Let’s compute the spectrum depicted in Fig 6.d of Appendix A (page 6) of
 the reference paper for the ultrastrong coupling case, using the

@@ -2,7 +2,7 @@ Note on the structure of the package
 =============================================================
 
 .. note::
-  The package **QuantNBody** is stuctured in 3 subpackages :code:`quantnbody.fermionic`, :code:`quantnbody.bosonic`and :code:`quantnbody.hybrid_fermionic_bosonic` which are respectively dedicated to fermionic, bosonic and fermionic-bosonic hybrid systems.
+  The package **QuantNBody** is stuctured in 3 subpackages :code:`quantnbody.fermionic`, :code:`quantnbody.bosonic` and :code:`quantnbody.hybrid_fermionic_bosonic` which are respectively dedicated to fermionic, bosonic and fermionic-bosonic hybrid systems.
   Each subpackage contains a list of functions (encapsulated in a local :code:`tools`
   module) one can use for creating/manipulating many-body operators/wavefunctions.
   In practice, to access all the functions, one only needs to import the following modules from quantnbody:

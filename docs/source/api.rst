@@ -324,7 +324,7 @@ In this subsection, we list a series of functions useful for fermionic-bosonic h
 
 
 Basic functions for the creation of many-fermion/boson hybrid systems
-----------------------------------------------------------------
+---------------------------------------------------------------------
 
 .. autofunction:: build_nbody_basis
 
@@ -412,6 +412,6 @@ _______________
 
 
 Functions to manipulate fermionic-bosonic hybrid integrals
-------------------------------------------------
+-----------------------------------------------------------
 
 .. autofunction:: transform_1_2_body_tensors_in_new_basis

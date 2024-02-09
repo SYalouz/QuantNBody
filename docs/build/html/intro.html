@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>What is QuantNBody ? &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=292eb321"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -65,12 +67,15 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
@@ -102,35 +107,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<figure class="align-default">
+  <figure class="align-default">
 <a class="reference internal image-reference" href="_images/logo_shadow.png"><img alt="_images/logo_shadow.png" src="_images/logo_shadow.png" style="width: 800px;" /></a>
 </figure>
 <section id="what-is-quantnbody">
-<h1>What is QuantNBody ?<a class="headerlink" href="#what-is-quantnbody" title="Permalink to this heading"></a></h1>
+<h1>What is QuantNBody ?<a class="headerlink" href="#what-is-quantnbody" title="Link to this heading"></a></h1>
 <p>The <strong>QuantNBody</strong> package is a Python toolkit for quantum chemists/physicists interested in methods development to study
 quantum many-body problems ranging from electronic structure to condensed matter theory. It provides a quick and easy way
 to build matrix representations of bosonic and fermionic quantum many-body operators (<em>e.g.</em> Hamiltonians, spin or excitation
@@ -155,7 +136,7 @@ Indeed, we believe that this package can be useful for pedagogical purposes and 
 </div>
 </section>
 <section id="framework-of-the-package">
-<h1>Framework of the package<a class="headerlink" href="#framework-of-the-package" title="Permalink to this heading"></a></h1>
+<h1>Framework of the package<a class="headerlink" href="#framework-of-the-package" title="Link to this heading"></a></h1>
 <p>The framework of the <strong>QuantNbody</strong> package lies in two fundamental ingredients.
 The first one is the creation of a <strong>reference many-body vector basis</strong> (based on a total number of quantum particles and modes/orbitals to fill)
 in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any
@@ -170,7 +151,7 @@ the user can employ various pre-built functions in order to</p>
 <p>Beyond this, the QuantNBody package has also been designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.</p>
 </section>
 <section id="brief-illustration-of-what-is-possible">
-<h1>Brief illustration of what is possible<a class="headerlink" href="#brief-illustration-of-what-is-possible" title="Permalink to this heading"></a></h1>
+<h1>Brief illustration of what is possible<a class="headerlink" href="#brief-illustration-of-what-is-possible" title="Link to this heading"></a></h1>
 <p>We provide below a non-exhaustive list of the various possibilities offered by the package:</p>
 <blockquote>
 <div><ul class="simple">
@@ -187,14 +168,14 @@ To generate these data, the package was used to code (from scratch) each many-bo
 <a class="reference internal image-reference" href="_images/figure_fermion.png"><img alt="_images/figure_fermion.png" src="_images/figure_fermion.png" style="width: 800px;" /></a>
 <figcaption>
 <p><span class="caption-text"><strong>Left column:</strong> Ground state energy and many-body decomposition of the hydrogen molecule groundstate in a minimal basis (STO-3G).
-<strong>Right column:</strong> similar properties for the Fermi-Hubbard dimer as a function of the on-site repulsion U (2 electrons on 2 sites).</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+<strong>Right column:</strong> similar properties for the Fermi-Hubbard dimer as a function of the on-site repulsion U (2 electrons on 2 sites).</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id2">
 <a class="reference internal image-reference" href="_images/figure_boson.png"><img alt="_images/figure_boson.png" src="_images/figure_boson.png" style="width: 800px;" /></a>
 <figcaption>
 <p><span class="caption-text"><strong>Left column:</strong> Bose-Hubbard dimer with two bosons.  <strong>Right column:</strong> ground state energy and many-body decomposition
-for the Bose-Hubbard dimer as a function of the on-site repulsion U.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+for the Bose-Hubbard dimer as a function of the on-site repulsion U.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <div class="admonition note">
@@ -203,12 +184,12 @@ for the Bose-Hubbard dimer as a function of the on-site repulsion U.</span><a cl
 </div>
 </section>
 <section id="how-to-contribute">
-<h1>How to contribute<a class="headerlink" href="#how-to-contribute" title="Permalink to this heading"></a></h1>
+<h1>How to contribute<a class="headerlink" href="#how-to-contribute" title="Link to this heading"></a></h1>
 <p>We’d love to accept your contributions and patches to QuantNBody. There are a few small guidelines you need to follow.</p>
 <p>All submissions require review. We use GitHub pull requests for this purpose. Consult GitHub Help for more information on using pull requests. Furthermore, please make sure your new code comes with documentation.</p>
 </section>
 <section id="support">
-<h1>Support<a class="headerlink" href="#support" title="Permalink to this heading"></a></h1>
+<h1>Support<a class="headerlink" href="#support" title="Link to this heading"></a></h1>
 <p>If you are having issues, please let us know by posting the issue on our Github issue tracker.</p>
 </section>
 
