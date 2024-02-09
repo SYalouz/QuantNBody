@@ -1,8 +1,8 @@
 *Tuto 6:* QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry
 =====================================================================================================
 
-Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024
+**Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024**
 
 .. code:: ipython3
 
