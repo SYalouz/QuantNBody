@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tuto 2: playing with many-body wavefunctions &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=292eb321"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -71,12 +73,15 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
@@ -108,32 +113,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="tuto-2-playing-with-many-body-wavefunctions">
-<h1><em>Tuto 2:</em> playing with many-body wavefunctions<a class="headerlink" href="#tuto-2-playing-with-many-body-wavefunctions" title="Permalink to this heading"></a></h1>
+  <section id="tuto-2-playing-with-many-body-wavefunctions">
+<h1><em>Tuto 2:</em> playing with many-body wavefunctions<a class="headerlink" href="#tuto-2-playing-with-many-body-wavefunctions" title="Link to this heading"></a></h1>
 <p><strong>Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
 France - July 2022</strong></p>
 <p>In this second QuantNBody tutorial we will focus on the manipulation of
@@ -149,7 +130,7 @@ molecular orbitals (so 8 spinorbitals in total).</p>
 </pre></div>
 </div>
 <section id="building-first-the-many-body-basis-and-the-a-dagger-p-sigma-a-q-tau-operators">
-<h2>Building first the many-body basis and the <span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators<a class="headerlink" href="#building-first-the-many-body-basis-and-the-a-dagger-p-sigma-a-q-tau-operators" title="Permalink to this heading"></a></h2>
+<h2>Building first the many-body basis and the <span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators<a class="headerlink" href="#building-first-the-many-body-basis-and-the-a-dagger-p-sigma-a-q-tau-operators" title="Link to this heading"></a></h2>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nbody_basis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span> <span class="n">N_MO</span><span class="p">,</span> <span class="n">N_elec</span> <span class="p">)</span>
 <span class="n">a_dagger_a</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">fermionic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_operator_a_dagger_a</span><span class="p">(</span> <span class="n">nbody_basis</span> <span class="p">)</span>
 
@@ -232,7 +213,7 @@ molecular orbitals (so 8 spinorbitals in total).</p>
 </div>
 </section>
 <section id="building-our-own-many-body-wavefunction">
-<h2>Building our own many-body wavefunction<a class="headerlink" href="#building-our-own-many-body-wavefunction" title="Permalink to this heading"></a></h2>
+<h2>Building our own many-body wavefunction<a class="headerlink" href="#building-our-own-many-body-wavefunction" title="Link to this heading"></a></h2>
 <p>The package QuantNBody offers the possibility to define our very own
 many-body wavefunction in an intuitive manner. For this we can use the
 function “my_state” to transform any occupation number state
@@ -309,7 +290,7 @@ just built using the “visualize_wft” function implemented in QuantNBody:</p>
 <p>Which returns precisely what we have implemented !</p>
 </section>
 <section id="building-filtered-lists-of-many-body-states">
-<h2>Building filtered lists of many-body states<a class="headerlink" href="#building-filtered-lists-of-many-body-states" title="Permalink to this heading"></a></h2>
+<h2>Building filtered lists of many-body states<a class="headerlink" href="#building-filtered-lists-of-many-body-states" title="Link to this heading"></a></h2>
 <p>A particularily interesting action we can realize is to filter the
 many-body basis to only retain states that respect a particular
 property. As an example, let us imagine that we want to create a list of
@@ -377,7 +358,7 @@ modification of what has been proposed before</p>
 </div>
 </section>
 <section id="applying-excitations-to-a-state">
-<h2>Applying excitations to a state<a class="headerlink" href="#applying-excitations-to-a-state" title="Permalink to this heading"></a></h2>
+<h2>Applying excitations to a state<a class="headerlink" href="#applying-excitations-to-a-state" title="Link to this heading"></a></h2>
 <p>In this final part we show the effect of applying excitations to a
 reference wavefunction. For this, we will consider implementing a
 singlet excitation over an initial configuration to produce the final

@@ -186,7 +186,7 @@ and the spin-up creation operator
 
 .. math::  {S}_+ = \sum_p a^\dagger_{p,\alpha} a_{p,\beta} 
 
-as we know that $ {S}\ *- = {S}*\ +^:raw-latex:`\dagger`$.
+as we know that :math:`{S}_- = {S}_+{^\dagger}`.
 
 Below we show how to generate the matrix representation of these three
 operators with a single pre-made function.

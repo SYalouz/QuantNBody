@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tuto 5: Hybrid Fermion-Boson Systems in QuantNBody &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=292eb321"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -73,7 +75,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
@@ -112,34 +113,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="tuto-5-hybrid-fermion-boson-systems-in-quantnbody">
-<h1><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody<a class="headerlink" href="#tuto-5-hybrid-fermion-boson-systems-in-quantnbody" title="Permalink to this heading"></a></h1>
-<p><strong>Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024</strong></p>
+  <section id="tuto-5-hybrid-fermion-boson-systems-in-quantnbody">
+<h1><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody<a class="headerlink" href="#tuto-5-hybrid-fermion-boson-systems-in-quantnbody" title="Link to this heading"></a></h1>
+<p>Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024</p>
 <p>Hybrid quantum many-body systems are prevalent in nature and they
 originate from the intricate interplay between electrons and bosons.
 These systems manifest, for example, when a molecular systems (or
@@ -154,7 +131,7 @@ of view, the total number of electrons <span class="math notranslate nohighlight
 is conserved as constant, but this is not the case for the bosonic
 number <span class="math notranslate nohighlight">\(N_{bos}\)</span>.</p>
 <blockquote>
-<div><a class="reference internal image-reference" href="_images/Intro.png"><img alt="_images/Intro.png" class="align-center" src="_images/Intro.png" style="width: 300px;" /></a>
+<div><a class="reference internal image-reference" href="_images/Intro.png"><img alt="_images/Intro.png" class="align-center" src="_images/Intro.png" style="width: 500px;" /></a>
 </div></blockquote>
 <p>The QuantNBody package provides all the necessary tools to simulate such
 hybrid quantum many-body systems. In the subsequent sections, we will
@@ -166,7 +143,7 @@ Before starting, let us import the package ;-)</p>
 </pre></div>
 </div>
 <section id="step-1-building-a-hybrid-many-body-basis">
-<h2>Step 1: Building a hybrid many-body basis<a class="headerlink" href="#step-1-building-a-hybrid-many-body-basis" title="Permalink to this heading"></a></h2>
+<h2>Step 1: Building a hybrid many-body basis<a class="headerlink" href="#step-1-building-a-hybrid-many-body-basis" title="Link to this heading"></a></h2>
 <p>Hybrid quantum many-body systems can formally be described by a hybrid
 Hilbert space <span class="math notranslate nohighlight">\(\mathcal{H}_{hyb}\)</span> composed of a set of
 electron-boson configurations
@@ -189,15 +166,15 @@ is given by the dimension of the hybrid Hilbert space:</p>
 <div class="math notranslate nohighlight">
 \[\dim({\mathcal{H}_{bos}}) = \sum_{N_{bos}=0}^{N_{bos}^{MAX}}\binom{N_{bos} + N_{mode} - 1 }{N_{mode}} \quad\quad \text{  AND} \quad\quad \dim({\mathcal{H}_{elec}}) = \binom{2N_{MO}}{N_{elec}} .\]</div>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\dim({\mathcal{H}_{bos}})\)</span> describes the dimension of the</p></li>
-</ul>
-<p>bosonic Fock-space. It includes all the possible distributions of
-<span class="math notranslate nohighlight">\(N_{bos}\)</span> bosons in <span class="math notranslate nohighlight">\(N_{modes}\)</span> modes (with $N_b = 0
-<a href="#id1"><span class="problematic" id="id2">:raw-latex:`\rightarrow `N\_{b}^{max} $). Note again that this space
-doesn’t preserve the total number of bosons! -
-:math:`</span></a>dim({mathcal{H}_{elec}})` describes the electronic space
+<li><p><span class="math notranslate nohighlight">\(\dim({\mathcal{H}_{bos}})\)</span> describes the dimension of the
+bosonic Fock-space. It includes all the possible distributions of
+<span class="math notranslate nohighlight">\(N_{bos}\)</span> bosons in <span class="math notranslate nohighlight">\(N_{modes}\)</span> modes (with
+<span class="math notranslate nohighlight">\(N_b=0 \rightarrow N_{b}^{max}\)</span>). Note again that this space
+doesn’t preserve the total number of bosons!</p></li>
+<li><p><span class="math notranslate nohighlight">\(\dim({\mathcal{H}_{elec}})\)</span> describes the electronic space
 counting all the possibilites to distribute <span class="math notranslate nohighlight">\(N_{elec}\)</span> in
-<span class="math notranslate nohighlight">\(N_{MO}\)</span> spatial orbitals.</p>
+<span class="math notranslate nohighlight">\(N_{MO}\)</span> spatial orbitals.</p></li>
+</ul>
 <p><strong>How to create such a many-body basis with QuantNBody ?</strong></p>
 <p>The QuantNBody package builds a numerical representation of such a
 hybrid many-body basis as a list of states describing the repartition of
@@ -207,8 +184,8 @@ These states are numerically referenced by a list of kappa indices such
 that :</p>
 <div class="math notranslate nohighlight">
 \[\Big\lbrace |\kappa \rangle \Big\rbrace_{\textstyle \kappa=1}^{\textstyle \dim_{\mathcal{H}_{bos/elec}}}\]</div>
-<p><strong>A little example with :math:`N_{MO}=N_{elec}=2` and
-:math:`N_{bos}=N_{modes}=2`: in this case, we should have 36 many-body
+<p><strong>A little example with</strong> <span class="math notranslate nohighlight">\(N_{MO}=N_{elec}=2\)</span> and
+<span class="math notranslate nohighlight">\(N_{bos}=N_{modes}=2\)</span> <strong>: in this case, we should have 36 many-body
 states</strong></p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================================</span>
 <span class="c1"># Define the fermionic system</span>
@@ -285,34 +262,32 @@ which we have :</p>
 Each value refers to the number of bosons in the associated bosonic
 mode.</p></li>
 <li><p>For the following fermionic part, each couple of terms refer to <strong>a
-same spatial orbital</strong>, with an alternation of <strong>:math:`alpha`-</strong>
-and <strong>:math:`beta`-spinorbitals</strong>.</p></li>
+same spatial orbital</strong>, with an alternation of <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> -spinorbitals.</p></li>
 </ul>
 <p>Considering the 36 states contained in the list, we see that the first
 set of 6 lines contains all the possible fermionic configurations, for a
 vacuum bosonic configuration. Then, the next following states describe
 all possible fermionic configurations, for another bosonic configuration
 where we consider 1 boson in the two modes, and so on… until all the
-possible repartitions of the $N_{bos} = 0
-:raw-latex:<a href="#id3"><span class="problematic" id="id4">`</span></a>rightarrow <a href="#id5"><span class="problematic" id="id6">`</span></a>N_{bos}^{max} $ bosons in the $ N_{mode}$
-modes have been scanned.</p>
+possible repartitions of the <span class="math notranslate nohighlight">\(N_{bos}=0 \rightarrow N_{bos}^{max}\)</span>
+bosons in the <span class="math notranslate nohighlight">\(N_{mode}\)</span> modes have been scanned.</p>
 </section>
 <section id="step-2-about-building-operators-in-the-hybrid-many-body-basis">
-<h2>Step 2: About building operators in the hybrid many-body basis<a class="headerlink" href="#step-2-about-building-operators-in-the-hybrid-many-body-basis" title="Permalink to this heading"></a></h2>
+<h2>Step 2: About building operators in the hybrid many-body basis<a class="headerlink" href="#step-2-about-building-operators-in-the-hybrid-many-body-basis" title="Link to this heading"></a></h2>
 <p>In QuantNbody, to treat hybrid systems two types of many-body operators
 are considered as elementary bricks:</p>
-<p><strong>Fermionic hopping operators :math:`hat{a}^dagger hat{a}`:</strong> indeed,
-every operator conserving the total number of fermionic particles can be
-decomposed as a serie of electronic hopping operators
+<p><strong>Fermionic hopping operators</strong> <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> <strong>:</strong>
+indeed, every operator conserving the total number of fermionic
+particles can be decomposed as a serie of electronic hopping operators
 <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a} \otimes \mathbb{1}_{bos}\)</span> which only act
 on the fermionic part leave unchanged the bosonic part of the
 hybrid-states.</p>
-<p><strong>Bosonic creation/anihilation :math:`hat{b}^dagger/hat{b}`:</strong>
+<p><strong>Bosonic creation/anihilation</strong> <span class="math notranslate nohighlight">\(\hat{b}^\dagger/\hat{b}\)</span> <strong>:</strong>
 indeed, every operator not conserving the total number of bosonic
 particles may be expressed as a series of anihilation (or creation)
-bosonic operators $ <a href="#id7"><span class="problematic" id="id8">:raw-latex:`\hat{b}`</span></a>
-<a href="#id9"><span class="problematic" id="id10">:raw-latex:`\otimes `:raw-latex:`</span></a>mathbb{1}`_{elec}$ that only act on
-the bosonic part of the states and leave the fermionic part unchanged.</p>
+bosonic operators <span class="math notranslate nohighlight">\(\hat{b} \otimes \mathbb{1}_{elec}\)</span> that only
+act on the bosonic part of the states and leave the fermionic part
+unchanged.</p>
 <p>The QuantNbody package provides a matrix representation of these two
 central operators in the numerical hybrid-many body basis. If we
 generically call the latter operators by <span class="math notranslate nohighlight">\(\hat{O}\)</span>, this means in
@@ -322,7 +297,7 @@ practice that we create a matrix representation such that</p>
 =1}^{\dim(\mathcal{H}_{hyb})}  \langle \kappa' | \hat{O} | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |\]</div>
 </section>
 <section id="step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis">
-<h2>Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis<a class="headerlink" href="#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis" title="Permalink to this heading"></a></h2>
+<h2>Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis<a class="headerlink" href="#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis" title="Link to this heading"></a></h2>
 <p>In the hybrid part of the QuanNBody package, the fermionic operators
 <span class="math notranslate nohighlight">\(\hat{a}^\dagger_{p,\sigma} \hat{a}_{q,\tau}\)</span> can be built with a
 simple command line:</p>
@@ -334,17 +309,14 @@ simple command line:</p>
 order the spin-orbitals in our many-body states. As an illustrative
 example, taking the following elements will return the associated
 many-body operators:</p>
-<center><p>a_dagger_a[0,0] $
-<a href="#id11"><span class="problematic" id="id12">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{a}`^:raw-latex:<cite>dagger</cite><em>{0,:raw-latex:`alpha`}
-:raw-latex:`hat{a}`</em>{0,:raw-latex:<cite>alpha</cite>}$</p>
-</center><center><p>a_dagger_a[1,0] $
-<a href="#id13"><span class="problematic" id="id14">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{a}`^:raw-latex:<cite>dagger</cite><em>{0,:raw-latex:`beta`}
-:raw-latex:`hat{a}`</em>{0,:raw-latex:<cite>alpha</cite>}$</p>
-</center><center><p>a_dagger_a[10,1] $
-<a href="#id15"><span class="problematic" id="id16">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{a}`^:raw-latex:<cite>dagger</cite><em>{5,:raw-latex:`alpha`}
-:raw-latex:`hat{a}`</em>{0,:raw-latex:<cite>beta</cite>}$</p>
-</center><p><strong>Example of the matrix shape of the hopping operator
-:math:`hat{a}^dagger_{0,alpha} hat{a}_{1,alpha}`:</strong></p>
+<center><p>a_dagger_a[0,0]
+<span class="math notranslate nohighlight">\(\longrightarrow \hat{a}^\dagger_{0,\alpha} \hat{a}_{0,\alpha}\)</span></p>
+</center><center><p>a_dagger_a[1,0]
+<span class="math notranslate nohighlight">\(\longrightarrow \hat{a}^\dagger_{0,\beta} \hat{a}_{0,\alpha}\)</span></p>
+</center><center><p>a_dagger_a[10,1]
+<span class="math notranslate nohighlight">\(\longrightarrow \hat{a}^\dagger_{5,\alpha} \hat{a}_{0,\beta}\)</span></p>
+</center><p><strong>Example of the matrix shape of the hopping operator</strong>
+<span class="math notranslate nohighlight">\(\hat{a}^\dagger_{0,\alpha} \hat{a}_{1,\alpha}\)</span> <strong>:</strong></p>
 <p>If we look at the element a_dagger_a[0,2], we get access to a sparse
 matrix representation of the fermionic operator
 <span class="math notranslate nohighlight">\(\hat{a}^\dagger_{0,\alpha} \hat{a}_{1,\alpha}\)</span> in the hybrid
@@ -370,11 +342,11 @@ spin up) of the fermionic sub-system:</p>
 </div>
 <p>We observe here that the action of this operator is only possible
 between specific configurations. As an exemple, let us consider the
-first line that shows a connexion between the $ <a href="#id17"><span class="problematic" id="id18">:raw-latex:`\kappa  `$
-states $|0 :raw-latex:`</span></a>rangle  <cite>:raw-latex:</cite>leftrightarrow <cite>| 3
-:raw-latex:</cite>rangle <a href="#id19"><span class="problematic" id="id20">`</span></a>$. These two states are actually given by |
-kappa=0 &gt; = [0 0 1 1 0 0] and | kappa=3 &gt; = [0 0 0 1 1 0]. Here, we
-clearly see that the action of the operator is well encoded:</p>
+first line that shows a connexion between the <span class="math notranslate nohighlight">\(\kappa\)</span> states
+<span class="math notranslate nohighlight">\(|0 \rangle \leftrightarrow | 3 \rangle\)</span>. These two states are
+actually given by | kappa=0 &gt; = [0 0 1 1 0 0] and | kappa=3 &gt; = [0 0 0
+1 1 0]. Here, we clearly see that the action of the operator is well
+encoded:</p>
 <ul class="simple">
 <li><p>The electron hops between the 0th and the 2nd spin-orbitals.</p></li>
 <li><p>There is no change in the occupation number of the bosonic modes
@@ -382,7 +354,7 @@ between these two states.</p></li>
 </ul>
 </section>
 <section id="step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis">
-<h2>Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis<a class="headerlink" href="#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis" title="Permalink to this heading"></a></h2>
+<h2>Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis<a class="headerlink" href="#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis" title="Link to this heading"></a></h2>
 <p>In the hybrid part of the QuanNBody package, the bosonic anihilation
 operators <span class="math notranslate nohighlight">\(\hat{b}_p\)</span> can be built with a simple command line:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We compute here the b operator</span>
@@ -393,12 +365,11 @@ operators <span class="math notranslate nohighlight">\(\hat{b}_p\)</span> can be
 follows the way we order the modes in our many-body states. As an
 illustrative example, taking the following elements will return the
 associated many-body operators:</p>
-<center><p>b[p] $ <a href="#id21"><span class="problematic" id="id22">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{b}`_{p} $</p>
+<center><p>b[p] <span class="math notranslate nohighlight">\(\longrightarrow \hat{b}_{p}\)</span></p>
 </center><p>Note that we can easily build the associated creation operator by taking
 the tranposed version of each element such that</p>
-<center><p>b[p].T $
-<a href="#id23"><span class="problematic" id="id24">:raw-latex:`\longrightarrow `:raw-latex:`</span></a>hat{b}`_{p}^:raw-latex:<a href="#id25"><span class="problematic" id="id26">`</span></a>dagger  <a href="#id27"><span class="problematic" id="id28">`</span></a>$</p>
-</center><p><strong>Example of a bosonic anihilation operator :math:`hat{b}_0`:</strong></p>
+<center><p>b[p].T <span class="math notranslate nohighlight">\(\longrightarrow \hat{b}_{p}^\dagger\)</span></p>
+</center><p><strong>Example of a bosonic anihilation operator</strong> <span class="math notranslate nohighlight">\(\hat{b}_0\)</span> <strong>:</strong></p>
 <p>If we look at the element b[0], we get access to a sparse matrix
 representation of the bosonic anihilation operator <span class="math notranslate nohighlight">\(\hat{b}_0\)</span> in
 the hybrid many-body basis which encodes the desctruction of 1 boson in
@@ -428,20 +399,18 @@ the 0th mode:</p>
 </div>
 <p>We observe here that the action of this operator is only possible
 between specific configurations. As an exemple, let us consider the
-first element that shows a connexion between the $
-<a href="#id29"><span class="problematic" id="id30">:raw-latex:`\kappa  `$ states $|0
-:raw-latex:`</span></a>rangle  <cite>:raw-latex:</cite>leftrightarrow <cite>| 6
-:raw-latex:</cite>rangle <a href="#id31"><span class="problematic" id="id32">`</span></a>$. These two states are actually given by |
-kappa=0 &gt; = [0 0 1 1 0 0] and | kappa=6 &gt; = [1 0 1 1 0 0]. Here, we
-clearly see that the action of the operator is well encoded:</p>
+first element that shows a connexion between the <span class="math notranslate nohighlight">\(\kappa\)</span> states
+<span class="math notranslate nohighlight">\(|0 \rangle \leftrightarrow | 6 \rangle\)</span>. These two states are
+actually given by | kappa=0 &gt; = [0 0 1 1 0 0] and | kappa=6 &gt; = [1 0 1
+1 0 0]. Here, we clearly see that the action of the operator is well
+encoded:</p>
 <ul class="simple">
 <li><p>The two states are related by the creation/anhihilation of one boson
 in the 0th mode.</p></li>
 <li><p>There is no change in the fermionic occupation numbers of the
 spin-orbitals between the two states.</p></li>
 </ul>
-<p><strong>Last exemple with a counting :math:`hat{b}_1^dagger hat{b}_1`
-operator:</strong></p>
+<p><strong>Last exemple with a counting</strong> <span class="math notranslate nohighlight">\(\hat{b}_1^\dagger\hat{b}_1\)</span> <strong>operator:</strong></p>
 <p>Once all the <span class="math notranslate nohighlight">\(\hat{b}_p\)</span> are built, one can use these operators as
 building blocks for a wide possibilty of operators such as the
 <span class="math notranslate nohighlight">\(\hat{n}_p = \hat{b}^\dagger_p \hat{b}_p\)</span> counting one. As an

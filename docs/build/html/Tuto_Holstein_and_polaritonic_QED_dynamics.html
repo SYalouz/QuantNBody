@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=292eb321"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -73,9 +75,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#c-computing-time-dependent-observables-of-interest">1.C. Computing time-dependent observables of interest</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id57">2.A. Defining the parameters, and finding the Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#b-computing-time-independent-properties">2.B. Computing time-independent properties</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
@@ -114,34 +120,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="tuto-6-quantnbody-package-for-two-fermion-boson-models-hubbard-holstein-and-polaritonic-chemistry">
-<h1><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry<a class="headerlink" href="#tuto-6-quantnbody-package-for-two-fermion-boson-models-hubbard-holstein-and-polaritonic-chemistry" title="Permalink to this heading"></a></h1>
-<p><strong>Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024</strong></p>
+  <section id="tuto-6-quantnbody-package-for-two-fermion-boson-models-hubbard-holstein-and-polaritonic-chemistry">
+<h1><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry<a class="headerlink" href="#tuto-6-quantnbody-package-for-two-fermion-boson-models-hubbard-holstein-and-polaritonic-chemistry" title="Link to this heading"></a></h1>
+<p>Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import librairies</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">psi4</span>
@@ -156,9 +138,9 @@ January 2024</strong></p>
 can be calculated with two simple examples of systems composed of
 fermions and bosons interacting together.</p>
 <section id="example-1-hubbard-holstein-model">
-<h2>Example 1: Hubbard-Holstein model<a class="headerlink" href="#example-1-hubbard-holstein-model" title="Permalink to this heading"></a></h2>
+<h2>Example 1: Hubbard-Holstein model<a class="headerlink" href="#example-1-hubbard-holstein-model" title="Link to this heading"></a></h2>
 <blockquote>
-<div><a class="reference internal image-reference" href="_images/Holstein.png"><img alt="_images/Holstein.png" class="align-center" src="_images/Holstein.png" style="width: 300px;" /></a>
+<div><a class="reference internal image-reference" href="_images/Holstein.png"><img alt="_images/Holstein.png" class="align-center" src="_images/Holstein.png" style="width: 500px;" /></a>
 </div></blockquote>
 <p><strong>Fermionic Hubbard model:</strong></p>
 <p>In the local site basis, the Fermionic-Hubbard model Hamiltonian
@@ -167,11 +149,11 @@ fermions and bosons interacting together.</p>
 \[\hat{H}_{elec} = {\sum_{\langle i,j \rangle}^{N_{MO}} -t_{ij} \sum_{\sigma=\uparrow,\downarrow} (\hat{a}^\dagger_{j,\sigma}\hat{a}_{i,\sigma}+\hat{a}^\dagger_{i,\sigma}\hat{a}_{j,\sigma})} + \color{black}{
 \sum_i^{N_{MO}} U_{iiii} \hat{a}^\dagger_{i,\uparrow}\hat{a}_{i,\uparrow} \hat{a}^\dagger_{i,\downarrow}\hat{a}_{i,\downarrow}
 }\]</div>
-<div class="line-block">
-<div class="line">with: - <span class="math notranslate nohighlight">\(t_{ij}\)</span> the hopping terms between the pair of connected
-sites <span class="math notranslate nohighlight">\(\langle i, j \rangle\)</span>.</div>
-<div class="line">- <span class="math notranslate nohighlight">\(U_{iiii}\)</span> the local coulombic repulsion on site “<span class="math notranslate nohighlight">\(i\)</span>”.</div>
-</div>
+<p>with</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t_{ij}\)</span> the hopping terms between the pair of connected sites <span class="math notranslate nohighlight">\(\langle i, j \rangle\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(U_{iiii}\)</span> the local coulombic repulsion on site “<span class="math notranslate nohighlight">\(i\)</span>”.</p></li>
+</ul>
 <p>In contrast with the system presented in the tutoral ‘First Step’, we
 ignore here the expression of a chemical potential. This sub-part is
 completely described via the a_dagger_a operator.</p>
@@ -186,7 +168,7 @@ completely described via the a_dagger_a operator.</p>
 <p>with <span class="math notranslate nohighlight">\(\lambda_s\)</span> the coupling of each mode <span class="math notranslate nohighlight">\(s\)</span> with the
 fermionic sub-system.</p>
 <section id="a-defining-the-parameters-and-finding-the-hamiltonian">
-<h3>1.A. Defining the parameters, and finding the Hamiltonian<a class="headerlink" href="#a-defining-the-parameters-and-finding-the-hamiltonian" title="Permalink to this heading"></a></h3>
+<h3>1.A. Defining the parameters, and finding the Hamiltonian<a class="headerlink" href="#a-defining-the-parameters-and-finding-the-hamiltonian" title="Link to this heading"></a></h3>
 <p>If we choose the following number of constituants:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================================</span>
 <span class="c1"># Define the fermionic system</span>
@@ -287,7 +269,7 @@ functions of the package. Let’s take a look at some examples of what can
 be done!</p>
 </section>
 <section id="b-computing-time-independent-observables-of-interest">
-<h3>1.B. Computing time-independent observables of interest<a class="headerlink" href="#b-computing-time-independent-observables-of-interest" title="Permalink to this heading"></a></h3>
+<h3>1.B. Computing time-independent observables of interest<a class="headerlink" href="#b-computing-time-independent-observables-of-interest" title="Link to this heading"></a></h3>
 <p><strong>Ground state values:</strong></p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simply diagonalize the Hamiltonian</span>
 <span class="n">eig_energies_Holstein</span><span class="p">,</span> <span class="n">eig_vectors_Holstein</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">H_Holstein</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
@@ -308,8 +290,8 @@ degenerate.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bosonic mode 2 =&#39;</span><span class="p">,</span> <span class="n">occ_number_mode2</span> <span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">1</span> <span class="o">=</span> <span class="mf">0.01008950475957186</span>
-<span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.010089504759571915</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">1</span> <span class="o">=</span> <span class="mf">0.010089504759571901</span>
+<span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.010089504759571913</span>
 </pre></div>
 </div>
 <p><strong>Visualizing the GS WF in the many-body-basis:</strong></p>
@@ -322,20 +304,20 @@ degenerate.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-----------
  Coeff.     N-body state and index
 -------     ----------------------
-+0.68715   |00⟩ ⊗ |0110⟩    #3
 -0.68715   |00⟩ ⊗ |1001⟩    #2
--0.13356   |00⟩ ⊗ |1100⟩    #0
++0.68715   |00⟩ ⊗ |0110⟩    #3
 -0.13356   |00⟩ ⊗ |0011⟩    #5
--0.06871   |01⟩ ⊗ |0110⟩    #15
--0.06871   |10⟩ ⊗ |0110⟩    #9
+-0.13356   |00⟩ ⊗ |1100⟩    #0
 +0.06871   |01⟩ ⊗ |1001⟩    #14
 +0.06871   |10⟩ ⊗ |1001⟩    #8
-+0.01995   |01⟩ ⊗ |0011⟩    #17
+-0.06871   |01⟩ ⊗ |0110⟩    #15
+-0.06871   |10⟩ ⊗ |0110⟩    #9
 +0.01995   |10⟩ ⊗ |1100⟩    #6
-+0.00683   |11⟩ ⊗ |0110⟩    #27
++0.01995   |01⟩ ⊗ |0011⟩    #17
 -0.00683   |11⟩ ⊗ |1001⟩    #26
-+0.00676   |01⟩ ⊗ |1100⟩    #12
++0.00683   |11⟩ ⊗ |0110⟩    #27
 +0.00676   |10⟩ ⊗ |0011⟩    #11
++0.00676   |01⟩ ⊗ |1100⟩    #12
 </pre></div>
 </div>
 <p>Here we see that each state is decomposed as the tensor product of the
@@ -345,7 +327,7 @@ here, so 4 digits for the 4 associated SOs, with always 2 fermions since
 the number of fermionic particles remains unchanged).</p>
 </section>
 <section id="c-computing-time-dependent-observables-of-interest">
-<h3>1.C. Computing time-dependent observables of interest<a class="headerlink" href="#c-computing-time-dependent-observables-of-interest" title="Permalink to this heading"></a></h3>
+<h3>1.C. Computing time-dependent observables of interest<a class="headerlink" href="#c-computing-time-dependent-observables-of-interest" title="Link to this heading"></a></h3>
 <p>Once all the components have been obtained, all the time-dependent
 observables can be easily calculated. We need to calculate the evolution
 operator for each time step and use it to compute the observables of
@@ -434,11 +416,10 @@ occupancy number of each mode and fermionic molecular orbital.</p>
 <img alt="_images/Tuto_Holstein_and_polaritonic_QED_dynamics_32_1.png" src="_images/Tuto_Holstein_and_polaritonic_QED_dynamics_32_1.png" />
 </section>
 </section>
-</section>
 <section id="example-2-polaritonic-chemistry">
-<h1>Example 2: Polaritonic chemistry<a class="headerlink" href="#example-2-polaritonic-chemistry" title="Permalink to this heading"></a></h1>
+<h2>Example 2: Polaritonic chemistry<a class="headerlink" href="#example-2-polaritonic-chemistry" title="Link to this heading"></a></h2>
 <blockquote>
-<div><a class="reference internal image-reference" href="_images/Cavity.png"><img alt="_images/Cavity.png" class="align-center" src="_images/Cavity.png" style="width: 300px;" /></a>
+<div><a class="reference internal image-reference" href="_images/Cavity.png"><img alt="_images/Cavity.png" class="align-center" src="_images/Cavity.png" style="width: 500px;" /></a>
 </div></blockquote>
 <p>The QuantNBody package makes it possible to simulate polaritonic
 chemistry: an electronic structure system (model or ab-initio) in
@@ -454,20 +435,16 @@ Hamiltonian.</p>
 <p><strong>Electronic (Fermi-Hubbard) Hamiltonian:</strong></p>
 <div class="math notranslate nohighlight">
 \[\hat{H}_{elec} = - t_0  \sum_{i\sigma} ( \hat{a}^\dagger_{i+1,\sigma} \hat{a}_{i \sigma}  + \hat{a}^\dagger_{i \sigma} \hat{a}_{i+1,\sigma} ) + U \sum_{i}   \hat{n}_{i,\uparrow}\hat{n}_{i,\downarrow}\]</div>
-<p>With in the local site basis: -
-$:raw-latex:<cite>hat{n}</cite><em>{i,:raw-latex:`sigma`} =
-:raw-latex:`hat{a}`^:raw-latex:`dagger`</em>{i:raw-latex:<cite>sigma</cite>}:raw-latex:<cite>hat{a}</cite><em>{i:raw-latex:`sigma`}
-$ the density of a spin-:math:`sigma` electron on site :math:`i`. -
-:math:`t_0` and :math:`U` the usual hopping and on-site repulsion
-constants. - The dipole operator of the system $:raw-latex:`hat{d}` =
-:raw-latex:`sum`i d_i (
-:raw-latex:`hat{n}`{i,:raw-latex:`uparrow`} +
-:raw-latex:`hat{n}`</em>{i,:raw-latex:<cite>downarrow</cite>} ) $</p>
+<p>With in the local site basis:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\hat{n}_{i,\sigma} = \hat{a}^\dagger_{i\sigma}\hat{a}_{i\sigma}\)</span> the density of a spin-<span class="math notranslate nohighlight">\(\sigma\)</span> electron on site <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_0\)</span> and <span class="math notranslate nohighlight">\(U\)</span> the usual hopping and on-site repulsion constants.</p></li>
+<li><p>The dipole operator of the system <span class="math notranslate nohighlight">\(\hat{d} = \sum_i d_i ( \hat{n}_{i,\uparrow} + \hat{n}_{i,\downarrow} )\)</span></p></li>
+</ul>
 <p><strong>Cavity as a bosonic bath:</strong></p>
 <div class="math notranslate nohighlight">
 \[\hat{H}_{bos} =  \sum_{\alpha} \omega_{c,\alpha} \hat{b}^\dagger_{\alpha} \hat{b}_{\alpha}\]</div>
-<p>Here, <span class="math notranslate nohighlight">\(\hat{b}_{\alpha}\)</span> and
-$:raw-latex:<cite>hat{b}`^:raw-latex:</cite>dagger`_{<a href="#id57"><span class="problematic" id="id58">:raw-latex:`\alpha`</span></a>} $
+<p>Here, <span class="math notranslate nohighlight">\(\hat{b}_{\alpha}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger_{\alpha}\)</span>
 represents the creation and annihilation operators for a cavity mode
 with frequency <span class="math notranslate nohighlight">\(\omega_{c,\alpha}\)</span>.</p>
 <p><strong>Fermion-boson interaction:</strong></p>
@@ -478,14 +455,16 @@ of the light-matter interaction; here we focus mostly on cases where
 <span class="math notranslate nohighlight">\(\gamma_{\alpha}\)</span> &gt; 0.05, where the system is typically considered
 to be in the strong-coupling regime. Note that in the following, every
 values will be expressed in <span class="math notranslate nohighlight">\(t_0\)</span> units (i.e., <span class="math notranslate nohighlight">\(t_0 = 1\)</span>).</p>
+<section id="id57">
+<h3>2.A. Defining the parameters, and finding the Hamiltonian<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
 <p>As a proof-of-principle, we consider as in the reference paper <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020)</a>,
 a half-filled four site Hubbard chain with an additional dipole coupled
 to a single photon cavity mode with frequency
-<span class="math notranslate nohighlight">\(\omega_{c,\alpha}= 1.028\)</span>. Here we consider $
-:raw-latex:<a href="#id59"><span class="problematic" id="id60">`</span></a>gamma <a href="#id61"><span class="problematic" id="id62">`</span></a>= 0.2$ for the light-matter coupling parameter,
-representing an ultrastrong coupling.</p>
+<span class="math notranslate nohighlight">\(\omega_{c,\alpha}= 1.028\)</span>. Here we consider <span class="math notranslate nohighlight">\(\gamma = 0.2\)</span>
+for the light-matter coupling parameter, representing an ultrastrong
+coupling.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================================</span>
 <span class="c1"># Define the fermionic system</span>
 <span class="c1"># ======================================</span>
@@ -582,17 +561,20 @@ basis, the operators, and finally the whole Hamiltonian of the system.</p>
                                                                                     <span class="n">nbody_basis_total_cavity</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="b-computing-time-independent-properties">
+<h3>2.B. Computing time-independent properties<a class="headerlink" href="#b-computing-time-independent-properties" title="Link to this heading"></a></h3>
 <p>Let’s now use all the previously calculated ingredients to find the FCI
 values obtained in reference <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina et al., Phys. Rev. Res., 2,
 023262
 (2020)</a>.</p>
 <p>Here, we focus on the case of a half-filled four-site Hubbard chain with
 an additional dipole coupled to a single photon cavity mode with
-frequency <span class="math notranslate nohighlight">\(\omega_{c,\alpha}= 1.028\)</span>. We consider here $
-<a href="#id63"><span class="problematic" id="id64">:raw-latex:`\gamma `= 0.2$ for the light-matter coupling parameter,
+frequency <span class="math notranslate nohighlight">\(\omega_{c,\alpha}= 1.028\)</span>. We consider here
+<span class="math notranslate nohighlight">\(\gamma= 0.2\)</span> for the light-matter coupling parameter,
 representing ultra-strong coupling. For ultra-strong coupling, we have
 considered that the maximum number of bosons would be
-:math:`N_{B}^{max} = 7`</span></a>. The values of the dipole in the site basis are
+<span class="math notranslate nohighlight">\(N_{B}^{max} = 7\)</span>. The values of the dipole in the site basis are
 taken here as <span class="math notranslate nohighlight">\(d=[-1.5,-0.5, 0.5, 1.5]\)</span>. All these parameters are
 well defined in the legend of Table 1 (page 3) of <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina et al.,
 Phys. Rev. Res., 2, 023262
@@ -626,13 +608,13 @@ where different case of coupling (weak, strong, and ultrastrong) are
 indicated. Here, it has been shown that the FCI value of the bosonic
 mode occupation number for the ultrastrong coupling (computed here as an
 example) is 8.69 × 10−3. Let’s calculate this value with the QuantNBody
-package, using the computed <span class="math notranslate nohighlight">\(\hat{b}\)</span> and
-$:raw-latex:<cite>hat{b}`^:raw-latex:</cite>dagger <a href="#id65"><span class="problematic" id="id66">`</span></a>$ operators :</p>
+package, using the computed <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span>
+operators :</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">occ_number_cavity</span> <span class="o">=</span> <span class="n">eig_vectors_cavity</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">b_dag_cavity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">b_cavity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">eig_vectors_cavity</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;occ_number : &#39;</span><span class="p">,</span> <span class="n">occ_number_cavity</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ_number</span> <span class="p">:</span>  <span class="mf">0.008692558807686284</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ_number</span> <span class="p">:</span>  <span class="mf">0.008692558807686324</span>
 </pre></div>
 </div>
 <p>Here we find again the FCI value of the FCI reference in <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina
@@ -646,10 +628,9 @@ Phys. Rev. Res., 2, 023262
 (page 3), the matter absorption cross section is given by :</p>
 <div class="math notranslate nohighlight">
 \[\sigma(\omega) = 4 \pi \frac{\omega}{c} Im \left( \sum_k \frac{ | \langle \psi_k | \hat{d}| \psi_0  \rangle |^2 } {(\omega_k - \omega_0) - \omega - i \eta }     \right)\]</div>
-<p>where $|:raw-latex:<cite>psi</cite>_k <a href="#id67"><span class="problematic" id="id68">:raw-latex:`\rangle `$ are many-body
-eigenstates of :math:`</span></a>hat{H}` with energy
-$:raw-latex:<cite>hbar `:raw-latex:</cite>omega`_k $ , <span class="math notranslate nohighlight">\(\omega\)</span> is the
-frequency of incident light, and <span class="math notranslate nohighlight">\(\eta = 0.005\)</span> is a (small)
+<p>where <span class="math notranslate nohighlight">\(|\psi_k \rangle\)</span> are many-body eigenstates of
+<span class="math notranslate nohighlight">\(\hat{H}\)</span> with energy <span class="math notranslate nohighlight">\(\hbar \omega_k\)</span> , <span class="math notranslate nohighlight">\(\omega\)</span> is
+the frequency of incident light, and <span class="math notranslate nohighlight">\(\eta= 0.005\)</span> is a (small)
 broadening parameter accounting for the finite lifetime of the state.
 Let’s compute the spectrum depicted in Fig 6.d of Appendix A (page 6) of
 the reference paper for the ultrastrong coupling case, using the
@@ -686,6 +667,8 @@ parameters define in the related legend.</p>
 <p>Here, we obtain the exact same spectrum than in the reference paper <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020)</a>.</p>
+</section>
+</section>
 </section>
 
 
