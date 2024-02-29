@@ -736,9 +736,9 @@ def build_hamiltonian_pauli_fierz ( h_fermion,
     H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[1] * fluc_dip_op_Y @ ( b[p].T + b[p] )  
     H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[2] * fluc_dip_op_Z @ ( b[p].T + b[p] )   
     
-    H_fermion_boson += 0.5 * ( lambda_coupling[0] * fluc_dip_op_X )**2. 
-    H_fermion_boson += 0.5 * ( lambda_coupling[1] * fluc_dip_op_Y )**2. 
-    H_fermion_boson += 0.5 * ( lambda_coupling[2] * fluc_dip_op_Z )**2. 
+    H_fermion_boson += 0.5 * lambda_coupling[0]**2 * fluc_dip_op_X @ fluc_dip_op_X
+    H_fermion_boson += 0.5 * lambda_coupling[1]**2 * fluc_dip_op_Y @ fluc_dip_op_Y
+    H_fermion_boson += 0.5 * lambda_coupling[2]**2 * fluc_dip_op_Z @ fluc_dip_op_Z
     
     return H_chemistry + H_boson + H_fermion_boson
 
@@ -789,8 +789,8 @@ def new_build_hamiltonian_pauli_fierz ( h_fermion,
                     H_chemistry += e_[p, q, r, s] * g_fermion[p, q, r, s] / 2.
                     
     fluc_dip_op_X =  dipole_operator_X - mean_dipole_op * scipy.sparse.identity(dim_H) 
-    fluc_dip_op_Y =  dipole_operator_Y - mean_dipole_op *  scipy.sparse.identity(dim_H)
-    fluc_dip_op_Z =  dipole_operator_Z - mean_dipole_op *  scipy.sparse.identity(dim_H)
+    fluc_dip_op_Y =  dipole_operator_Y - mean_dipole_op * scipy.sparse.identity(dim_H)
+    fluc_dip_op_Z =  dipole_operator_Z - mean_dipole_op * scipy.sparse.identity(dim_H)
     
     # Reminder : S_2 = S(S+1) and the total spin multiplicity is 2S+1
     # with S = the number of unpaired electrons x 1/2
@@ -813,9 +813,11 @@ def new_build_hamiltonian_pauli_fierz ( h_fermion,
     H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[1] * fluc_dip_op_Y @ ( b[p].T + b[p] )  
     H_fermion_boson += - np.sqrt(omega_cav/2.) * lambda_coupling[2] * fluc_dip_op_Z @ ( b[p].T + b[p] )   
     
-    H_fermion_boson += 0.5 * ( lambda_coupling[0] * fluc_dip_op_X )**2. 
-    H_fermion_boson += 0.5 * ( lambda_coupling[1] * fluc_dip_op_Y )**2. 
-    H_fermion_boson += 0.5 * ( lambda_coupling[2] * fluc_dip_op_Z )**2. 
+    Self_dip_term = (  lambda_coupling[0] * fluc_dip_op_X 
+                     + lambda_coupling[1] * fluc_dip_op_Y 
+                     + lambda_coupling[2] * fluc_dip_op_Z )
+    
+    H_fermion_boson += 0.5 * Self_dip_term @ Self_dip_term 
     
     return H_chemistry + H_boson + H_fermion_boson
 
