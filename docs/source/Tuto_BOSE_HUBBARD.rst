@@ -178,7 +178,7 @@ And we can finally compare all these results to the one provided by the
 .. code:: ipython3
 
     print("GS energy estimations ======================== ")
-    print( "With the all in one function", E_projection )
+    print( "With the all in one function", GS_energy )
     print( "With the projection method  ", E_projection )
     print( "With the RDMs method        ", E_with_RDMs )
 
