@@ -1,16 +1,15 @@
-*Tuto 5:* Hybrid Fermion-Boson Systems in QuantNBody
+*Tuto 5:* Hybrid Fermion-Boson Systems
 ====================================================
 
-Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024
+**Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024**
 
 Hybrid quantum many-body systems are prevalent in nature and they
 originate from the intricate interplay between electrons and bosons.
 These systems manifest, for example, when a molecular systems (or
 materials) interact with an external environment, incorporating photons
 and/or phonons. This is the case for exemple in polaritonic quantum
-chemistry (i.e., quantum electrodynamics), where the electronic
-structure of a molecule interacts with the photonic field of a cavity.
+chemistry, where the electronic structure of a molecule interacts with the photonic field of a cavity.
 Similarly, in condensed matter physics, the electronic degrees of
 freedom (or excitonic ones) experience perturbation owing to the
 presence of a vibrational phononic environment. From a theoretical point
@@ -265,7 +264,7 @@ If we look at the element a_dagger_a[0,2], we get access to a sparse
 matrix representation of the fermionic operator
 :math:`\hat{a}^\dagger_{0,\alpha} \hat{a}_{1,\alpha}` in the hybrid
 many-body basis which encodes the promotion of 1 electron from the the
-2nd spin orbital (second MO, spin up) to the oth spin orbital (first MO,
+2nd spin orbital (second MO, spin up) to the 0th spin orbital (first MO,
 spin up) of the fermionic sub-system:
 
 .. code:: ipython3
@@ -295,7 +294,7 @@ first line that shows a connexion between the :math:`\kappa` states
 :math:`|0 \rangle \leftrightarrow | 3 \rangle`. These two states are
 actually given by \| kappa=0 > = [0 0 1 1 0 0] and \| kappa=3 > = [0 0 0
 1 1 0]. Here, we clearly see that the action of the operator is well
-encoded:
+encoded as it generates the following modification:
 
 -  The electron hops between the 0th and the 2nd spin-orbitals.
 -  There is no change in the occupation number of the bosonic modes

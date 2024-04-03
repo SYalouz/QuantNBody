@@ -1,4 +1,3 @@
-
 .. figure:: logo_shadow.png
     :width: 800
 
@@ -32,25 +31,23 @@ The code includes various native functions and it is flexible enough to help use
   **A teaching-friendly package:** with QuantNBody, we want to provide a tool to help teach theoretical concepts in chemistry and physics associated with quantum many-body systems.
   Indeed, we believe that this package can be useful for pedagogical purposes and to help illustrate numerical methods for fermionic or bosonic systems.
 
-Framework of the package
-===========================
+.. Framework of the package
+.. ===========================
 
-The framework of the **QuantNbody** package lies in two fundamental ingredients.
-The first one is the creation of a **reference many-body vector basis** (based on a total number of quantum particles and modes/orbitals to fill)
-in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any
-particle-number conserving many-body operator which is: **the single-body hopping operators** :math:`a^\dagger_p a_q`.  Once these two ingredients have been created,
-the user can employ various pre-built functions in order to
+.. The framework of the **QuantNbody** package lies in two fundamental ingredients.
+.. The first one is the creation of a **reference many-body vector basis** (based on a total number of quantum particles and modes/orbitals to fill)
+.. in which second quantization operators can be represented. The second ingredient consists in creating a general tool that can help build any
+.. particle-number conserving many-body operator which is: **the single-body hopping operators** :math:`a^\dagger_p a_q`.  Once these two ingredients have been created,
+.. the user can employ various pre-built functions in order to
 
-  #. Construct different types of **many-body operators**.
+..   #. Construct different types of **many-body operators**.
 
-  #. Manipulate/visualize **quantum many-body states**.
-
-Beyond this, the QuantNBody package has also been designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.
-
+..   #. Manipulate/visualize **quantum many-body states**.
 
 Brief illustration of what is possible
 =======================================
 
+Beyond this, the QuantNBody package has also been designed to provide flexibility to experimented users to develop their own tools to implement/test their own methods.
 We provide below a non-exhaustive list of the various possibilities offered by the package:
 
   *  Visualizing the structure of any wavefunction in a given many-body basis (for fermionic and bosonic systems)

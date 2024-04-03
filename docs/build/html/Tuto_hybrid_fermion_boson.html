@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tuto 5: Hybrid Fermion-Boson Systems in QuantNBody &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>Tuto 5: Hybrid Fermion-Boson Systems &mdash; QuantNBody 1.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=292eb321"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" />
+    <link rel="next" title="Tuto 6: Two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" />
     <link rel="prev" title="Tuto 4: the Bose-Hubbard system" href="Tuto_BOSE_HUBBARD.html" /> 
 </head>
 
@@ -51,7 +51,6 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
@@ -67,14 +66,14 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#step-1-building-a-hybrid-many-body-basis">Step 1: Building a hybrid many-body basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#step-2-about-building-operators-in-the-hybrid-many-body-basis">Step 2: About building operators in the hybrid many-body basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis">Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis">Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html">Tuto 6: Two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
@@ -86,7 +85,6 @@
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
 </ul>
 
         </div>
@@ -103,7 +101,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</li>
+      <li class="breadcrumb-item active"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Tuto_hybrid_fermion_boson.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -113,17 +111,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="tuto-5-hybrid-fermion-boson-systems-in-quantnbody">
-<h1><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody<a class="headerlink" href="#tuto-5-hybrid-fermion-boson-systems-in-quantnbody" title="Link to this heading"></a></h1>
-<p>Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024</p>
+  <section id="tuto-5-hybrid-fermion-boson-systems">
+<h1><em>Tuto 5:</em> Hybrid Fermion-Boson Systems<a class="headerlink" href="#tuto-5-hybrid-fermion-boson-systems" title="Permalink to this heading"></a></h1>
+<p><strong>Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024</strong></p>
 <p>Hybrid quantum many-body systems are prevalent in nature and they
 originate from the intricate interplay between electrons and bosons.
 These systems manifest, for example, when a molecular systems (or
 materials) interact with an external environment, incorporating photons
 and/or phonons. This is the case for exemple in polaritonic quantum
-chemistry (i.e., quantum electrodynamics), where the electronic
-structure of a molecule interacts with the photonic field of a cavity.
+chemistry, where the electronic structure of a molecule interacts with the photonic field of a cavity.
 Similarly, in condensed matter physics, the electronic degrees of
 freedom (or excitonic ones) experience perturbation owing to the
 presence of a vibrational phononic environment. From a theoretical point
@@ -143,7 +140,7 @@ Before starting, let us import the package ;-)</p>
 </pre></div>
 </div>
 <section id="step-1-building-a-hybrid-many-body-basis">
-<h2>Step 1: Building a hybrid many-body basis<a class="headerlink" href="#step-1-building-a-hybrid-many-body-basis" title="Link to this heading"></a></h2>
+<h2>Step 1: Building a hybrid many-body basis<a class="headerlink" href="#step-1-building-a-hybrid-many-body-basis" title="Permalink to this heading"></a></h2>
 <p>Hybrid quantum many-body systems can formally be described by a hybrid
 Hilbert space <span class="math notranslate nohighlight">\(\mathcal{H}_{hyb}\)</span> composed of a set of
 electron-boson configurations
@@ -273,7 +270,7 @@ possible repartitions of the <span class="math notranslate nohighlight">\(N_{bos
 bosons in the <span class="math notranslate nohighlight">\(N_{mode}\)</span> modes have been scanned.</p>
 </section>
 <section id="step-2-about-building-operators-in-the-hybrid-many-body-basis">
-<h2>Step 2: About building operators in the hybrid many-body basis<a class="headerlink" href="#step-2-about-building-operators-in-the-hybrid-many-body-basis" title="Link to this heading"></a></h2>
+<h2>Step 2: About building operators in the hybrid many-body basis<a class="headerlink" href="#step-2-about-building-operators-in-the-hybrid-many-body-basis" title="Permalink to this heading"></a></h2>
 <p>In QuantNbody, to treat hybrid systems two types of many-body operators
 are considered as elementary bricks:</p>
 <p><strong>Fermionic hopping operators</strong> <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> <strong>:</strong>
@@ -297,7 +294,7 @@ practice that we create a matrix representation such that</p>
 =1}^{\dim(\mathcal{H}_{hyb})}  \langle \kappa' | \hat{O} | \kappa  \rangle  \; | \kappa'    \rangle\langle \kappa |\]</div>
 </section>
 <section id="step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis">
-<h2>Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis<a class="headerlink" href="#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis" title="Link to this heading"></a></h2>
+<h2>Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis<a class="headerlink" href="#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis" title="Permalink to this heading"></a></h2>
 <p>In the hybrid part of the QuanNBody package, the fermionic operators
 <span class="math notranslate nohighlight">\(\hat{a}^\dagger_{p,\sigma} \hat{a}_{q,\tau}\)</span> can be built with a
 simple command line:</p>
@@ -321,7 +318,7 @@ many-body operators:</p>
 matrix representation of the fermionic operator
 <span class="math notranslate nohighlight">\(\hat{a}^\dagger_{0,\alpha} \hat{a}_{1,\alpha}\)</span> in the hybrid
 many-body basis which encodes the promotion of 1 electron from the the
-2nd spin orbital (second MO, spin up) to the oth spin orbital (first MO,
+2nd spin orbital (second MO, spin up) to the 0th spin orbital (first MO,
 spin up) of the fermionic sub-system:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">a_dagger_a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
@@ -346,7 +343,7 @@ first line that shows a connexion between the <span class="math notranslate nohi
 <span class="math notranslate nohighlight">\(|0 \rangle \leftrightarrow | 3 \rangle\)</span>. These two states are
 actually given by | kappa=0 &gt; = [0 0 1 1 0 0] and | kappa=3 &gt; = [0 0 0
 1 1 0]. Here, we clearly see that the action of the operator is well
-encoded:</p>
+encoded as it generates the following modification:</p>
 <ul class="simple">
 <li><p>The electron hops between the 0th and the 2nd spin-orbitals.</p></li>
 <li><p>There is no change in the occupation number of the bosonic modes
@@ -354,7 +351,7 @@ between these two states.</p></li>
 </ul>
 </section>
 <section id="step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis">
-<h2>Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis<a class="headerlink" href="#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis" title="Link to this heading"></a></h2>
+<h2>Step 3: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis<a class="headerlink" href="#step-3-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis" title="Permalink to this heading"></a></h2>
 <p>In the hybrid part of the QuanNBody package, the bosonic anihilation
 operators <span class="math notranslate nohighlight">\(\hat{b}_p\)</span> can be built with a simple command line:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We compute here the b operator</span>
@@ -459,7 +456,7 @@ number list as follows</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Tuto_BOSE_HUBBARD.html" class="btn btn-neutral float-left" title="Tuto 4: the Bose-Hubbard system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" class="btn btn-neutral float-right" title="Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Tuto_Holstein_and_polaritonic_QED_dynamics.html" class="btn btn-neutral float-right" title="Tuto 6: Two fermion-boson models: Hubbard-Holstein and polaritonic chemistry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
