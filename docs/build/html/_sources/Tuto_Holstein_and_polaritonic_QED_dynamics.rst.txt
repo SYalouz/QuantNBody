@@ -395,8 +395,8 @@ strong-coupling regime where :math:`\gamma_{\alpha}` > 0.05. Note that
 in the following, every values will be expressed in :math:`t_0` units
 (i.e., :math:`t_0 = 1`).
 
-2.B. Building the Hamiltonian
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2.A. Building the Hamiltonian
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As a proof-of-principle, we consider as in the reference paper `U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
