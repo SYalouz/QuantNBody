@@ -62,7 +62,7 @@ with :math:`\Omega_s` the frequency of each mode :math:`s`, and
 with :math:`\lambda_s` the coupling of each mode :math:`s` with the
 fermionic sub-system.
 
-1.A. Building he Hamiltonian
+1.A. Building the Hamiltonian
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If we choose the following number of constituants:
@@ -252,7 +252,7 @@ occupancies, the maximum being 4 bosons) and a fermionic part (2 MO
 here, so 4 digits for the 4 associated SOs, with always 2 fermions since
 the number of fermionic particles remains unchanged).
 
-1.C. Computing time-dependent observables of interest
+1.C. Computing time-dependent observables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once all the components have been obtained, all the time-dependent
@@ -395,7 +395,7 @@ strong-coupling regime where :math:`\gamma_{\alpha}` > 0.05. Note that
 in the following, every values will be expressed in :math:`t_0` units
 (i.e., :math:`t_0 = 1`).
 
-2.B. Defining the parameters, and finding the Hamiltonian
+2.B. Building the Hamiltonian
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As a proof-of-principle, we consider as in the reference paper `U.

@@ -69,9 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tuto 6: Two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#example-1-hubbard-holstein-model">Example 1: Hubbard-Holstein model</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#a-building-he-hamiltonian">1.A. Building he Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#a-building-the-hamiltonian">1.A. Building the Hamiltonian</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#b-computing-time-independent-observables">1.B. Computing time-independent observables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#c-computing-time-dependent-observables-of-interest">1.C. Computing time-dependent observables of interest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c-computing-time-dependent-observables">1.C. Computing time-dependent observables</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a><ul>
@@ -164,8 +164,8 @@ sites <span class="math notranslate nohighlight">\(\langle i, j \rangle\)</span>
 \[\hat{H}_{elec-bos} = \sum_{s} \lambda_s (\hat{b}^\dagger_{s} + \hat{b}_{s}) \sum_{\sigma=\uparrow,\downarrow}  \hat{a}^\dagger_{s,\sigma}\hat{a}_{s,\sigma}\]</div>
 <p>with <span class="math notranslate nohighlight">\(\lambda_s\)</span> the coupling of each mode <span class="math notranslate nohighlight">\(s\)</span> with the
 fermionic sub-system.</p>
-<section id="a-building-he-hamiltonian">
-<h3>1.A. Building he Hamiltonian<a class="headerlink" href="#a-building-he-hamiltonian" title="Permalink to this heading"></a></h3>
+<section id="a-building-the-hamiltonian">
+<h3>1.A. Building the Hamiltonian<a class="headerlink" href="#a-building-the-hamiltonian" title="Permalink to this heading"></a></h3>
 <p>If we choose the following number of constituants:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================================</span>
 <span class="c1"># Define the fermionic system</span>
@@ -321,8 +321,8 @@ occupancies, the maximum being 4 bosons) and a fermionic part (2 MO
 here, so 4 digits for the 4 associated SOs, with always 2 fermions since
 the number of fermionic particles remains unchanged).</p>
 </section>
-<section id="c-computing-time-dependent-observables-of-interest">
-<h3>1.C. Computing time-dependent observables of interest<a class="headerlink" href="#c-computing-time-dependent-observables-of-interest" title="Permalink to this heading"></a></h3>
+<section id="c-computing-time-dependent-observables">
+<h3>1.C. Computing time-dependent observables<a class="headerlink" href="#c-computing-time-dependent-observables" title="Permalink to this heading"></a></h3>
 <p>Once all the components have been obtained, all the time-dependent
 observables can be easily calculated. We need to calculate the evolution
 operator for each time step and use it to compute the observables of
