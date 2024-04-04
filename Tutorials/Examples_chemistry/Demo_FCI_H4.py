@@ -1,23 +1,31 @@
 # ==========================================================================================
 # ==========================================================================================
-# 
-# A code to demonstrate how to implement a FCI method with 
+#  .d88888b.                             888    888b    888 888888b.                 888          
+# d88P" "Y88b                            888    8888b   888 888  "88b                888          
+# 888     888                            888    88888b  888 888  .88P                888          
+# 888     888 888  888  8888b.  88888b.  888888 888Y88b 888 8888888K.   .d88b.   .d88888 888  888 
+# 888     888 888  888     "88b 888 "88b 888    888 Y88b888 888  "Y88b d88""88b d88" 888 888  888 
+# 888 Y8b 888 888  888 .d888888 888  888 888    888  Y88888 888    888 888  888 888  888 888  888 
+# Y88b.Y8b88P Y88b 888 888  888 888  888 Y88b.  888   Y8888 888   d88P Y88..88P Y88b 888 Y88b 888 
+#  "Y888888"   "Y88888 "Y888888 888  888  "Y888 888    Y888 8888888P"   "Y88P"   "Y88888  "Y88888 
+#        Y8b                                                                                  888 
+# ====================================================================================== Y8b d88P 
+#======================================================================================== "Y88P"  
+#
+# A sample code to demonstrate how to implement a FCI method with 
 # the QuantNBody package on the H4 molecule.
 # The results are compared to the FCI method already implemented in the
 # Psi4 quantum chemistry package.
 #
-# Author : Saad Yalouz
+# Author : Saad Yalouz 
 # ==========================================================================================
-# ==========================================================================================
+# ==========================================================================================   
 
 import numpy as np 
 import psi4     
 import math
 import scipy 
-import matplotlib.pyplot as plt
-import sys 
-sys.path.append('../')
-
+import matplotlib.pyplot as plt 
 import quantnbody as qnb
 
 def RUN_FCI_PSI4( string_geo,
