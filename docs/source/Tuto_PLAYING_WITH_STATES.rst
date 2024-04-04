@@ -295,7 +295,7 @@ reference wavefunction. For this, we will consider implementing a
 singlet excitation over an initial configuration to produce the final
 state
 
-.. math::  | \Psi \rangle = (a^\dagger_{3,\alpha}a_{2,\alpha} + a^\dagger_{3,\beta}a_{2,\beta})| 11110000\rangle / \sqrt{2}
+.. math::  | \Psi \rangle = (a^\dagger_{2,\alpha}a_{1,\alpha} + a^\dagger_{2,\beta}a_{1,\beta})| 11110000\rangle / \sqrt{2}
 
 This is very easy to implement with the QuantNBody package. In this
 case, as shown below, the second quantization algebra can be very
