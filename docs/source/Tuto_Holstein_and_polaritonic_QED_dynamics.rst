@@ -8,12 +8,9 @@ January 2024**
 
     # Import librairies 
     import numpy as np 
-    import psi4     
-    import math
     import scipy 
     import matplotlib.pyplot as plt
     import quantnbody as qnb
-    from scipy.constants import c
 
 In this second QuantNBody tutorial on hybrid models, we’ll explore what
 can be calculated with two simple examples of systems composed of
