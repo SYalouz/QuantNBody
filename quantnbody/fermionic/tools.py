@@ -1587,31 +1587,36 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
 def build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local ):
     """
-    Create a matrix representation of the local spin operators s_2, s_z and s_plus
-    in the many-body basis for a local set of  orbitals attached to a "molecular fragment".
+    Create a matrix representation of the spin operators s2, s_z and s_plus 
+    in the many-body basis projected into a local basis defined by list_mo_local. 
 
     Parameters
     ----------
     a_dagger_a : array
-        matrix representation of the a_dagger_a operator in the many-body basis.
-    list_mo_local : array
-        List of molecular orbital indices belonging to fragment of interest
+        a_dagger_a operator.
+    list_mo_local : list
+        indices of the local Molecular Orbitals.
 
     Returns
     -------
-    s2_local  : array
-        matrix representation of the local s_2 operator in the many-body basis.
+    s2_local : array
+        matrix representation of the s2_local operator (local spin squared) in the many-body basis.
+    s_z_local : array
+        matrix representation of the s_z_local operator (local spin projection) in the many-body basis.
+    s_plus_local : array
+        matrix representation of the s_plus_local operator (local spin ladder up) in the many-body basis.
 
     """
     dim_H = np.shape(a_dagger_a[0, 0].A)[0]
-    s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
-    s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
+    s_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
+    s_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))
+    
     for p in list_mo_local:
-        s_plus += a_dagger_a[2 * p, 2 * p + 1]
-        s_z += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
-    s2_local = s_plus @ s_plus.T + s_z @ s_z - s_z
+        s_plus_local += a_dagger_a[2 * p, 2 * p + 1]
+        s_z_local += (a_dagger_a[2 * p, 2 * p] - a_dagger_a[2 * p + 1, 2 * p + 1]) / 2.
+    s2_local = s_plus_local @ s_plus_local.T + s_z_local @ s_z_local - s_z_local
 
-    return s2_local, s_z, s_plus
+    return s2_local, s_z_local, s_plus_local
 
 
 def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
@@ -1679,6 +1684,165 @@ def build_spin_subspaces( S2_local, S2_local_target ):
     Projector_spin_subspace  =  Set_vectors @ Set_vectors.T
 
     return Projector_spin_subspace
+
+# =============================================================================
+#  SPIN-ORBIT OPERATORS
+# =============================================================================
+
+def build_local_l2_lz_lplus_operator(a_dagger_a, list_mo_local, l_local, list_l_local):
+    """
+    Create a matrix representation of the angular momentum operators l2, l_z and l_plus
+    in the many-body basis projected into a local basis defined by list_mo_local. 
+
+    Parameters
+    ----------
+    a_dagger_a : array
+        a_dagger_a operator.
+    list_mo_local : list
+        indices of the local Molecular Orbitals.
+    l_local : int
+        azimutal quantum number of the local MOs (1: p, 2: d, 3: f, 4: g)
+    list_l_local : list
+        local angular momentum associated to each local MO.
+
+    Returns
+    -------
+    l2_local : array
+        matrix representation of the l2_local operator (local angular momentum squared) in the many-body basis.
+    l_z_local : array
+        matrix representation of the l_z_local operator (local angular momentum projection) in the many-body basis.
+    l_plus_local : array
+        matrix representation of the l_plus_local operator (local angular momentum ladder up) in the many-body basis.
+
+    """
+    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    l_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
+    
+    l_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))
+    
+    for m in list_mo_local: # -l_loca < m < +l_local
+        for m2 in list_mo_local:
+            if m2 == m:
+                l_z_local += (list_l_local[m]) *( a_dagger_a[2 * m, 2 * m] + a_dagger_a[2 * m + 1, 2 * m + 1])  
+            elif m2 != m:
+                if np.abs(list_l_local[m] - list_l_local[m2]) != 1:
+                    pass
+                # Part for l_plus
+                elif list_l_local[m2] - list_l_local[m] == 1:
+                    l_plus_local += np.sqrt(l_local+list_l_local[m]+1) * np.sqrt(l_local - list_l_local[m]) * (a_dagger_a[2 * m2, 2 * m]
+                                                                                           + a_dagger_a[2*m2+1, 2*m+1])       
+            
+    l2_local = l_plus_local @ l_plus_local.T + l_z_local @ l_z_local - l_z_local
+    
+    return l2_local, l_z_local, l_plus_local
+
+def build_local_j2_jz_jplus_operator(a_dagger_a, list_mo_local, l_local, list_l_local):
+    """
+    Create a matrix representation of the total angular momentum operators j2, j_z and j_plus
+    in the many-body basis projected into a local basis defined by list_mo_local. 
+
+    Parameters
+    ----------
+    a_dagger_a : array
+        a_dagger_a operator.
+    list_mo_local : list
+        indices of the local Molecular Orbitals.
+    l_local : int
+        azimutal quantum number of the local MOs (1: p, 2: d, 3: f, 4: g)
+    list_l_local : list
+        local angular momentum associated to each local MO.
+
+    Returns
+    -------
+    j2_local : array
+        matrix representation of the j2_local operator (local total angular momentum squared) in the many-body basis.
+    j_z_local : array
+        matrix representation of the j_z_local operator (local total angular momentum projection) in the many-body basis.
+    j_plus_local : array
+        matrix representation of the j_plus_local operator (local total angular momentum ladder up) in the many-body basis.
+
+    """
+    s2_local, s_z_local, s_plus_local = build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local )
+    l2_local, l_z_local, l_plus_local = build_local_l2_lz_lplus_operator(a_dagger_a, list_mo_local,l_local, list_l_local)
+    
+    j_plus_local = l_plus_local + s_plus_local
+    j_z_local = l_z_local + s_z_local
+    
+    j2_local = j_plus_local @ j_plus_local.T + j_z_local @ j_z_local - j_z_local
+    
+    return j2_local, j_z_local, j_plus_local
+
+
+def build_local_spinorbit_lz(a_dagger_a, list_mo_local, l_local, list_l_local):
+    """
+    Create a matrix representation of the spin-orbit operator
+    in the many-body basis projected into a local basis defined by list_mo_local. 
+    It is defined using projection and ladder operators of spin "S" and angular momentum "L".
+    
+    H_SO = L_z @ S_z + 1/2 * (L_p @ S_p.T + L_p.T @ S_p)
+    
+    This is equivalent to build_local_spinorbit_j2().
+
+    Parameters
+    ----------
+    a_dagger_a : array
+        a_dagger_a operator.
+    list_mo_local : list
+        indices of the local Molecular Orbitals.
+    l_local : int
+        azimutal quantum number of the local MOs (1: p, 2: d, 3: f, 4: g)
+    list_l_local : list
+        local angular momentum associated to each local MO.
+
+    Returns
+    -------
+    H_SO : array
+        matrix representation of the local H_SO operator (local spin-orbit) in the many-body basis.
+
+    """
+    ### General formula
+    s2_local, s_z_local, s_plus_local = build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local )
+    l2_local, l_z_local, l_plus_local = build_local_l2_lz_lplus_operator(a_dagger_a, list_mo_local,l_local, list_l_local)
+    
+    H_SO = l_z_local @ s_z_local + (l_plus_local @ s_plus_local.T + l_plus_local.T @ s_plus_local) * 1/2
+    
+    return H_SO
+
+
+def build_local_spinorbit_j2(a_dagger_a, list_mo_local, l_local, list_l_local):
+    """
+    Create a matrix representation of the spin-orbit operator
+    in the many-body basis projected into a local basis defined by list_mo_local. 
+    It is defined using the squared operator of spin "S", angular momentum "L" and total angular momentum "J".
+    
+    L.S = 1/2 * (J^2 - S^2 - L^2)
+    
+    This is equivalent to build_local_spinorbit_lz().
+    
+    Parameters
+    ----------
+    a_dagger_a : array
+        a_dagger_a operator.
+    list_mo_local : list
+        indices of the local Molecular Orbitals.
+    l_local : int
+        azimutal quantum number of the local MOs (1: p, 2: d, 3: f, 4: g)
+    list_l_local : list
+        local angular momentum associated to each local MO.
+
+    Returns
+    -------
+    LS : array
+        matrix representation of the local LS operator (local spin-orbit) in the many-body basis.
+
+    """
+    s_2_local, s_z_local, s_plus_local = build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local )
+    l_2_local, l_z_local, l_plus_local = build_local_l2_lz_lplus_operator(a_dagger_a, list_mo_local,l_local, list_l_local)
+    j_2_local, j_z_local, j_plus_local = build_local_j2_jz_jplus_operator(a_dagger_a, list_mo_local,l_local, list_l_local)
+
+    LS = 1/2 * (j_2_local - s_2_local - l_2_local)
+
+    return LS
 
 
 # =============================================================================
@@ -2021,7 +2185,7 @@ def scalar_product_different_MO_basis_with_frozen_orbitals( Psi_A_MOB1,
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
 # =============================================================================
 
-def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
+def visualize_wft(WFT, nbody_basis, cutoff=0.005, ndets=8, atomic_orbitals=False):
     """
     Print the decomposition of a given input wavefunction in a many-body basis.
 
@@ -2033,6 +2197,8 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
         List of many-body states (occupation number states)
     cutoff           : array
         Cut off for the amplitudes retained (default is 0.005)
+    ndets            : int
+        Maximum number of printed determinants
     atomic_orbitals  : Boolean
         If True then instead of 0/1 for spin orbitals we get 0/alpha/beta/2 for atomic orbitals
 
@@ -2052,7 +2218,7 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, atomic_orbitals=False):
     list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
 
     return_string = f'\n\t{"-" * 11}\n\t Coeff.     N-body state and index \n\t{"-" * 7}     {"-" * 22}\n'
-    for index in list_sorted_index[0:8]:
+    for index in list_sorted_index[0:ndets]:
         state = states[index]
         True_index_state =  np.flatnonzero((nbody_basis == state).all(1))[0]
         if atomic_orbitals:
