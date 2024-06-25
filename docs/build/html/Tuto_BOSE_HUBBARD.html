@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tuto 4: the Bose-Hubbard system &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=292eb321"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tuto 5: Hybrid Fermion-Boson Systems" href="Tuto_hybrid_fermion_boson.html" />
+    <link rel="next" title="Tuto 5: Hybrid Fermion-Boson Systems in QuantNBody" href="Tuto_hybrid_fermion_boson.html" />
     <link rel="prev" title="Tuto 3: electronic structure Hamiltonian and spin operators" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html" /> 
 </head>
 
@@ -51,6 +51,7 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
@@ -76,8 +77,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#checking-the-implementation-comparing-different-ways-to-estimate-the-groundstate-energy">Checking the implementation : comparing different ways to estimate the groundstate energy</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html">Tuto 6: Two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
@@ -89,6 +90,7 @@
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
 </ul>
 
         </div>
@@ -116,11 +118,11 @@
            <div itemprop="articleBody">
              
   <section id="tuto-4-the-bose-hubbard-system">
-<h1><em>Tuto 4:</em> the Bose-Hubbard system<a class="headerlink" href="#tuto-4-the-bose-hubbard-system" title="Permalink to this heading"></a></h1>
+<h1><em>Tuto 4:</em> the Bose-Hubbard system<a class="headerlink" href="#tuto-4-the-bose-hubbard-system" title="Link to this heading"></a></h1>
 <p><strong>Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
 France - July 2022</strong></p>
 <section id="introduction-the-bose-hubbard-system">
-<h2>Introduction : the Bose-Hubbard system<a class="headerlink" href="#introduction-the-bose-hubbard-system" title="Permalink to this heading"></a></h2>
+<h2>Introduction : the Bose-Hubbard system<a class="headerlink" href="#introduction-the-bose-hubbard-system" title="Link to this heading"></a></h2>
 <p>The Bose-Hubbard Hamiltonian is defined in the site basis as follows</p>
 <div class="math notranslate nohighlight">
 \[H = \sum_{i,j} h_{ij} a^\dagger_i a_j + \sum_{i} U_{iiii}  a^\dagger_i a^\dagger_i a_i a_i ,\]</div>
@@ -152,7 +154,7 @@ defined like</p>
 <p>We show below how to build all these objects with QuantNBody.</p>
 </section>
 <section id="importing-the-required-libraries">
-<h2>Importing the required libraries<a class="headerlink" href="#importing-the-required-libraries" title="Permalink to this heading"></a></h2>
+<h2>Importing the required libraries<a class="headerlink" href="#importing-the-required-libraries" title="Link to this heading"></a></h2>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quantnbody</span> <span class="k">as</span> <span class="nn">qnb</span>
 <span class="kn">import</span> <span class="nn">scipy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -160,7 +162,7 @@ defined like</p>
 </div>
 </section>
 <section id="defining-the-basic-properties-of-the-system">
-<h2>Defining the basic properties of the system<a class="headerlink" href="#defining-the-basic-properties-of-the-system" title="Permalink to this heading"></a></h2>
+<h2>Defining the basic properties of the system<a class="headerlink" href="#defining-the-basic-properties-of-the-system" title="Link to this heading"></a></h2>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_mode</span>  <span class="o">=</span> <span class="mi">5</span> <span class="c1"># Number of modes</span>
 <span class="n">n_boson</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># Number of bosons</span>
 
@@ -183,7 +185,7 @@ defined like</p>
 </div>
 </section>
 <section id="building-the-essential-tools-for-the-quantnbody-package">
-<h2>Building the essential tools for the QuantNBody package<a class="headerlink" href="#building-the-essential-tools-for-the-quantnbody-package" title="Permalink to this heading"></a></h2>
+<h2>Building the essential tools for the QuantNBody package<a class="headerlink" href="#building-the-essential-tools-for-the-quantnbody-package" title="Link to this heading"></a></h2>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Building the many-body basis</span>
 <span class="n">nbodybasis</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span> <span class="n">n_mode</span><span class="p">,</span> <span class="n">n_boson</span> <span class="p">)</span>
 
@@ -193,7 +195,7 @@ defined like</p>
 </div>
 </section>
 <section id="all-in-one-function">
-<h2>All-in-one function<a class="headerlink" href="#all-in-one-function" title="Permalink to this heading"></a></h2>
+<h2>All-in-one function<a class="headerlink" href="#all-in-one-function" title="Link to this heading"></a></h2>
 <p>We define below an “all-in-one” function that returns :</p>
 <ul class="simple">
 <li><p>Bose-Hubbard Hamiltonian</p></li>
@@ -220,7 +222,7 @@ defined like</p>
 </div>
 </section>
 <section id="applying-the-function-to-get-information-from-the-system">
-<h2>Applying the function to get information from the system<a class="headerlink" href="#applying-the-function-to-get-information-from-the-system" title="Permalink to this heading"></a></h2>
+<h2>Applying the function to get information from the system<a class="headerlink" href="#applying-the-function-to-get-information-from-the-system" title="Link to this heading"></a></h2>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Hamiltonian</span><span class="p">,</span> <span class="n">GS_energy</span><span class="p">,</span> <span class="n">GS_WFT</span><span class="p">,</span> <span class="n">GS_one_rdm</span><span class="p">,</span> <span class="n">GS_two_rdm</span> <span class="o">=</span> <span class="n">Bose_hubbard_all_in_one</span><span class="p">(</span> <span class="n">h_tensor</span><span class="p">,</span>
                                                                                   <span class="n">U_tensor</span><span class="p">,</span>
                                                                                   <span class="n">nbodybasis</span><span class="p">,</span>
@@ -229,7 +231,7 @@ defined like</p>
 </div>
 </section>
 <section id="visualizing-the-resulting-wavefunction-in-the-many-body-basis">
-<h2>Visualizing the resulting wavefunction in the many-body basis<a class="headerlink" href="#visualizing-the-resulting-wavefunction-in-the-many-body-basis" title="Permalink to this heading"></a></h2>
+<h2>Visualizing the resulting wavefunction in the many-body basis<a class="headerlink" href="#visualizing-the-resulting-wavefunction-in-the-many-body-basis" title="Link to this heading"></a></h2>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qnb</span><span class="o">.</span><span class="n">bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">visualize_wft</span><span class="p">(</span> <span class="n">GS_WFT</span><span class="p">,</span> <span class="n">nbodybasis</span> <span class="p">)</span>
 <span class="nb">print</span><span class="p">()</span>
 </pre></div>
@@ -249,7 +251,7 @@ defined like</p>
 </div>
 </section>
 <section id="checking-the-implementation-comparing-different-ways-to-estimate-the-groundstate-energy">
-<h2>Checking the implementation : comparing different ways to estimate the groundstate energy<a class="headerlink" href="#checking-the-implementation-comparing-different-ways-to-estimate-the-groundstate-energy" title="Permalink to this heading"></a></h2>
+<h2>Checking the implementation : comparing different ways to estimate the groundstate energy<a class="headerlink" href="#checking-the-implementation-comparing-different-ways-to-estimate-the-groundstate-energy" title="Link to this heading"></a></h2>
 <p>In order to check if everything is correct, we can compare the resulting
 GS energy. First, let us evaluate it via the left/right projections on the Hamiltonian <span class="math notranslate nohighlight">\(\langle  \Psi | H |\Psi\rangle\)</span> as shown below</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">E_projection</span> <span class="o">=</span> <span class="n">GS_WFT</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Hamiltonian</span> <span class="o">@</span> <span class="n">GS_WFT</span> <span class="c1"># &lt;== Very simple and intuitive</span>
@@ -284,7 +286,7 @@ With the RDMs method         -202.257041610291
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html" class="btn btn-neutral float-left" title="Tuto 3: electronic structure Hamiltonian and spin operators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Tuto_hybrid_fermion_boson.html" class="btn btn-neutral float-right" title="Tuto 5: Hybrid Fermion-Boson Systems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Tuto_hybrid_fermion_boson.html" class="btn btn-neutral float-right" title="Tuto 5: Hybrid Fermion-Boson Systems in QuantNBody" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

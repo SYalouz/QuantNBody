@@ -300,7 +300,7 @@ encoded as it generates the following modification:
 -  There is no change in the occupation number of the bosonic modes
    between these two states.
 
-Step 3: Build the bosonic :math:`\hat{b}` and :math:`\hat{b}^\dagger` operators in the hybrid basis
+Step 4: Build the bosonic :math:`\hat{b}` and :math:`\hat{b}^\dagger` operators in the hybrid basis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the hybrid part of the QuanNBody package, the bosonic anihilation
