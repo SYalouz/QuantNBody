@@ -1,12 +1,13 @@
-Tuto 6: Two fermion-boson models: Hubbard-Holstein and polaritonic chemistry
+Tuto 6: Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and
+polaritonic chemistry
 ====================================================================
 
-Lucie Pepe - - Laboratoire de Chimie Quantique de Strasbourg, France -
-January 2024
+**Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
+January 2024**
 
 .. code:: ipython3
 
-    # Import librairies 
+    # Import libraries 
     import numpy as np 
     import scipy 
     import matplotlib.pyplot as plt
@@ -17,9 +18,15 @@ build two simple examples of hybrid systems composed of fermions and
 bosons interacting together.
 
 Example 1: Hubbard-Holstein model
----------------------------------
+=================================
 
-.. image::  Holstein.png 
+.. raw:: html
+
+   <center>
+
+.. raw:: html
+
+   </center>
 
 **Fermionic Hubbard model:**
 
@@ -28,39 +35,33 @@ In the local site basis, the Fermionic-Hubbard model Hamiltonian
 
 .. math::
 
-    
    \hat{H}_{elec} = {\sum_{\langle i,j \rangle}^{N_{MO}} -t_{ij} \sum_{\sigma=\uparrow,\downarrow} (\hat{a}^\dagger_{j,\sigma}\hat{a}_{i,\sigma}+\hat{a}^\dagger_{i,\sigma}\hat{a}_{j,\sigma})} + \color{black}{
    \sum_i^{N_{MO}} U_{iiii} \hat{a}^\dagger_{i,\uparrow}\hat{a}_{i,\uparrow} \hat{a}^\dagger_{i,\downarrow}\hat{a}_{i,\downarrow} 
    }
 
-| with: 
+with:
 
-- :math:`t_{ij}` the hopping terms between the pair of connected
-  sites :math:`\langle i, j \rangle`.
-| - :math:`U_{iiii}` the local coulombic repulsion on site “:math:`i`”.
+| - :math:`t_{ij}` the hopping terms between the pair of connected
+| sites :math:`\langle i, j \rangle`.
+
+- :math:`U_{iiii}` the local coulombic repulsion on site “:math:`i`”.
 
 **Adding the bosonic sub-part:**
 
-.. math::
-
-
-   \hat{H}_{bos} = \sum_{s} \Omega_s \hat{b}^\dagger_{s} \hat{b}_{s}
+.. math:: \hat{H}_{bos} = \sum_{s} \Omega_s \hat{b}^\dagger_{s} \hat{b}_{s}
 
 with :math:`\Omega_s` the frequency of each mode :math:`s`, and
 :math:`(\hat{b}^\dagger,\hat{b})` the bosonic operators.
 
 **Adding the bosonic-fermionic interaction:**
 
-.. math::
-
-
-   \hat{H}_{elec-bos} = \sum_{s} \lambda_s (\hat{b}^\dagger_{s} + \hat{b}_{s}) \sum_{\sigma=\uparrow,\downarrow}  \hat{a}^\dagger_{s,\sigma}\hat{a}_{s,\sigma}
+.. math:: \hat{H}_{elec-bos} = \sum_{s} \lambda_s (\hat{b}^\dagger_{s} + \hat{b}_{s}) \sum_{\sigma=\uparrow,\downarrow}  \hat{a}^\dagger_{s,\sigma}\hat{a}_{s,\sigma}
 
 with :math:`\lambda_s` the coupling of each mode :math:`s` with the
 fermionic sub-system.
 
-1.A. Building the Hamiltonian
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 1: Building the Hamiltonian
+--------------------------------
 
 If we choose the following number of constituants:
 
@@ -77,7 +78,7 @@ If we choose the following number of constituants:
     # ======================================
     N_b_max_Holstein = 4 # maximal number of bosons in the whole bosonic system 
     N_mode_Holstein  = 2 # number of bosonic modes 
-    list_bosons_Holstein = range(N_b_max_Holstein+1) # list of all possible number of bosons that can be distributed in the bosonic modes  
+    list_bosons_Holstein = [ n for n in range(N_b_max_Holstein+1) ] # list of all possible number of bosons that can be distributed in the bosonic modes
 
 One can directly use the implemented functions of the package to compute
 the associated nbody-basis of the hybrid system, as described
@@ -88,22 +89,21 @@ previously:
     # ==============================================
     # Build the hybrid many-body basis and operators
     # ==============================================
-    
-    # 1) Construct the basis 
+    # Construct the basis 
     nbody_basis_Holstein = qnb.hybrid_fermionic_bosonic.tools.build_nbody_basis(N_mode_Holstein,
                                                                                 list_bosons_Holstein,
                                                                                 N_MO_Holstein,
                                                                                 N_elec_Holstein)
     
-    # 2) Build the fermionic particle conserving operator 
+    # Build the fermionic particle conserving operator 
     a_dagger_a_Holstein = qnb.hybrid_fermionic_bosonic.tools.build_fermion_operator_a_dagger_a(nbody_basis_Holstein,
                                                                                                N_mode_Holstein)
     
-    # 3) Build the bosonic creation (particle non-conserving) operator 
+    # Build the bosonic creation (particle non-conserving) operator 
     b_Holstein = qnb.hybrid_fermionic_bosonic.tools.build_boson_anihilation_operator_b(nbody_basis_Holstein,
                                                                                        N_mode_Holstein)
     
-    # 4) Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation (particle non-conserving) operator 
+    # Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation (particle non-conserving) operator 
     b_dag_Holstein = []
     for mode in range(N_mode_Holstein):
         b_dag_Holstein += [b_Holstein[mode].T]
@@ -117,7 +117,6 @@ first define all the parameters.
     # ====================
     # Define parameters
     # ====================
-    
     t_val      = 1    # hopping term
     U_val      = 10   # local coulombic repulsion
     omega_val  = 10.0 # frequency, same for each mode
@@ -132,46 +131,39 @@ two-electron integrals of the fermionic-Hubbard part of the system.
     # ======================
     # Fermionic Hamiltonian
     # ======================
-    
     t_  = np.zeros((N_MO_Holstein,N_MO_Holstein))
-    U_  = np.zeros((N_MO_Holstein,N_MO_Holstein,N_MO_Holstein,N_MO_Holstein))
-    
+    U_  = np.zeros((N_MO_Holstein,N_MO_Holstein,N_MO_Holstein,N_MO_Holstein)) 
     for i in range(N_MO_Holstein): 
         U_[i,i,i,i]  =  U_val  # Local coulombic repulsion 
-        
         for j in range(i+1,N_MO_Holstein): 
             t_[i,j]  = t_[j,i] = - t_val  # Hopping constants
-    
-    h_fermionic = t_   # Global one-body matrix in the spin orbital basis
-    
+            
     # ====================================
     # Bosonic and interaction Hamiltonian
     # ====================================
-    
     # Frequency of the modes in a matrix shape (here we have 2 modes)
     omega_values = [omega_val, omega_val]
     h_boson      = np.zeros((len(omega_values), len(omega_values)))
     np.fill_diagonal(h_boson, omega_values)
-
 
 Nevertheless, this model is already implemented in the package. One can
 just directly compute the whole Hamiltonian with the following line :
 
 .. code:: ipython3
 
-    H_Holstein = qnb.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_holstein(h_fermionic,
-                                            U_, 
-                                            a_dagger_a_Holstein,
-                                            h_boson,
-                                            b_Holstein,
-                                            Coupling_fermion_boson, 
-                                            nbody_basis_Holstein) 
+    H_Holstein = qnb.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_holstein( t_,
+                                                                                        U_, 
+                                                                                        a_dagger_a_Holstein,
+                                                                                        h_boson,
+                                                                                        b_Holstein,
+                                                                                        Coupling_fermion_boson, 
+                                                                                        nbody_basis_Holstein) 
 
 Now we have the Hamiltonian, we can compute differentproperties of the
 systems. Let’s take a look at some examples of what can be done!
 
-1.B. Computing time-independent observables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 2: Computing time-independent observables
+----------------------------------------------
 
 **Ground state values:**
 
@@ -182,14 +174,13 @@ systems. Let’s take a look at some examples of what can be done!
     print('Energies =', eig_energies_Holstein[:4] )
 
 
-
 .. parsed-literal::
 
     Energies = [-0.58872733 -0.2        -0.2        -0.2       ]
 
 
-We see here that we obtain one GS and 3 subsequent ES that are
-degenerate.
+We obtain here the groundstate energy and three subsequent degenerate
+excited states energies.
 
 **Occupation numbers:**
 
@@ -199,15 +190,14 @@ degenerate.
     occ_number_mode1 = eig_vectors_Holstein[:,0].T @ b_dag_Holstein[0] @ b_Holstein[0] @ eig_vectors_Holstein[:,0]
     occ_number_mode2 = eig_vectors_Holstein[:,0].T @ b_dag_Holstein[1] @ b_Holstein[1] @ eig_vectors_Holstein[:,0]
     
-    print('bosonic mode 1 =', occ_number_mode1 )
-    print('bosonic mode 2 =', occ_number_mode2 )
-
+    print('Occ bosonic mode 1 =', occ_number_mode1 )
+    print('Occ bosonic mode 2 =', occ_number_mode2 )
 
 
 .. parsed-literal::
 
-    bosonic mode 1 = 0.01008950475957189
-    bosonic mode 2 = 0.010089504759571898
+    Occ bosonic mode 1 = 0.01008950475957189
+    Occ bosonic mode 2 = 0.010089504759571898
 
 
 **Visualizing the GS WF in the many-body-basis:**
@@ -223,34 +213,34 @@ degenerate.
 .. parsed-literal::
 
     
-        -----------
-         Coeff.     N-body state and index 
-        -------     ----------------------
-        -0.68715   |00⟩ ⊗ |1001⟩    #2 
-        +0.68715   |00⟩ ⊗ |0110⟩    #3 
-        -0.13356   |00⟩ ⊗ |0011⟩    #5 
-        -0.13356   |00⟩ ⊗ |1100⟩    #0 
-        +0.06871   |01⟩ ⊗ |1001⟩    #14 
-        +0.06871   |10⟩ ⊗ |1001⟩    #8 
-        -0.06871   |01⟩ ⊗ |0110⟩    #15 
-        -0.06871   |10⟩ ⊗ |0110⟩    #9 
-        +0.01995   |01⟩ ⊗ |0011⟩    #17 
-        +0.01995   |10⟩ ⊗ |1100⟩    #6 
-        -0.00683   |11⟩ ⊗ |1001⟩    #26 
-        +0.00683   |11⟩ ⊗ |0110⟩    #27 
-        +0.00676   |10⟩ ⊗ |0011⟩    #11 
-        +0.00676   |01⟩ ⊗ |1100⟩    #12 
+    	-----------
+    	 Coeff.     N-body state and index 
+    	-------     ----------------------
+    	-0.68715   |00⟩ ⊗ |1001⟩    #2 
+    	+0.68715   |00⟩ ⊗ |0110⟩    #3 
+    	-0.13356   |00⟩ ⊗ |0011⟩    #5 
+    	-0.13356   |00⟩ ⊗ |1100⟩    #0 
+    	+0.06871   |01⟩ ⊗ |1001⟩    #14 
+    	+0.06871   |10⟩ ⊗ |1001⟩    #8 
+    	-0.06871   |01⟩ ⊗ |0110⟩    #15 
+    	-0.06871   |10⟩ ⊗ |0110⟩    #9 
+    	+0.01995   |01⟩ ⊗ |0011⟩    #17 
+    	+0.01995   |10⟩ ⊗ |1100⟩    #6 
+    	-0.00683   |11⟩ ⊗ |1001⟩    #26 
+    	+0.00683   |11⟩ ⊗ |0110⟩    #27 
+    	+0.00676   |10⟩ ⊗ |0011⟩    #11 
+    	+0.00676   |01⟩ ⊗ |1100⟩    #12 
     
 
 
 Here we see that each state is decomposed as the tensor product of the
 bosonic part (2 modes here with a different number of bosonic
-occupancies, the maximum being 4 bosons) and a fermionic part (2 MO
-here, so 4 digits for the 4 associated SOs, with always 2 fermions since
-the number of fermionic particles remains unchanged).
+occupancies, the maximum being 4 bosons) and a fermionic part (2 MOs
+here, so 4 digits for the 4 associated spinorbitals, with always 2
+fermions since the number of fermionic particles remains unchanged).
 
-1.C. Computing time-dependent observables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 3: Computing time-dependent observables
+--------------------------------------------
 
 Once all the components have been obtained, all the time-dependent
 observables can be easily calculated. We need to calculate the evolution
@@ -263,16 +253,14 @@ occupancy number of each mode and fermionic molecular orbital.
     # ====================
     # Define parameters
     # ====================
+    # Choose an initial state: a single hybrid configuration
+    many_body_state = [2,2,1,1,0,0] # Let's put 2 bosons in each mode, and the 2 electrons in the first MO orbital.
     
-    # 1) Choose a starting point : a state
-    many_body_state = [2,2,1,1,0,0] 
-    # Let's put 2 bosons in each mode, and the 2 electrons in the first MO orbital.
-    
-    # 2) Obtain the associated state in the qnb definition  
+    # Building the associated state in the qnb hybrid many-body basis  
     initial_state =  qnb.hybrid_fermionic_bosonic.tools.my_state( many_body_state,
                                                                   nbody_basis_Holstein)
-     
-    # 3) Define time-dependent parameters
+    
+    # Define time-dependent parameters
     Nb_points = 1000
     t_fin     = 1e2
     list_t    = np.linspace( start=0, stop=t_fin, num=Nb_points )
@@ -282,31 +270,27 @@ occupancy number of each mode and fermionic molecular orbital.
     # ==================================
     # Compute time-dependent populations
     # ==================================
-    
-    # Initial empty values
     pops_modes = np.zeros(( Nb_points, len(nbody_basis_Holstein[0])), dtype=float)
     dim_H = len(nbody_basis_Holstein)
-    
-    for time_index in range(Nb_points): 
-         
-         # Determine the evolution operator in the hybrid many-body basis 
+    for time_index in range(Nb_points):  
+        
+         # Building the evolution operator in the hybrid many-body basis 
          U = np.zeros((dim_H,dim_H),dtype=np.complex128)
          for k  in range(dim_H):
              U +=  np.exp( -1j * eig_energies_Holstein[k] * list_t[time_index] ) * np.outer( eig_vectors_Holstein[:,k],  eig_vectors_Holstein[:,k].conj())   
-         
+    
          # Determine the total wavefunction at each time step
-         WF_T = (U @ initial_state)
+         WF_T = U @ initial_state
     
          # Determine the occupation values in each site at each time-step
          for mode in range(len(nbody_basis_Holstein[0])):   
-        
+    
             if mode  <= N_mode_Holstein -1 :
                 # bosonic modes
                 pops_modes[time_index,mode] += (( np.conjugate(WF_T).T) @( b_dag_Holstein[mode].A @ b_Holstein[mode].A) @ WF_T ).real   
             else:
                 # fermionic spin-orbitals
                 pops_modes[time_index,mode] += (( np.conjugate(WF_T).T @ a_dagger_a_Holstein[mode- N_mode_Holstein,mode- N_mode_Holstein].A @ WF_T)).real
-            
 
 .. code:: ipython3
 
@@ -316,7 +300,7 @@ occupancy number of each mode and fermionic molecular orbital.
     
     fig, (ax) = plt.subplots( nrows=2, ncols=1, figsize=(8, 6), sharex=(True) )
     
-    # Bosonic population of the 2 modes 
+    # Bosonic population of the 2 local bosonic modes 
     ax[0].plot( list_t, pops_modes[:,0]  ,  color='yellow', label='1st bosonic mode')
     ax[0].plot( list_t, pops_modes[:,1] ,  color='black', label='2nd bosonic mode')
     ax[0].set_xlim(0, 70)
@@ -326,11 +310,11 @@ occupancy number of each mode and fermionic molecular orbital.
     ax[0].set_ylabel('Populations', size=14)
     ax[0].set_title('Population of bosonic modes', size=15)
     
-    # Fermionic populations of the 2 M0 orbitals 
+    # Fermionic populations of the two MOs 
     ax[1].plot( list_t, np.sum(pops_modes[:,2:], axis=1) ,  color='black', ls='dotted', label='total')
     ax[1].plot( list_t, pops_modes[:,2] + pops_modes[:,3] ,  color='red', label='1st MO')  
     ax[1].plot( list_t, pops_modes[:,4] + pops_modes[:,5] ,  color='blue', label='2nd MO')  
-     
+    
     ax[1].set_xlim(0, 70)
     ax[1].set_ylim(-0., 2.1)
     ax[1].grid(ls='--')
@@ -342,20 +326,27 @@ occupancy number of each mode and fermionic molecular orbital.
 
 
 
-.. image:: output_32_0.png
+.. image:: output_21_0.png
 
 
 Example 2: Polaritonic chemistry
----------------------------------
+================================
 
-.. image::  Cavity.png 
+.. raw:: html
+
+   <center>
+
+.. raw:: html
+
+   </center>
 
 The QuantNBody package makes it possible to simulate polaritonic
 chemistry: an electronic structure system (model or ab-initio) in
 interaction with the photonic modes of a cavity. Here, as a proof of
 principle, we’ll concentrate on reproducing the FCI (Full Configuration
-Interaction) results obtained in the following article: `U. Mordovina et
-al., Phys. Rev. Res., 2, 023262
+Interaction) results obtained in the following article
+
+`U. Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020) <https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262>`__.
 For this reason, the molecular Hamiltonian here will be a fermi-Hubbard
 Hamiltonian.
@@ -365,18 +356,18 @@ Let’s first define the parameters of the total Hamiltonian of the system
 
 **Electronic (Fermi-Hubbard) Hamiltonian:**
 
-.. math::  \hat{H}_{elec} = - t_0  \sum_{i\sigma} ( \hat{a}^\dagger_{i+1,\sigma} \hat{a}_{i \sigma}  + \hat{a}^\dagger_{i \sigma} \hat{a}_{i+1,\sigma} ) + U \sum_{i}   \hat{n}_{i,\uparrow}\hat{n}_{i,\downarrow} 
+.. math:: \hat{H}_{elec} = - t_0  \sum_{i\sigma} ( \hat{a}^\dagger_{i+1,\sigma} \hat{a}_{i \sigma}  + \hat{a}^\dagger_{i \sigma} \hat{a}_{i+1,\sigma} ) + U \sum_{i}   \hat{n}_{i,\uparrow}\hat{n}_{i,\downarrow}
 
-With in the local site basis: -
-:math:`\hat{n}_{i,\sigma} = \hat{a}^\dagger_{i\sigma}\hat{a}_{i\sigma}`
-the density of a spin-:math:`\sigma` electron on site :math:`i`. -
-:math:`t_0` and :math:`U` the usual hopping and on-site repulsion
+With in the local site basis:
+-:math:`\hat{n}_{i,\sigma} = \hat{a}^\dagger_{i\sigma}\hat{a}_{i\sigma}`
+the density of a spin-:math:`\sigma` electron on site :math:`i`.
+-:math:`t_0` and :math:`U` the usual hopping and on-site repulsion
 constants. - The dipole operator of the system
 :math:`\hat{d} =  \sum_i d_i ( \hat{n}_{i,\uparrow} + \hat{n}_{i,\downarrow} )`
 
 **Cavity as a bosonic bath:**
 
-.. math::  \hat{H}_{bos} =  \sum_{\alpha} \omega_{c,\alpha} \hat{b}^\dagger_{\alpha} \hat{b}_{\alpha} 
+.. math:: \hat{H}_{bos} =  \sum_{\alpha} \omega_{c,\alpha} \hat{b}^\dagger_{\alpha} \hat{b}_{\alpha}
 
 Here, :math:`\hat{b}_{\alpha}` and :math:`\hat{b}^\dagger_{\alpha}`
 represents the creation and annihilation operators for a cavity mode
@@ -384,7 +375,7 @@ with frequency :math:`\omega_{c,\alpha}`.
 
 **Fermion-boson interaction:**
 
-.. math::  \hat{H}_{elec-bos} =   \gamma_{\alpha} \omega_{c,\alpha} \hat{d} (\hat{b}^\dagger_{\alpha} + \hat{b}_{\alpha}) + \gamma_{\alpha}^2  \omega_{c,\alpha} \hat{d}^2 
+.. math:: \hat{H}_{elec-bos} =   \gamma_{\alpha} \omega_{c,\alpha} \hat{d} (\hat{b}^\dagger_{\alpha} + \hat{b}_{\alpha}) + \gamma_{\alpha}^2  \omega_{c,\alpha} \hat{d}^2
 
 Here, the coupling parameter :math:`\gamma_{\alpha}` defines the
 strength of the light-matter interaction; here we focus mostly on the
@@ -392,8 +383,8 @@ strong-coupling regime where :math:`\gamma_{\alpha}` > 0.05. Note that
 in the following, every values will be expressed in :math:`t_0` units
 (i.e., :math:`t_0 = 1`).
 
-2.A. Building the Hamiltonian
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 1: Building the Hamiltonian
+--------------------------------
 
 As a proof-of-principle, we consider as in the reference paper `U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
@@ -417,7 +408,7 @@ coupling.
     # ======================================
     N_b_max_cavity = 7 # maximal number of bosons in the whole bosonic system 
     N_mode_cavity  = 1 # number of bosonic modes 
-    list_bosons_cavity = range(N_b_max_cavity+1) # list of all the possible occupation number values that a bosonic mode can take 
+    list_bosons_cavity = [ n for n in range(N_b_max_cavity+1) ] # list of all the possible occupation number values that a bosonic mode can take 
     
     # ======================================
     # Values of the parameters
@@ -426,7 +417,7 @@ coupling.
     t_val_cavity = 0.5   # hopping constant
     gamma_cavity = 0.2   # coupling between bosons and fermions 
     freq_cavity  = 1.028 # cavity frequency 
-    broad_cavity = 0.005 # broadening parameter for the GS absoprtion spectrum
+    broad_cavity = 0.005 # broadening parameter for the GS absorption spectrum
 
 Let’s now use the QuantNobdy functions to build the hybrid many-body
 basis, the operators, and finally the whole Hamiltonian of the system.
@@ -436,46 +427,38 @@ basis, the operators, and finally the whole Hamiltonian of the system.
     # ============================================================
     # Build the hybrid many-body basis, operators and Hamiltonian
     # ============================================================
-    
-    # 1) Construct the basis 
+    # Construct the basis 
     nbody_basis_total_cavity  = qnb.hybrid_fermionic_bosonic.tools.build_nbody_basis(N_mode_cavity,
                                                                                      list_bosons_cavity,
                                                                                      N_MO_cavity,
                                                                                      N_elec_cavity )
     dim_H_cavity = len(nbody_basis_total_cavity)
     
-    # 2) Build the fermionic particle conserving operator 
+    # Build the fermionic particle conserving operator 
     a_dagger_a_cavity  = qnb.hybrid_fermionic_bosonic.tools.build_fermion_operator_a_dagger_a(nbody_basis_total_cavity, 
                                                                                               N_mode_cavity)
     
-    # 3) Build the bosonic creation (particle non-conserving) operator 
+    # Build the bosonic creation (particle non-conserving) operator 
     b_cavity  = qnb.hybrid_fermionic_bosonic.tools.build_boson_anihilation_operator_b(nbody_basis_total_cavity,
                                                                                       N_mode_cavity)
     
-    # 4) Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation (particle non-conserving) operator 
+    # Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation operator 
     b_dag_cavity= []
     for mode in range(N_mode_cavity):
         b_dag_cavity += [b_cavity[mode].T]
     
-    # 5) Determine the fermionic integrals
+    # Build the fermionic integrals
     t_cavity       = np.zeros((N_MO_cavity,N_MO_cavity))
     U_ferm_cavity  = np.zeros((N_MO_cavity,N_MO_cavity,N_MO_cavity,N_MO_cavity))
-    
     for i in range(N_MO_cavity): 
         U_ferm_cavity[i,i,i,i]  =  U_val_cavity  # Local coulombic repulsion 
-      
         for j in range(N_MO_cavity): 
             if j==i : 
                 t_cavity[i,j] = 0 
             elif j==i+1 or j == i-1 :
-                t_cavity[i,j] = t_cavity[j,i] = - t_val_cavity
+                t_cavity[i,j] = t_cavity[j,i] = - t_val_cavity  
     
-    h_ferm_cavity = t_cavity  
-    
-    # 6) Determine the dipole-related parameters 
-    
-    # values of the dipole integrals and dipole operator (same values than the reference)
-    d_op_cavity = scipy.sparse.csr_matrix((dim_H_cavity, dim_H_cavity)) 
+    # Building the dipole-related parameters  
     d_integrals = np.zeros((4,4), dtype = float)
     d_integrals[0,0] = -1.5
     d_integrals[1,1] = -0.5
@@ -483,18 +466,19 @@ basis, the operators, and finally the whole Hamiltonian of the system.
     d_integrals[3,3] = 1.5
     d_integrals = np.array(d_integrals)
     
-    # define them in a list for the implemented function of the package 
+    # Define them in a list for the implemented function of the QNB package 
     d_integrals_list    = np.diag(d_integrals)
     cut_off_integral    = 1e-8
     indices_d_integrals = np.transpose((abs(np.array(d_integrals))>cut_off_integral).nonzero())
     
-    # determine the dipole operator
+    # Build the dipole operator
+    d_op_cavity = scipy.sparse.csr_matrix((dim_H_cavity, dim_H_cavity)) 
     for indices in indices_d_integrals:
         p = indices[0]
         d_op_cavity +=  d_integrals[p,p] * (a_dagger_a_cavity[2*p,2*p] + a_dagger_a_cavity[2*p+1,2*p+1]) 
     
-    # 7) Construct the total Hamiltonian 
-    H_total_cavity  =  qnb.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_QED(h_ferm_cavity,
+    # Build the total Hamiltonian 
+    H_total_cavity  =  qnb.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_QED(t_cavity,
                                                                                         U_ferm_cavity, 
                                                                                         a_dagger_a_cavity, 
                                                                                         freq_cavity, 
@@ -503,9 +487,8 @@ basis, the operators, and finally the whole Hamiltonian of the system.
                                                                                         b_cavity, 
                                                                                         nbody_basis_total_cavity)
 
-
-2.B. Computing time-independent properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 2: Computing time-independent properties
+---------------------------------------------
 
 Let’s now use all the previously calculated ingredients to find the FCI
 values obtained in reference `U. Mordovina et al., Phys. Rev. Res., 2,
@@ -546,6 +529,8 @@ diagonalizing the Hamiltonian.
     Energies = [-1.41864225 -1.02867613 -1.02867613 -1.02867613]
 
 
+Energies = [-1.41864225 -1.02867613 -1.02867613 -1.02867613]
+
 Here we find the FCI value of the reference `U. Mordovina et al., Phys.
 Rev. Res., 2, 023262
 (2020) <https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262>`__.
@@ -570,7 +555,6 @@ operators :
     print('occ_number : ', occ_number_cavity)
 
 
-
 .. parsed-literal::
 
     occ_number :  0.008692558807686325
@@ -588,7 +572,7 @@ Phys. Rev. Res., 2, 023262
 (2020) <https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262>`__
 (page 3), the matter absorption cross section is given by :
 
-.. math::  \sigma(\omega) = 4 \pi \frac{\omega}{c} Im \left( \sum_k \frac{ | \langle \psi_k | \hat{d}| \psi_0  \rangle |^2 } {(\omega_k - \omega_0) - \omega - i \eta }     \right)  
+.. math:: \sigma(\omega) = 4 \pi \frac{\omega}{c} Im \left( \sum_k \frac{ | \langle \psi_k | \hat{d}| \psi_0  \rangle |^2 } {(\omega_k - \omega_0) - \omega - i \eta }     \right)
 
 where :math:`|\psi_k \rangle` are many-body eigenstates of
 :math:`\hat{H}` with energy :math:`\hbar \omega_k` , :math:`\omega` is
@@ -613,7 +597,7 @@ parameters define in the related legend.
             somme += elem
         cross_section.append( 4* np.pi * ( freq_spec / c) * somme.imag)
     
-    # Plotting ! 
+    # Plotting 
     fig, ( bx ) = plt.subplots( nrows=1, ncols=1, figsize=(6, 4), sharex=(True) )
     bx.grid(linestyle='--')   
     
@@ -623,9 +607,11 @@ parameters define in the related legend.
     plt.tight_layout() 
     plt.show()
 
-.. image:: output_52_1.png
+
+
+.. image:: output_31_0.png
+
 
 Here, we obtain the exact same spectrum than in the reference paper `U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020) <https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262>`__.
-
