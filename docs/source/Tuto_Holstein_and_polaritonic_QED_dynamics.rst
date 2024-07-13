@@ -1,6 +1,5 @@
-Tuto 6: Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and
-polaritonic chemistry
-====================================================================
+*Tuto 6:* Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry
+=========================================================================================
 
 **Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
 January 2024**
@@ -18,7 +17,7 @@ build two simple examples of hybrid systems composed of fermions and
 bosons interacting together.
 
 Example 1: Hubbard-Holstein model
-=================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. raw:: html
 
@@ -208,11 +207,9 @@ excited states energies.
     WFT_visualize = qnb.hybrid_fermionic_bosonic.tools.visualize_wft(WFT_GS,
                                                                      nbody_basis_Holstein,
                                                                      N_mode_Holstein) 
-
-
+                                                                     
 .. parsed-literal::
 
-    
     	-----------
     	 Coeff.     N-body state and index 
     	-------     ----------------------
@@ -230,8 +227,6 @@ excited states energies.
     	+0.00683   |11⟩ ⊗ |0110⟩    #27 
     	+0.00676   |10⟩ ⊗ |0011⟩    #11 
     	+0.00676   |01⟩ ⊗ |1100⟩    #12 
-    
-
 
 Here we see that each state is decomposed as the tensor product of the
 bosonic part (2 modes here with a different number of bosonic
@@ -330,7 +325,7 @@ occupancy number of each mode and fermionic molecular orbital.
 
 
 Example 2: Polaritonic chemistry
-================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. raw:: html
 

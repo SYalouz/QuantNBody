@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tuto 6: QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>Tuto 6: Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry &mdash; QuantNBody 1.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=292eb321"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Note on the structure of the package" href="remarks_structure.html" />
-    <link rel="prev" title="Tuto 5: Hybrid Fermion-Boson Systems in QuantNBody" href="Tuto_hybrid_fermion_boson.html" /> 
+    <link rel="prev" title="Tuto 5: Hybrid Fermion-Boson Systems" href="Tuto_hybrid_fermion_boson.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,7 +51,6 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
@@ -67,17 +66,17 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Tuto 6:</em> Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#example-1-hubbard-holstein-model">Example 1: Hubbard-Holstein model</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#a-defining-the-parameters-and-finding-the-hamiltonian">1.A. Defining the parameters, and finding the Hamiltonian</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#b-computing-time-independent-observables-of-interest">1.B. Computing time-independent observables of interest</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#c-computing-time-dependent-observables-of-interest">1.C. Computing time-dependent observables of interest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-building-the-hamiltonian">Step 1: Building the Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-computing-time-independent-observables">Step 2: Computing time-independent observables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-computing-time-dependent-observables">Step 3: Computing time-dependent observables</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id57">2.A. Defining the parameters, and finding the Hamiltonian</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#b-computing-time-independent-properties">2.B. Computing time-independent properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id57">Step 1: Building the Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-computing-time-independent-properties">Step 2: Computing time-independent properties</a></li>
 </ul>
 </li>
 </ul>
@@ -93,7 +92,6 @@
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
 </ul>
 
         </div>
@@ -110,7 +108,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</li>
+      <li class="breadcrumb-item active"><em>Tuto 6:</em> Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Tuto_Holstein_and_polaritonic_QED_dynamics.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -120,40 +118,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="tuto-6-quantnbody-package-for-two-fermion-boson-models-hubbard-holstein-and-polaritonic-chemistry">
-<h1><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry<a class="headerlink" href="#tuto-6-quantnbody-package-for-two-fermion-boson-models-hubbard-holstein-and-polaritonic-chemistry" title="Link to this heading"></a></h1>
+  <section id="tuto-6-hybrid-fermion-boson-hamiltonians-hubbard-holstein-and-polaritonic-chemistry">
+<h1><em>Tuto 6:</em> Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry<a class="headerlink" href="#tuto-6-hybrid-fermion-boson-hamiltonians-hubbard-holstein-and-polaritonic-chemistry" title="Permalink to this heading"></a></h1>
 <p><strong>Lucie Pepe - Laboratoire de Chimie Quantique de Strasbourg, France -
 January 2024</strong></p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import librairies</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import libraries</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">quantnbody</span> <span class="k">as</span> <span class="nn">qnb</span>
 </pre></div>
 </div>
-<p>In this second QuantNBody tutorial on hybrid models, we’ll explore what
-can be calculated with two simple examples of systems composed of
-fermions and bosons interacting together.</p>
+<p>In this second QuantNBody tutorial on hybrid models, we’ll show how to
+build two simple examples of hybrid systems composed of fermions and
+bosons interacting together.</p>
 <section id="example-1-hubbard-holstein-model">
-<h2>Example 1: Hubbard-Holstein model<a class="headerlink" href="#example-1-hubbard-holstein-model" title="Link to this heading"></a></h2>
-<blockquote>
-<div><a class="reference internal image-reference" href="_images/Holstein.png"><img alt="_images/Holstein.png" class="align-center" src="_images/Holstein.png" style="width: 500px;" /></a>
-</div></blockquote>
-<p><strong>Fermionic Hubbard model:</strong></p>
+<h2>Example 1: Hubbard-Holstein model<a class="headerlink" href="#example-1-hubbard-holstein-model" title="Permalink to this heading"></a></h2>
+<center></center><p><strong>Fermionic Hubbard model:</strong></p>
 <p>In the local site basis, the Fermionic-Hubbard model Hamiltonian
 <span class="math notranslate nohighlight">\(\hat{H}_{elec}\)</span> is usually expressed such that:</p>
 <div class="math notranslate nohighlight">
 \[\hat{H}_{elec} = {\sum_{\langle i,j \rangle}^{N_{MO}} -t_{ij} \sum_{\sigma=\uparrow,\downarrow} (\hat{a}^\dagger_{j,\sigma}\hat{a}_{i,\sigma}+\hat{a}^\dagger_{i,\sigma}\hat{a}_{j,\sigma})} + \color{black}{
 \sum_i^{N_{MO}} U_{iiii} \hat{a}^\dagger_{i,\uparrow}\hat{a}_{i,\uparrow} \hat{a}^\dagger_{i,\downarrow}\hat{a}_{i,\downarrow}
 }\]</div>
-<p>with</p>
+<p>with:</p>
+<div class="line-block">
+<div class="line">- <span class="math notranslate nohighlight">\(t_{ij}\)</span> the hopping terms between the pair of connected</div>
+<div class="line">sites <span class="math notranslate nohighlight">\(\langle i, j \rangle\)</span>.</div>
+</div>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(t_{ij}\)</span> the hopping terms between the pair of connected sites <span class="math notranslate nohighlight">\(\langle i, j \rangle\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(U_{iiii}\)</span> the local coulombic repulsion on site “<span class="math notranslate nohighlight">\(i\)</span>”.</p></li>
 </ul>
-<p>In contrast with the system presented in the tutoral ‘First Step’, we
-ignore here the expression of a chemical potential. This sub-part is
-completely described via the a_dagger_a operator.</p>
 <p><strong>Adding the bosonic sub-part:</strong></p>
 <div class="math notranslate nohighlight">
 \[\hat{H}_{bos} = \sum_{s} \Omega_s \hat{b}^\dagger_{s} \hat{b}_{s}\]</div>
@@ -161,11 +156,11 @@ completely described via the a_dagger_a operator.</p>
 <span class="math notranslate nohighlight">\((\hat{b}^\dagger,\hat{b})\)</span> the bosonic operators.</p>
 <p><strong>Adding the bosonic-fermionic interaction:</strong></p>
 <div class="math notranslate nohighlight">
-\[\hat{H}_{elec-bos} = \sum_{s} \lambda_s (\hat{b}^\dagger_{s} + \hat{b}_{s}) \sum_{\sigma=\uparrow,\downarrow} (\hat{a}^\dagger_{s,\sigma}\hat{a}_{s,\sigma})\]</div>
+\[\hat{H}_{elec-bos} = \sum_{s} \lambda_s (\hat{b}^\dagger_{s} + \hat{b}_{s}) \sum_{\sigma=\uparrow,\downarrow}  \hat{a}^\dagger_{s,\sigma}\hat{a}_{s,\sigma}\]</div>
 <p>with <span class="math notranslate nohighlight">\(\lambda_s\)</span> the coupling of each mode <span class="math notranslate nohighlight">\(s\)</span> with the
 fermionic sub-system.</p>
-<section id="a-defining-the-parameters-and-finding-the-hamiltonian">
-<h3>1.A. Defining the parameters, and finding the Hamiltonian<a class="headerlink" href="#a-defining-the-parameters-and-finding-the-hamiltonian" title="Link to this heading"></a></h3>
+<section id="step-1-building-the-hamiltonian">
+<h3>Step 1: Building the Hamiltonian<a class="headerlink" href="#step-1-building-the-hamiltonian" title="Permalink to this heading"></a></h3>
 <p>If we choose the following number of constituants:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================================</span>
 <span class="c1"># Define the fermionic system</span>
@@ -178,7 +173,7 @@ fermionic sub-system.</p>
 <span class="c1"># ======================================</span>
 <span class="n">N_b_max_Holstein</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># maximal number of bosons in the whole bosonic system</span>
 <span class="n">N_mode_Holstein</span>  <span class="o">=</span> <span class="mi">2</span> <span class="c1"># number of bosonic modes</span>
-<span class="n">list_bosons_Holstein</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_b_max_Holstein</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># list of all possible number of bosons that can be distributed in the bosonic modes</span>
+<span class="n">list_bosons_Holstein</span> <span class="o">=</span> <span class="p">[</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_b_max_Holstein</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">]</span> <span class="c1"># list of all possible number of bosons that can be distributed in the bosonic modes</span>
 </pre></div>
 </div>
 <p>One can directly use the implemented functions of the package to compute
@@ -187,22 +182,21 @@ previously:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ==============================================</span>
 <span class="c1"># Build the hybrid many-body basis and operators</span>
 <span class="c1"># ==============================================</span>
-
-<span class="c1"># 1) Construct the basis</span>
+<span class="c1"># Construct the basis</span>
 <span class="n">nbody_basis_Holstein</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span><span class="n">N_mode_Holstein</span><span class="p">,</span>
                                                                             <span class="n">list_bosons_Holstein</span><span class="p">,</span>
                                                                             <span class="n">N_MO_Holstein</span><span class="p">,</span>
                                                                             <span class="n">N_elec_Holstein</span><span class="p">)</span>
 
-<span class="c1"># 2) Build the fermionic particle conserving operator</span>
+<span class="c1"># Build the fermionic particle conserving operator</span>
 <span class="n">a_dagger_a_Holstein</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_fermion_operator_a_dagger_a</span><span class="p">(</span><span class="n">nbody_basis_Holstein</span><span class="p">,</span>
                                                                                            <span class="n">N_mode_Holstein</span><span class="p">)</span>
 
-<span class="c1"># 3) Build the bosonic creation (particle non-conserving) operator</span>
+<span class="c1"># Build the bosonic creation (particle non-conserving) operator</span>
 <span class="n">b_Holstein</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_boson_anihilation_operator_b</span><span class="p">(</span><span class="n">nbody_basis_Holstein</span><span class="p">,</span>
                                                                                    <span class="n">N_mode_Holstein</span><span class="p">)</span>
 
-<span class="c1"># 4) Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation (particle non-conserving) operator</span>
+<span class="c1"># Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation (particle non-conserving) operator</span>
 <span class="n">b_dag_Holstein</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_mode_Holstein</span><span class="p">):</span>
     <span class="n">b_dag_Holstein</span> <span class="o">+=</span> <span class="p">[</span><span class="n">b_Holstein</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">]</span>
@@ -214,7 +208,6 @@ first define all the parameters.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ====================</span>
 <span class="c1"># Define parameters</span>
 <span class="c1"># ====================</span>
-
 <span class="n">t_val</span>      <span class="o">=</span> <span class="mi">1</span>    <span class="c1"># hopping term</span>
 <span class="n">U_val</span>      <span class="o">=</span> <span class="mi">10</span>   <span class="c1"># local coulombic repulsion</span>
 <span class="n">omega_val</span>  <span class="o">=</span> <span class="mf">10.0</span> <span class="c1"># frequency, same for each mode</span>
@@ -227,22 +220,16 @@ two-electron integrals of the fermionic-Hubbard part of the system.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ======================</span>
 <span class="c1"># Fermionic Hamiltonian</span>
 <span class="c1"># ======================</span>
-
 <span class="n">t_</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_MO_Holstein</span><span class="p">,</span><span class="n">N_MO_Holstein</span><span class="p">))</span>
 <span class="n">U_</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_MO_Holstein</span><span class="p">,</span><span class="n">N_MO_Holstein</span><span class="p">,</span><span class="n">N_MO_Holstein</span><span class="p">,</span><span class="n">N_MO_Holstein</span><span class="p">))</span>
-
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_MO_Holstein</span><span class="p">):</span>
     <span class="n">U_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span>  <span class="n">U_val</span>  <span class="c1"># Local coulombic repulsion</span>
-
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">N_MO_Holstein</span><span class="p">):</span>
         <span class="n">t_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>  <span class="o">=</span> <span class="n">t_</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">t_val</span>  <span class="c1"># Hopping constants</span>
-
-<span class="n">h_fermionic</span> <span class="o">=</span> <span class="n">t_</span>   <span class="c1"># Global one-body matrix in the spin orbital basis</span>
 
 <span class="c1"># ====================================</span>
 <span class="c1"># Bosonic and interaction Hamiltonian</span>
 <span class="c1"># ====================================</span>
-
 <span class="c1"># Frequency of the modes in a matrix shape (here we have 2 modes)</span>
 <span class="n">omega_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">omega_val</span><span class="p">,</span> <span class="n">omega_val</span><span class="p">]</span>
 <span class="n">h_boson</span>      <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">omega_values</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">omega_values</span><span class="p">)))</span>
@@ -251,22 +238,20 @@ two-electron integrals of the fermionic-Hubbard part of the system.</p>
 </div>
 <p>Nevertheless, this model is already implemented in the package. One can
 just directly compute the whole Hamiltonian with the following line :</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">H_Holstein</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_hamiltonian_hubbard_holstein</span><span class="p">(</span><span class="n">h_fermionic</span><span class="p">,</span>
-                                        <span class="n">U_</span><span class="p">,</span>
-                                        <span class="n">a_dagger_a_Holstein</span><span class="p">,</span>
-                                        <span class="n">h_boson</span><span class="p">,</span>
-                                        <span class="n">b_Holstein</span><span class="p">,</span>
-                                        <span class="n">Coupling_fermion_boson</span><span class="p">,</span>
-                                        <span class="n">nbody_basis_Holstein</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">H_Holstein</span> <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_hamiltonian_hubbard_holstein</span><span class="p">(</span> <span class="n">t_</span><span class="p">,</span>
+                                                                                    <span class="n">U_</span><span class="p">,</span>
+                                                                                    <span class="n">a_dagger_a_Holstein</span><span class="p">,</span>
+                                                                                    <span class="n">h_boson</span><span class="p">,</span>
+                                                                                    <span class="n">b_Holstein</span><span class="p">,</span>
+                                                                                    <span class="n">Coupling_fermion_boson</span><span class="p">,</span>
+                                                                                    <span class="n">nbody_basis_Holstein</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>With the Hamiltonian, we obtain an efficient tool for determining any
-observable of interest, with or without the already implemented
-functions of the package. Let’s take a look at some examples of what can
-be done!</p>
+<p>Now we have the Hamiltonian, we can compute differentproperties of the
+systems. Let’s take a look at some examples of what can be done!</p>
 </section>
-<section id="b-computing-time-independent-observables-of-interest">
-<h3>1.B. Computing time-independent observables of interest<a class="headerlink" href="#b-computing-time-independent-observables-of-interest" title="Link to this heading"></a></h3>
+<section id="step-2-computing-time-independent-observables">
+<h3>Step 2: Computing time-independent observables<a class="headerlink" href="#step-2-computing-time-independent-observables" title="Permalink to this heading"></a></h3>
 <p><strong>Ground state values:</strong></p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simply diagonalize the Hamiltonian</span>
 <span class="n">eig_energies_Holstein</span><span class="p">,</span> <span class="n">eig_vectors_Holstein</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">H_Holstein</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
@@ -276,19 +261,19 @@ be done!</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Energies</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.58872733</span> <span class="o">-</span><span class="mf">0.2</span>        <span class="o">-</span><span class="mf">0.2</span>        <span class="o">-</span><span class="mf">0.2</span>       <span class="p">]</span>
 </pre></div>
 </div>
-<p>We see here that we obtain one GS and 3 subsequent ES that are
-degenerate.</p>
+<p>We obtain here the groundstate energy and three subsequent degenerate
+excited states energies.</p>
 <p><strong>Occupation numbers:</strong></p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute the 2 bosonic occupation numbers in GS</span>
 <span class="n">occ_number_mode1</span> <span class="o">=</span> <span class="n">eig_vectors_Holstein</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">b_dag_Holstein</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">b_Holstein</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">@</span> <span class="n">eig_vectors_Holstein</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">occ_number_mode2</span> <span class="o">=</span> <span class="n">eig_vectors_Holstein</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">b_dag_Holstein</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">b_Holstein</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">eig_vectors_Holstein</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bosonic mode 1 =&#39;</span><span class="p">,</span> <span class="n">occ_number_mode1</span> <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bosonic mode 2 =&#39;</span><span class="p">,</span> <span class="n">occ_number_mode2</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Occ bosonic mode 1 =&#39;</span><span class="p">,</span> <span class="n">occ_number_mode1</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Occ bosonic mode 2 =&#39;</span><span class="p">,</span> <span class="n">occ_number_mode2</span> <span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">1</span> <span class="o">=</span> <span class="mf">0.010089504759571901</span>
-<span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.010089504759571913</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Occ</span> <span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">1</span> <span class="o">=</span> <span class="mf">0.01008950475957189</span>
+<span class="n">Occ</span> <span class="n">bosonic</span> <span class="n">mode</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.010089504759571898</span>
 </pre></div>
 </div>
 <p><strong>Visualizing the GS WF in the many-body-basis:</strong></p>
@@ -309,8 +294,8 @@ degenerate.</p>
 +0.06871   |10⟩ ⊗ |1001⟩    #8
 -0.06871   |01⟩ ⊗ |0110⟩    #15
 -0.06871   |10⟩ ⊗ |0110⟩    #9
-+0.01995   |10⟩ ⊗ |1100⟩    #6
 +0.01995   |01⟩ ⊗ |0011⟩    #17
++0.01995   |10⟩ ⊗ |1100⟩    #6
 -0.00683   |11⟩ ⊗ |1001⟩    #26
 +0.00683   |11⟩ ⊗ |0110⟩    #27
 +0.00676   |10⟩ ⊗ |0011⟩    #11
@@ -319,12 +304,12 @@ degenerate.</p>
 </div>
 <p>Here we see that each state is decomposed as the tensor product of the
 bosonic part (2 modes here with a different number of bosonic
-occupancies, the maximum being 4 bosons) and a fermionic part (2 MO
-here, so 4 digits for the 4 associated SOs, with always 2 fermions since
-the number of fermionic particles remains unchanged).</p>
+occupancies, the maximum being 4 bosons) and a fermionic part (2 MOs
+here, so 4 digits for the 4 associated spinorbitals, with always 2
+fermions since the number of fermionic particles remains unchanged).</p>
 </section>
-<section id="c-computing-time-dependent-observables-of-interest">
-<h3>1.C. Computing time-dependent observables of interest<a class="headerlink" href="#c-computing-time-dependent-observables-of-interest" title="Link to this heading"></a></h3>
+<section id="step-3-computing-time-dependent-observables">
+<h3>Step 3: Computing time-dependent observables<a class="headerlink" href="#step-3-computing-time-dependent-observables" title="Permalink to this heading"></a></h3>
 <p>Once all the components have been obtained, all the time-dependent
 observables can be easily calculated. We need to calculate the evolution
 operator for each time step and use it to compute the observables of
@@ -333,16 +318,14 @@ occupancy number of each mode and fermionic molecular orbital.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ====================</span>
 <span class="c1"># Define parameters</span>
 <span class="c1"># ====================</span>
+<span class="c1"># Choose an initial state: a single hybrid configuration</span>
+<span class="n">many_body_state</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Let&#39;s put 2 bosons in each mode, and the 2 electrons in the first MO orbital.</span>
 
-<span class="c1"># 1) Choose a starting point : a state</span>
-<span class="n">many_body_state</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
-<span class="c1"># Let&#39;s put 2 bosons in each mode, and the 2 electrons in the first MO orbital.</span>
-
-<span class="c1"># 2) Obtain the associated state in the qnb definition</span>
+<span class="c1"># Building the associated state in the qnb hybrid many-body basis</span>
 <span class="n">initial_state</span> <span class="o">=</span>  <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">my_state</span><span class="p">(</span> <span class="n">many_body_state</span><span class="p">,</span>
                                                               <span class="n">nbody_basis_Holstein</span><span class="p">)</span>
 
-<span class="c1"># 3) Define time-dependent parameters</span>
+<span class="c1"># Define time-dependent parameters</span>
 <span class="n">Nb_points</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">t_fin</span>     <span class="o">=</span> <span class="mf">1e2</span>
 <span class="n">list_t</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">t_fin</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">Nb_points</span> <span class="p">)</span>
@@ -351,20 +334,17 @@ occupancy number of each mode and fermionic molecular orbital.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ==================================</span>
 <span class="c1"># Compute time-dependent populations</span>
 <span class="c1"># ==================================</span>
-
-<span class="c1"># Initial empty values</span>
 <span class="n">pops_modes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span> <span class="n">Nb_points</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nbody_basis_Holstein</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">dim_H</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nbody_basis_Holstein</span><span class="p">)</span>
-
 <span class="k">for</span> <span class="n">time_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nb_points</span><span class="p">):</span>
 
-     <span class="c1"># Determine the evolution operator in the hybrid many-body basis</span>
+     <span class="c1"># Building the evolution operator in the hybrid many-body basis</span>
      <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim_H</span><span class="p">,</span><span class="n">dim_H</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
      <span class="k">for</span> <span class="n">k</span>  <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim_H</span><span class="p">):</span>
          <span class="n">U</span> <span class="o">+=</span>  <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">eig_energies_Holstein</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">list_t</span><span class="p">[</span><span class="n">time_index</span><span class="p">]</span> <span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span> <span class="n">eig_vectors_Holstein</span><span class="p">[:,</span><span class="n">k</span><span class="p">],</span>  <span class="n">eig_vectors_Holstein</span><span class="p">[:,</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">())</span>
 
      <span class="c1"># Determine the total wavefunction at each time step</span>
-     <span class="n">WF_T</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span> <span class="o">@</span> <span class="n">initial_state</span><span class="p">)</span>
+     <span class="n">WF_T</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">initial_state</span>
 
      <span class="c1"># Determine the occupation values in each site at each time-step</span>
      <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nbody_basis_Holstein</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
@@ -383,47 +363,42 @@ occupancy number of each mode and fermionic molecular orbital.</p>
 
 <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="p">)</span>
 
-<span class="c1"># Bosonic population of the 2 modes</span>
+<span class="c1"># Bosonic population of the 2 local bosonic modes</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_t</span><span class="p">,</span> <span class="n">pops_modes</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1st bosonic mode&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_t</span><span class="p">,</span> <span class="n">pops_modes</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2nd bosonic mode&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.7</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">,</span>  <span class="n">framealpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Populations&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Populations&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Population of bosonic modes&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
-<span class="c1"># Fermionic populations of the 2 M0 orbitals</span>
+<span class="c1"># Fermionic populations of the two MOs</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pops_modes</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_t</span><span class="p">,</span> <span class="n">pops_modes</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">pops_modes</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1st MO&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">list_t</span><span class="p">,</span> <span class="n">pops_modes</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">pops_modes</span><span class="p">[:,</span><span class="mi">5</span><span class="p">]</span> <span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;2nd MO&#39;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;medium&#39;</span><span class="p">,</span>  <span class="n">framealpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Populations&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time $(t^{-1})$ &#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Populations&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time ($t^{-1}$ unit) &#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Population of molecular orbitals&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Text</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;Population of molecular orbitals&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<img alt="_images/Tuto_Holstein_and_polaritonic_QED_dynamics_32_1.png" src="_images/Tuto_Holstein_and_polaritonic_QED_dynamics_32_1.png" />
+<img alt="_images/output_21_0.png" src="_images/output_21_0.png" />
 </section>
 </section>
 <section id="example-2-polaritonic-chemistry">
-<h2>Example 2: Polaritonic chemistry<a class="headerlink" href="#example-2-polaritonic-chemistry" title="Link to this heading"></a></h2>
-<blockquote>
-<div><a class="reference internal image-reference" href="_images/Cavity.png"><img alt="_images/Cavity.png" class="align-center" src="_images/Cavity.png" style="width: 500px;" /></a>
-</div></blockquote>
-<p>The QuantNBody package makes it possible to simulate polaritonic
+<h2>Example 2: Polaritonic chemistry<a class="headerlink" href="#example-2-polaritonic-chemistry" title="Permalink to this heading"></a></h2>
+<center></center><p>The QuantNBody package makes it possible to simulate polaritonic
 chemistry: an electronic structure system (model or ab-initio) in
 interaction with the photonic modes of a cavity. Here, as a proof of
 principle, we’ll concentrate on reproducing the FCI (Full Configuration
-Interaction) results obtained in the following article: <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina et
-al., Phys. Rev. Res., 2, 023262
+Interaction) results obtained in the following article</p>
+<p><a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020)</a>.
 For this reason, the molecular Hamiltonian here will be a fermi-Hubbard
 Hamiltonian.</p>
@@ -432,12 +407,12 @@ Hamiltonian.</p>
 <p><strong>Electronic (Fermi-Hubbard) Hamiltonian:</strong></p>
 <div class="math notranslate nohighlight">
 \[\hat{H}_{elec} = - t_0  \sum_{i\sigma} ( \hat{a}^\dagger_{i+1,\sigma} \hat{a}_{i \sigma}  + \hat{a}^\dagger_{i \sigma} \hat{a}_{i+1,\sigma} ) + U \sum_{i}   \hat{n}_{i,\uparrow}\hat{n}_{i,\downarrow}\]</div>
-<p>With in the local site basis:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\hat{n}_{i,\sigma} = \hat{a}^\dagger_{i\sigma}\hat{a}_{i\sigma}\)</span> the density of a spin-<span class="math notranslate nohighlight">\(\sigma\)</span> electron on site <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(t_0\)</span> and <span class="math notranslate nohighlight">\(U\)</span> the usual hopping and on-site repulsion constants.</p></li>
-<li><p>The dipole operator of the system <span class="math notranslate nohighlight">\(\hat{d} = \sum_i d_i ( \hat{n}_{i,\uparrow} + \hat{n}_{i,\downarrow} )\)</span></p></li>
-</ul>
+<p>With in the local site basis:
+-<span class="math notranslate nohighlight">\(\hat{n}_{i,\sigma} = \hat{a}^\dagger_{i\sigma}\hat{a}_{i\sigma}\)</span>
+the density of a spin-<span class="math notranslate nohighlight">\(\sigma\)</span> electron on site <span class="math notranslate nohighlight">\(i\)</span>.
+-<span class="math notranslate nohighlight">\(t_0\)</span> and <span class="math notranslate nohighlight">\(U\)</span> the usual hopping and on-site repulsion
+constants. - The dipole operator of the system
+<span class="math notranslate nohighlight">\(\hat{d} =  \sum_i d_i ( \hat{n}_{i,\uparrow} + \hat{n}_{i,\downarrow} )\)</span></p>
 <p><strong>Cavity as a bosonic bath:</strong></p>
 <div class="math notranslate nohighlight">
 \[\hat{H}_{bos} =  \sum_{\alpha} \omega_{c,\alpha} \hat{b}^\dagger_{\alpha} \hat{b}_{\alpha}\]</div>
@@ -447,13 +422,13 @@ with frequency <span class="math notranslate nohighlight">\(\omega_{c,\alpha}\)<
 <p><strong>Fermion-boson interaction:</strong></p>
 <div class="math notranslate nohighlight">
 \[\hat{H}_{elec-bos} =   \gamma_{\alpha} \omega_{c,\alpha} \hat{d} (\hat{b}^\dagger_{\alpha} + \hat{b}_{\alpha}) + \gamma_{\alpha}^2  \omega_{c,\alpha} \hat{d}^2\]</div>
-<p>Here, the coupling parameter <span class="math notranslate nohighlight">\(\gamma_{\alpha}\)</span> tunes the strength
-of the light-matter interaction; here we focus mostly on cases where
-<span class="math notranslate nohighlight">\(\gamma_{\alpha}\)</span> &gt; 0.05, where the system is typically considered
-to be in the strong-coupling regime. Note that in the following, every
-values will be expressed in <span class="math notranslate nohighlight">\(t_0\)</span> units (i.e., <span class="math notranslate nohighlight">\(t_0 = 1\)</span>).</p>
+<p>Here, the coupling parameter <span class="math notranslate nohighlight">\(\gamma_{\alpha}\)</span> defines the
+strength of the light-matter interaction; here we focus mostly on the
+strong-coupling regime where <span class="math notranslate nohighlight">\(\gamma_{\alpha}\)</span> &gt; 0.05. Note that
+in the following, every values will be expressed in <span class="math notranslate nohighlight">\(t_0\)</span> units
+(i.e., <span class="math notranslate nohighlight">\(t_0 = 1\)</span>).</p>
 <section id="id57">
-<h3>2.A. Defining the parameters, and finding the Hamiltonian<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
+<h3>Step 1: Building the Hamiltonian<a class="headerlink" href="#id57" title="Permalink to this heading"></a></h3>
 <p>As a proof-of-principle, we consider as in the reference paper <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020)</a>,
@@ -473,7 +448,7 @@ coupling.</p>
 <span class="c1"># ======================================</span>
 <span class="n">N_b_max_cavity</span> <span class="o">=</span> <span class="mi">7</span> <span class="c1"># maximal number of bosons in the whole bosonic system</span>
 <span class="n">N_mode_cavity</span>  <span class="o">=</span> <span class="mi">1</span> <span class="c1"># number of bosonic modes</span>
-<span class="n">list_bosons_cavity</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_b_max_cavity</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># list of all the possible occupation number values that a bosonic mode can take</span>
+<span class="n">list_bosons_cavity</span> <span class="o">=</span> <span class="p">[</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_b_max_cavity</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">]</span> <span class="c1"># list of all the possible occupation number values that a bosonic mode can take</span>
 
 <span class="c1"># ======================================</span>
 <span class="c1"># Values of the parameters</span>
@@ -482,7 +457,7 @@ coupling.</p>
 <span class="n">t_val_cavity</span> <span class="o">=</span> <span class="mf">0.5</span>   <span class="c1"># hopping constant</span>
 <span class="n">gamma_cavity</span> <span class="o">=</span> <span class="mf">0.2</span>   <span class="c1"># coupling between bosons and fermions</span>
 <span class="n">freq_cavity</span>  <span class="o">=</span> <span class="mf">1.028</span> <span class="c1"># cavity frequency</span>
-<span class="n">broad_cavity</span> <span class="o">=</span> <span class="mf">0.005</span> <span class="c1"># broadening parameter for the GS absoprtion spectrum</span>
+<span class="n">broad_cavity</span> <span class="o">=</span> <span class="mf">0.005</span> <span class="c1"># broadening parameter for the GS absorption spectrum</span>
 </pre></div>
 </div>
 <p>Let’s now use the QuantNobdy functions to build the hybrid many-body
@@ -490,46 +465,38 @@ basis, the operators, and finally the whole Hamiltonian of the system.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ============================================================</span>
 <span class="c1"># Build the hybrid many-body basis, operators and Hamiltonian</span>
 <span class="c1"># ============================================================</span>
-
-<span class="c1"># 1) Construct the basis</span>
+<span class="c1"># Construct the basis</span>
 <span class="n">nbody_basis_total_cavity</span>  <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_nbody_basis</span><span class="p">(</span><span class="n">N_mode_cavity</span><span class="p">,</span>
                                                                                  <span class="n">list_bosons_cavity</span><span class="p">,</span>
                                                                                  <span class="n">N_MO_cavity</span><span class="p">,</span>
                                                                                  <span class="n">N_elec_cavity</span> <span class="p">)</span>
 <span class="n">dim_H_cavity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nbody_basis_total_cavity</span><span class="p">)</span>
 
-<span class="c1"># 2) Build the fermionic particle conserving operator</span>
+<span class="c1"># Build the fermionic particle conserving operator</span>
 <span class="n">a_dagger_a_cavity</span>  <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_fermion_operator_a_dagger_a</span><span class="p">(</span><span class="n">nbody_basis_total_cavity</span><span class="p">,</span>
                                                                                           <span class="n">N_mode_cavity</span><span class="p">)</span>
 
-<span class="c1"># 3) Build the bosonic creation (particle non-conserving) operator</span>
+<span class="c1"># Build the bosonic creation (particle non-conserving) operator</span>
 <span class="n">b_cavity</span>  <span class="o">=</span> <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_boson_anihilation_operator_b</span><span class="p">(</span><span class="n">nbody_basis_total_cavity</span><span class="p">,</span>
                                                                                   <span class="n">N_mode_cavity</span><span class="p">)</span>
 
-<span class="c1"># 4) Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation (particle non-conserving) operator</span>
+<span class="c1"># Build the bosonic annhilation operator : hermitian conjugate of the bosonic creation operator</span>
 <span class="n">b_dag_cavity</span><span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_mode_cavity</span><span class="p">):</span>
     <span class="n">b_dag_cavity</span> <span class="o">+=</span> <span class="p">[</span><span class="n">b_cavity</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">]</span>
 
-<span class="c1"># 5) Determine the fermionic integrals</span>
+<span class="c1"># Build the fermionic integrals</span>
 <span class="n">t_cavity</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_MO_cavity</span><span class="p">,</span><span class="n">N_MO_cavity</span><span class="p">))</span>
 <span class="n">U_ferm_cavity</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_MO_cavity</span><span class="p">,</span><span class="n">N_MO_cavity</span><span class="p">,</span><span class="n">N_MO_cavity</span><span class="p">,</span><span class="n">N_MO_cavity</span><span class="p">))</span>
-
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_MO_cavity</span><span class="p">):</span>
     <span class="n">U_ferm_cavity</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span>  <span class="o">=</span>  <span class="n">U_val_cavity</span>  <span class="c1"># Local coulombic repulsion</span>
-
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_MO_cavity</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">j</span><span class="o">==</span><span class="n">i</span> <span class="p">:</span>
             <span class="n">t_cavity</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">elif</span> <span class="n">j</span><span class="o">==</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="p">:</span>
             <span class="n">t_cavity</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_cavity</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">t_val_cavity</span>
 
-<span class="n">h_ferm_cavity</span> <span class="o">=</span> <span class="n">t_cavity</span>
-
-<span class="c1"># 6) Determine the dipole-related parameters</span>
-
-<span class="c1"># values of the dipole integrals and dipole operator (same values than the reference)</span>
-<span class="n">d_op_cavity</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">dim_H_cavity</span><span class="p">,</span> <span class="n">dim_H_cavity</span><span class="p">))</span>
+<span class="c1"># Building the dipole-related parameters</span>
 <span class="n">d_integrals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">)</span>
 <span class="n">d_integrals</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span>
 <span class="n">d_integrals</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
@@ -537,18 +504,19 @@ basis, the operators, and finally the whole Hamiltonian of the system.</p>
 <span class="n">d_integrals</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span>
 <span class="n">d_integrals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_integrals</span><span class="p">)</span>
 
-<span class="c1"># define them in a list for the implemented function of the package</span>
+<span class="c1"># Define them in a list for the implemented function of the QNB package</span>
 <span class="n">d_integrals_list</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">d_integrals</span><span class="p">)</span>
 <span class="n">cut_off_integral</span>    <span class="o">=</span> <span class="mf">1e-8</span>
 <span class="n">indices_d_integrals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_integrals</span><span class="p">))</span><span class="o">&gt;</span><span class="n">cut_off_integral</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">())</span>
 
-<span class="c1"># determine the dipole operator</span>
+<span class="c1"># Build the dipole operator</span>
+<span class="n">d_op_cavity</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">dim_H_cavity</span><span class="p">,</span> <span class="n">dim_H_cavity</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">indices_d_integrals</span><span class="p">:</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">d_op_cavity</span> <span class="o">+=</span>  <span class="n">d_integrals</span><span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="n">p</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">a_dagger_a_cavity</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_dagger_a_cavity</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="c1"># 7) Construct the total Hamiltonian</span>
-<span class="n">H_total_cavity</span>  <span class="o">=</span>  <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_hamiltonian_hubbard_QED</span><span class="p">(</span><span class="n">h_ferm_cavity</span><span class="p">,</span>
+<span class="c1"># Build the total Hamiltonian</span>
+<span class="n">H_total_cavity</span>  <span class="o">=</span>  <span class="n">qnb</span><span class="o">.</span><span class="n">hybrid_fermionic_bosonic</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">build_hamiltonian_hubbard_QED</span><span class="p">(</span><span class="n">t_cavity</span><span class="p">,</span>
                                                                                     <span class="n">U_ferm_cavity</span><span class="p">,</span>
                                                                                     <span class="n">a_dagger_a_cavity</span><span class="p">,</span>
                                                                                     <span class="n">freq_cavity</span><span class="p">,</span>
@@ -559,8 +527,8 @@ basis, the operators, and finally the whole Hamiltonian of the system.</p>
 </pre></div>
 </div>
 </section>
-<section id="b-computing-time-independent-properties">
-<h3>2.B. Computing time-independent properties<a class="headerlink" href="#b-computing-time-independent-properties" title="Link to this heading"></a></h3>
+<section id="step-2-computing-time-independent-properties">
+<h3>Step 2: Computing time-independent properties<a class="headerlink" href="#step-2-computing-time-independent-properties" title="Permalink to this heading"></a></h3>
 <p>Let’s now use all the previously calculated ingredients to find the FCI
 values obtained in reference <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina et al., Phys. Rev. Res., 2,
 023262
@@ -592,6 +560,7 @@ diagonalizing the Hamiltonian.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Energies</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.41864225</span> <span class="o">-</span><span class="mf">1.02867613</span> <span class="o">-</span><span class="mf">1.02867613</span> <span class="o">-</span><span class="mf">1.02867613</span><span class="p">]</span>
 </pre></div>
 </div>
+<p>Energies = [-1.41864225 -1.02867613 -1.02867613 -1.02867613]</p>
 <p>Here we find the FCI value of the reference <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina et al., Phys.
 Rev. Res., 2, 023262
 (2020)</a>.
@@ -611,7 +580,7 @@ operators :</p>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;occ_number : &#39;</span><span class="p">,</span> <span class="n">occ_number_cavity</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ_number</span> <span class="p">:</span>  <span class="mf">0.008692558807686324</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ_number</span> <span class="p">:</span>  <span class="mf">0.008692558807686325</span>
 </pre></div>
 </div>
 <p>Here we find again the FCI value of the FCI reference in <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U. Mordovina
@@ -645,22 +614,18 @@ parameters define in the related legend.</p>
         <span class="n">somme</span> <span class="o">+=</span> <span class="n">elem</span>
     <span class="n">cross_section</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="mi">4</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span> <span class="n">freq_spec</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">somme</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
 
-<span class="c1"># Plotting !</span>
+<span class="c1"># Plotting</span>
 <span class="n">fig</span><span class="p">,</span> <span class="p">(</span> <span class="n">bx</span> <span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="p">)</span>
 <span class="n">bx</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
 
 <span class="n">bx</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">freq_spec_list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cross_section</span><span class="p">)</span> <span class="p">)</span>
-<span class="c1">#bx.set_yscale(&#39;log&#39;)</span>
-<span class="n">bx</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;log $\sigma$&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">bx</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$\omega$&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="c1">#bx.set_ylim(-12.6,2.6)</span>
+<span class="n">bx</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;log $</span><span class="se">\\</span><span class="s1">sigma$&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">bx</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">omega$&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1"># titre</span>
 </pre></div>
 </div>
-<img alt="_images/Tuto_Holstein_and_polaritonic_QED_dynamics_52_0.png" src="_images/Tuto_Holstein_and_polaritonic_QED_dynamics_52_0.png" />
+<img alt="_images/output_31_0.png" src="_images/output_31_0.png" />
 <p>Here, we obtain the exact same spectrum than in the reference paper <a class="reference external" href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023262">U.
 Mordovina et al., Phys. Rev. Res., 2, 023262
 (2020)</a>.</p>
@@ -672,7 +637,7 @@ Mordovina et al., Phys. Rev. Res., 2, 023262
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Tuto_hybrid_fermion_boson.html" class="btn btn-neutral float-left" title="Tuto 5: Hybrid Fermion-Boson Systems in QuantNBody" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Tuto_hybrid_fermion_boson.html" class="btn btn-neutral float-left" title="Tuto 5: Hybrid Fermion-Boson Systems" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="remarks_structure.html" class="btn btn-neutral float-right" title="Note on the structure of the package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
