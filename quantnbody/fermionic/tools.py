@@ -707,8 +707,8 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target):
     for p in range(1,n_mo):
         occupancy_penalty  +=  ( a_dagger_a[2*p, 2*p] + a_dagger_a[2*p+1, 2*p+1] -  occupancy_target * scipy.sparse.identity(dim_H) )**2
 
-    list_indices_good_states = np.where( np.diag( occupancy_penalty.toarray() ) < 0.1 )[0]
-    list_indices_bad_states  = np.where( np.diag( occupancy_penalty.toarray() ) > 0.1 )[0]
+    list_indices_good_states = np.where( np.diag( occupancy_penalty.A ) < 0.1 )[0]
+    list_indices_bad_states  = np.where( np.diag( occupancy_penalty.A ) > 0.1 )[0]
 
     return  occupancy_penalty, list_indices_good_states, list_indices_bad_states
 
@@ -1572,7 +1572,7 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
-    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
+    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mo):
@@ -1607,7 +1607,7 @@ def build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local ):
         matrix representation of the s_plus_local operator (local spin ladder up) in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
+    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     
@@ -1640,7 +1640,7 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
         matrix representation of s_A x s_B in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
+    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     s_plus_A = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_plus_B = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z_A = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -1678,7 +1678,7 @@ def build_spin_subspaces( S2_local, S2_local_target ):
         the many-body states respecting the local spin symmetry demanded)
 
     """
-    S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.toarray() )
+    S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.A )
     Set_vectors = S2_local_eigvec[ :,   (S2_local_eigval >= S2_local_target-1.e-3)
                                       & (S2_local_eigval <= S2_local_target+1.e-3)   ]
     Projector_spin_subspace  =  Set_vectors @ Set_vectors.T
@@ -1715,7 +1715,7 @@ def build_local_l2_lz_lplus_operator(a_dagger_a, list_mo_local, l_local, list_l_
         matrix representation of the l_plus_local operator (local angular momentum ladder up) in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
+    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
     l_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     
     l_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))
