@@ -707,8 +707,8 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target):
     for p in range(1,n_mo):
         occupancy_penalty  +=  ( a_dagger_a[2*p, 2*p] + a_dagger_a[2*p+1, 2*p+1] -  occupancy_target * scipy.sparse.identity(dim_H) )**2
 
-    list_indices_good_states = np.where( np.diag( occupancy_penalty.A ) < 0.1 )[0]
-    list_indices_bad_states  = np.where( np.diag( occupancy_penalty.A ) > 0.1 )[0]
+    list_indices_good_states = np.where( np.diag( occupancy_penalty.toarray() ) < 0.1 )[0]
+    list_indices_bad_states  = np.where( np.diag( occupancy_penalty.toarray() ) > 0.1 )[0]
 
     return  occupancy_penalty, list_indices_good_states, list_indices_bad_states
 
@@ -1678,7 +1678,7 @@ def build_spin_subspaces( S2_local, S2_local_target ):
         the many-body states respecting the local spin symmetry demanded)
 
     """
-    S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.A )
+    S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.toarray() )
     Set_vectors = S2_local_eigvec[ :,   (S2_local_eigval >= S2_local_target-1.e-3)
                                       & (S2_local_eigval <= S2_local_target+1.e-3)   ]
     Projector_spin_subspace  =  Set_vectors @ Set_vectors.T
