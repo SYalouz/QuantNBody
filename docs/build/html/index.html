@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>A Python package for quantum chemistry and physics. &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=292eb321"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,7 +48,6 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
@@ -64,8 +63,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
@@ -77,7 +76,6 @@
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
 </ul>
 
         </div>
@@ -108,17 +106,12 @@
 <a class="reference internal image-reference" href="_images/logo_shadow.png"><img alt="_images/logo_shadow.png" src="_images/logo_shadow.png" style="width: 800px;" /></a>
 </figure>
 <section id="a-python-package-for-quantum-chemistry-and-physics">
-<h1>A Python package for quantum chemistry and physics.<a class="headerlink" href="#a-python-package-for-quantum-chemistry-and-physics" title="Link to this heading"></a></h1>
-<p><strong>QuantNBody</strong> is a python package facilitating the implementation and manipulation of quantum many-body systems
-composed of fermions or bosons.
-It provides a quick and easy way to build many-body operators and wavefunctions and get access
-(in a few python lines) to quantities and objects of interest for theoretical research and method developements.
-This tool also can be of a great help for pedagogical purpose and to help illustrate numerical methods for fermionic or bosonic systems.</p>
+<h1>A Python package for quantum chemistry and physics.<a class="headerlink" href="#a-python-package-for-quantum-chemistry-and-physics" title="Permalink to this heading"></a></h1>
+<p><strong>QuantNBody</strong> is a Python package that facilitates the implementation and manipulation of quantum many-body systems composed of fermions or bosons. It provides a quick and easy way to build many-body operators and wavefunctions, enabling access (in just a few lines of Python code) to quantities and objects of interest for theoretical research and method development. This tool can also be greatly helpful for pedagogical purposes and to illustrate numerical methods for fermionic or bosonic systems.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
@@ -172,23 +165,23 @@ This tool also can be of a great help for pedagogical purpose and to help illust
 <li class="toctree-l2"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html#checking-the-implementation-comparing-different-ways-to-estimate-the-groundstate-energy">Checking the implementation : comparing different ways to estimate the groundstate energy</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-1-building-a-hybrid-many-body-basis">Step 1: Building a hybrid many-body basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-2-about-building-operators-in-the-hybrid-many-body-basis">Step 2: About building operators in the hybrid many-body basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-3-build-the-fermionic-hat-a-dagger-hat-a-operator-in-the-hybrid-basis">Step 3: Build the fermionic <span class="math notranslate nohighlight">\(\hat{a}^\dagger \hat{a}\)</span> operator in the hybrid basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html#step-4-build-the-bosonic-hat-b-and-hat-b-dagger-operators-in-the-hybrid-basis">Step 4: Build the bosonic <span class="math notranslate nohighlight">\(\hat{b}\)</span> and <span class="math notranslate nohighlight">\(\hat{b}^\dagger\)</span> operators in the hybrid basis</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-1-hubbard-holstein-model">Example 1: Hubbard-Holstein model</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#a-defining-the-parameters-and-finding-the-hamiltonian">1.A. Defining the parameters, and finding the Hamiltonian</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#b-computing-time-independent-observables-of-interest">1.B. Computing time-independent observables of interest</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#c-computing-time-dependent-observables-of-interest">1.C. Computing time-dependent observables of interest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#step-1-building-the-hamiltonian">Step 1: Building the Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#step-2-computing-time-independent-observables">Step 2: Computing time-independent observables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#step-3-computing-time-dependent-observables">Step 3: Computing time-dependent observables</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#example-2-polaritonic-chemistry">Example 2: Polaritonic chemistry</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#id57">2.A. Defining the parameters, and finding the Hamiltonian</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#b-computing-time-independent-properties">2.B. Computing time-independent properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#id57">Step 1: Building the Hamiltonian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html#step-2-computing-time-independent-properties">Step 2: Computing time-independent properties</a></li>
 </ul>
 </li>
 </ul>
@@ -200,154 +193,32 @@ This tool also can be of a great help for pedagogical purpose and to help illust
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="remarks_structure.html">Note on the structure of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Fermionic systems</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#basic-functions-for-the-creation-of-many-fermion-systems">Basic functions for the creation of many-fermion systems</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_nbody_basis"><code class="docutils literal notranslate"><span class="pre">build_nbody_basis()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_operator_a_dagger_a"><code class="docutils literal notranslate"><span class="pre">build_operator_a_dagger_a()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#many-body-hamiltonians-and-excitations-operators">Many-body Hamiltonians and excitations operators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_hamiltonian_quantum_chemistry"><code class="docutils literal notranslate"><span class="pre">build_hamiltonian_quantum_chemistry()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_hamiltonian_fermi_hubbard"><code class="docutils literal notranslate"><span class="pre">build_hamiltonian_fermi_hubbard()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_E_and_e_operators"><code class="docutils literal notranslate"><span class="pre">build_E_and_e_operators()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#spin-operators">Spin operators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_s2_sz_splus_operator"><code class="docutils literal notranslate"><span class="pre">build_s2_sz_splus_operator()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_local_s2_sz_splus_operator"><code class="docutils literal notranslate"><span class="pre">build_local_s2_sz_splus_operator()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_sAsB_coupling"><code class="docutils literal notranslate"><span class="pre">build_sAsB_coupling()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_spin_subspaces"><code class="docutils literal notranslate"><span class="pre">build_spin_subspaces()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#creating-manipulating-visualizing-many-body-wavefunctions">Creating/manipulating/visualizing many-body wavefunctions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.my_state"><code class="docutils literal notranslate"><span class="pre">my_state()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.visualize_wft"><code class="docutils literal notranslate"><span class="pre">visualize_wft()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_projector_active_space"><code class="docutils literal notranslate"><span class="pre">build_projector_active_space()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.weight_det"><code class="docutils literal notranslate"><span class="pre">weight_det()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.scalar_product_different_MO_basis"><code class="docutils literal notranslate"><span class="pre">scalar_product_different_MO_basis()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.transform_psi_MO_basis1_in_MO_basis2"><code class="docutils literal notranslate"><span class="pre">transform_psi_MO_basis1_in_MO_basis2()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.scalar_product_different_MO_basis_with_frozen_orbitals"><code class="docutils literal notranslate"><span class="pre">scalar_product_different_MO_basis_with_frozen_orbitals()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#reduced-density-matrices">Reduced density matrices</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_1rdm_alpha"><code class="docutils literal notranslate"><span class="pre">build_1rdm_alpha()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_1rdm_beta"><code class="docutils literal notranslate"><span class="pre">build_1rdm_beta()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_1rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_1rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_2rdm_fh_on_site_repulsion"><code class="docutils literal notranslate"><span class="pre">build_2rdm_fh_on_site_repulsion()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_2rdm_fh_dipolar_interactions"><code class="docutils literal notranslate"><span class="pre">build_2rdm_fh_dipolar_interactions()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_2rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_2rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_1rdm_and_2rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_1rdm_and_2rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_hybrid_1rdm_alpha_beta"><code class="docutils literal notranslate"><span class="pre">build_hybrid_1rdm_alpha_beta()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_transition_1rdm_alpha"><code class="docutils literal notranslate"><span class="pre">build_transition_1rdm_alpha()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_transition_1rdm_beta"><code class="docutils literal notranslate"><span class="pre">build_transition_1rdm_beta()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_transition_1rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_transition_1rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_transition_2rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_transition_2rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_full_mo_1rdm_and_2rdm_for_AS"><code class="docutils literal notranslate"><span class="pre">build_full_mo_1rdm_and_2rdm_for_AS()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-fermionic-integrals">Functions to manipulate fermionic integrals</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.transform_1_2_body_tensors_in_new_basis"><code class="docutils literal notranslate"><span class="pre">transform_1_2_body_tensors_in_new_basis()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.fh_get_active_space_integrals"><code class="docutils literal notranslate"><span class="pre">fh_get_active_space_integrals()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.fh_get_active_space_integrals_with_V"><code class="docutils literal notranslate"><span class="pre">fh_get_active_space_integrals_with_V()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.qc_get_active_space_integrals"><code class="docutils literal notranslate"><span class="pre">qc_get_active_space_integrals()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#quantum-embedding-transformations-householder">Quantum embedding transformations (Householder)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.householder_transformation"><code class="docutils literal notranslate"><span class="pre">householder_transformation()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.block_householder_transformation"><code class="docutils literal notranslate"><span class="pre">block_householder_transformation()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#psi4-calculation-helper">Psi4 calculation helper</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.get_info_from_psi4"><code class="docutils literal notranslate"><span class="pre">get_info_from_psi4()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.generate_h_chain_geometry"><code class="docutils literal notranslate"><span class="pre">generate_h_chain_geometry()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.generate_h_ring_geometry"><code class="docutils literal notranslate"><span class="pre">generate_h_ring_geometry()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.generate_h4_geometry"><code class="docutils literal notranslate"><span class="pre">generate_h4_geometry()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#orbital-optimization">Orbital optimization</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.transform_vec_to_skewmatrix"><code class="docutils literal notranslate"><span class="pre">transform_vec_to_skewmatrix()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.transform_vec_to_skewmatrix_with_active_space"><code class="docutils literal notranslate"><span class="pre">transform_vec_to_skewmatrix_with_active_space()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.prepare_vector_k_orbital_rotation_with_active_space"><code class="docutils literal notranslate"><span class="pre">prepare_vector_k_orbital_rotation_with_active_space()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.energy_cost_function_orbital_optimization"><code class="docutils literal notranslate"><span class="pre">energy_cost_function_orbital_optimization()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.brute_force_orbital_optimization"><code class="docutils literal notranslate"><span class="pre">brute_force_orbital_optimization()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.sa_build_mo_hessian_and_gradient"><code class="docutils literal notranslate"><span class="pre">sa_build_mo_hessian_and_gradient()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_mo_gradient"><code class="docutils literal notranslate"><span class="pre">build_mo_gradient()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.orbital_optimisation_newtonraphson"><code class="docutils literal notranslate"><span class="pre">orbital_optimisation_newtonraphson()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.orbital_optimisation_newtonraphson_no_active_space"><code class="docutils literal notranslate"><span class="pre">orbital_optimisation_newtonraphson_no_active_space()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_generalized_fock_matrix"><code class="docutils literal notranslate"><span class="pre">build_generalized_fock_matrix()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.fermionic.tools.build_generalized_fock_matrix_active_space_adapted"><code class="docutils literal notranslate"><span class="pre">build_generalized_fock_matrix_active_space_adapted()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#basic-functions-for-the-creation-of-many-fermion-systems">Basic functions for the creation of many-fermion systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#many-body-hamiltonians-and-excitations-operators">Many-body Hamiltonians and excitations operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spin-operators">Spin operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#creating-manipulating-visualizing-many-body-wavefunctions">Creating/manipulating/visualizing many-body wavefunctions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#reduced-density-matrices">Reduced density matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-fermionic-integrals">Functions to manipulate fermionic integrals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#quantum-embedding-transformations-householder">Quantum embedding transformations (Householder)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#psi4-calculation-helper">Psi4 calculation helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#orbital-optimization">Orbital optimization</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html#bosonic-systems">Bosonic systems</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#basic-functions-for-the-creation-of-many-boson-systems">Basic functions for the creation of many-boson systems</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.build_nbody_basis"><code class="docutils literal notranslate"><span class="pre">build_nbody_basis()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.build_operator_a_dagger_a"><code class="docutils literal notranslate"><span class="pre">build_operator_a_dagger_a()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id1">Many-body Hamiltonians and excitations operators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.build_hamiltonian_bose_hubbard"><code class="docutils literal notranslate"><span class="pre">build_hamiltonian_bose_hubbard()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id2">Creating/manipulating/visualizing many-body wavefunctions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.my_state"><code class="docutils literal notranslate"><span class="pre">my_state()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.visualize_wft"><code class="docutils literal notranslate"><span class="pre">visualize_wft()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id3">Reduced density matrices</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.build_1rdm"><code class="docutils literal notranslate"><span class="pre">build_1rdm()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.build_2rdm"><code class="docutils literal notranslate"><span class="pre">build_2rdm()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-bosonic-integrals">Functions to manipulate bosonic integrals</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.bosonic.tools.transform_1_2_body_tensors_in_new_basis"><code class="docutils literal notranslate"><span class="pre">transform_1_2_body_tensors_in_new_basis()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#basic-functions-for-the-creation-of-many-boson-systems">Basic functions for the creation of many-boson systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id1">Many-body Hamiltonians and excitations operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id2">Creating/manipulating/visualizing many-body wavefunctions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id3">Reduced density matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-bosonic-integrals">Functions to manipulate bosonic integrals</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html#fermionic-bosonic-hybrid-systems">Fermionic-Bosonic hybrid systems</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#basic-functions-for-the-creation-of-many-fermion-boson-hybrid-systems">Basic functions for the creation of many-fermion/boson hybrid systems</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_nbody_basis"><code class="docutils literal notranslate"><span class="pre">build_nbody_basis()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_boson_anihilation_operator_b"><code class="docutils literal notranslate"><span class="pre">build_boson_anihilation_operator_b()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermion_operator_a_dagger_a"><code class="docutils literal notranslate"><span class="pre">build_fermion_operator_a_dagger_a()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_E_and_e_operators"><code class="docutils literal notranslate"><span class="pre">build_E_and_e_operators()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id4">Many-body Hamiltonians and excitations operators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_holstein"><code class="docutils literal notranslate"><span class="pre">build_hamiltonian_hubbard_holstein()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_hamiltonian_hubbard_QED"><code class="docutils literal notranslate"><span class="pre">build_hamiltonian_hubbard_QED()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Spin operators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_s2_sz_splus_operator"><code class="docutils literal notranslate"><span class="pre">build_s2_sz_splus_operator()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id6">Creating/manipulating/visualizing many-body wavefunctions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.my_state"><code class="docutils literal notranslate"><span class="pre">my_state()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.visualize_wft"><code class="docutils literal notranslate"><span class="pre">visualize_wft()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id7">Reduced density matrices</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_anihilation_rdm"><code class="docutils literal notranslate"><span class="pre">build_bosonic_anihilation_rdm()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_bosonic_1rdm"><code class="docutils literal notranslate"><span class="pre">build_bosonic_1rdm()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_alpha"><code class="docutils literal notranslate"><span class="pre">build_fermionic_1rdm_alpha()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_beta"><code class="docutils literal notranslate"><span class="pre">build_fermionic_1rdm_beta()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_fermionic_1rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_on_site_repulsion"><code class="docutils literal notranslate"><span class="pre">build_fermionic_2rdm_fh_on_site_repulsion()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_fh_dipolar_interactions"><code class="docutils literal notranslate"><span class="pre">build_fermionic_2rdm_fh_dipolar_interactions()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_2rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_fermionic_2rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_1rdm_and_2rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_fermionic_1rdm_and_2rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_hybrid_1rdm_alpha_beta"><code class="docutils literal notranslate"><span class="pre">build_fermionic_hybrid_1rdm_alpha_beta()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_alpha"><code class="docutils literal notranslate"><span class="pre">build_fermionic_transition_1rdm_alpha()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_beta"><code class="docutils literal notranslate"><span class="pre">build_fermionic_transition_1rdm_beta()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_1rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_fermionic_transition_1rdm_spin_free()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.build_fermionic_transition_2rdm_spin_free"><code class="docutils literal notranslate"><span class="pre">build_fermionic_transition_2rdm_spin_free()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-fermionic-bosonic-hybrid-integrals">Functions to manipulate fermionic-bosonic hybrid integrals</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#quantnbody.hybrid_fermionic_bosonic.tools.transform_1_2_body_tensors_in_new_basis"><code class="docutils literal notranslate"><span class="pre">transform_1_2_body_tensors_in_new_basis()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#basic-functions-for-the-creation-of-many-fermion-boson-hybrid-systems">Basic functions for the creation of many-fermion/boson hybrid systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id4">Many-body Hamiltonians and excitations operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Spin operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id6">Creating/manipulating/visualizing many-body wavefunctions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id7">Reduced density matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#functions-to-manipulate-fermionic-bosonic-hybrid-integrals">Functions to manipulate fermionic-bosonic hybrid integrals</a></li>
 </ul>
 </li>
 </ul>
@@ -356,12 +227,11 @@ This tool also can be of a great help for pedagogical purpose and to help illust
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
 </ul>
 </div>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>

@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation and Running &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=292eb321"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -49,7 +49,6 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
@@ -69,8 +68,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
@@ -82,7 +81,6 @@
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
 </ul>
 
         </div>
@@ -110,33 +108,33 @@
            <div itemprop="articleBody">
              
   <section id="installation-and-running">
-<h1>Installation and Running<a class="headerlink" href="#installation-and-running" title="Link to this heading"></a></h1>
+<h1>Installation and Running<a class="headerlink" href="#installation-and-running" title="Permalink to this heading"></a></h1>
 <section id="required-packages">
-<h2>Required packages<a class="headerlink" href="#required-packages" title="Link to this heading"></a></h2>
+<h2>Required packages<a class="headerlink" href="#required-packages" title="Permalink to this heading"></a></h2>
 <p>To run the <strong>QuantNBody</strong> package, you will need first to install the next four packages:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p><strong>SciPy</strong> : for installing, see <a class="reference external" href="https://scipy.org/install/">https://scipy.org/install/</a></p></li>
-<li><p><strong>NumPy</strong> : for installing, see <a class="reference external" href="https://numpy.org/install/">https://numpy.org/install/</a></p></li>
-<li><p><strong>Numba</strong> : for installing, see <a class="reference external" href="https://numba.readthedocs.io/en/stable/user/installing.html">https://numba.readthedocs.io/en/stable/user/installing.html</a></p></li>
-<li><p><strong>Psi4</strong>  : for installing, see <a class="reference external" href="https://anaconda.org/psi4/psi4">https://anaconda.org/psi4/psi4</a>, or <a class="reference external" href="https://psicode.org/psi4manual/1.2.1/conda.html">https://psicode.org/psi4manual/1.2.1/conda.html</a></p></li>
+<li><p><strong>SciPy</strong> : For installation, see [SciPy’s installation page](<a class="reference external" href="https://scipy.org/install/">https://scipy.org/install/</a>)</p></li>
+<li><p><strong>NumPy</strong> : For installation, see [NumPy’s installation page](<a class="reference external" href="https://numpy.org/install/">https://numpy.org/install/</a>)</p></li>
+<li><p><strong>Numba</strong> : For installation, see [Numba’s installation page](<a class="reference external" href="https://numba.readthedocs.io/en/stable/user/installing.html">https://numba.readthedocs.io/en/stable/user/installing.html</a>)</p></li>
+<li><p><strong>Psi4</strong>  : For installation, see [Psi4’s Anaconda page](<a class="reference external" href="https://anaconda.org/psi4/psi4">https://anaconda.org/psi4/psi4</a>), or [Psi4’s official website](<a class="reference external" href="https://psicode.org/psi4manual/1.2.1/conda.html">https://psicode.org/psi4manual/1.2.1/conda.html</a>)</p></li>
 </ol>
 </div></blockquote>
 </section>
 <section id="installation-of-quantnbody">
-<h2>Installation of QuantNBody<a class="headerlink" href="#installation-of-quantnbody" title="Link to this heading"></a></h2>
-<p>An easy way to install the QuantNBody package is by using <code class="code docutils literal notranslate"><span class="pre">pip</span></code> in your terminal as follows:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">quantnbody</span>
+<h2>Installation of QuantNBody<a class="headerlink" href="#installation-of-quantnbody" title="Permalink to this heading"></a></h2>
+<p>An easy way to install the <strong>QuantNBody</strong> package is by using <code class="docutils literal notranslate"><span class="pre">pip</span></code> in your terminal as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>quantnbody
 </pre></div>
 </div>
-<p>Another alternative is to clone the repository from our <a class="reference external" href="https://github.com/SYalouz/QuantNBody">Github page</a>  and install it in developper mode.
+<p>Another alternative is to clone the repository from our <a class="reference external" href="https://github.com/SYalouz/QuantNBody">Github page</a> and install it in developer mode.
 For this, write the following lines in your terminal:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">SYalouz</span><span class="o">/</span><span class="n">QuantNBody</span><span class="o">.</span><span class="n">git</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="n">QuantNBody</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/SYalouz/QuantNBody.git
+<span class="nb">cd</span><span class="w"> </span>QuantNBody
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
-<p>And dont forget to always <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> if you want to get the latest version of the package!</p>
+<p>And don’t forget to always <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> if you want to get the latest version of the package!</p>
 </section>
 </section>
 

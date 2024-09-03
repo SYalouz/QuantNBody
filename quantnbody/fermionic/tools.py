@@ -1572,7 +1572,7 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mo):
@@ -1607,7 +1607,7 @@ def build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local ):
         matrix representation of the s_plus_local operator (local spin ladder up) in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     s_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     
@@ -1640,7 +1640,7 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
         matrix representation of s_A x s_B in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     s_plus_A = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_plus_B = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z_A = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -1715,7 +1715,7 @@ def build_local_l2_lz_lplus_operator(a_dagger_a, list_mo_local, l_local, list_l_
         matrix representation of the l_plus_local operator (local angular momentum ladder up) in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     l_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     
     l_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))

@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tuto 1: first steps with the package &mdash; QuantNBody 1.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=292eb321"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -51,7 +51,6 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">What is QuantNBody ?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#framework-of-the-package">Framework of the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#brief-illustration-of-what-is-possible">Brief illustration of what is possible</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#how-to-contribute">How to contribute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#support">Support</a></li>
@@ -74,8 +73,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Tuto_PLAYING_WITH_STATES.html"><em>Tuto 2:</em> playing with many-body wavefunctions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_SPIN_AND_AB_INITIO_HAMILTONIANS.html"><em>Tuto 3:</em> electronic structure Hamiltonian and spin operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Tuto_BOSE_HUBBARD.html"><em>Tuto 4:</em> the Bose-Hubbard system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems in QuantNBody</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> QuantNBody package for two fermion-boson models: Hubbard-Holstein and polaritonic chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_hybrid_fermion_boson.html"><em>Tuto 5:</em> Hybrid Fermion-Boson Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tuto_Holstein_and_polaritonic_QED_dynamics.html"><em>Tuto 6:</em> Hybrid fermion-boson Hamiltonians: Hubbard-Holstein and polaritonic chemistry</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">List of implemented functions</span></p>
 <ul>
@@ -87,7 +86,6 @@
 <p class="caption" role="heading"><span class="caption-text">How to cite</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="references.html">How to cite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html#works-using-quantnbody">Works using QuantNBody</a></li>
 </ul>
 
         </div>
@@ -115,11 +113,11 @@
            <div itemprop="articleBody">
              
   <section id="tuto-1-first-steps-with-the-package">
-<h1><em>Tuto 1:</em> first steps with the package<a class="headerlink" href="#tuto-1-first-steps-with-the-package" title="Link to this heading"></a></h1>
+<h1><em>Tuto 1:</em> first steps with the package<a class="headerlink" href="#tuto-1-first-steps-with-the-package" title="Permalink to this heading"></a></h1>
 <p><strong>Dr. Saad Yalouz - Laboratoire de Chimie Quantique de Strasbourg,
 France - July 2022</strong></p>
 <section id="philosophy-of-the-package">
-<h2>Philosophy of the package<a class="headerlink" href="#philosophy-of-the-package" title="Link to this heading"></a></h2>
+<h2>Philosophy of the package<a class="headerlink" href="#philosophy-of-the-package" title="Permalink to this heading"></a></h2>
 <p>The philosophy of the <strong>QuantNBody</strong> package is to facilitate the
 implementation and manipulation of quantum many-body systems composed of
 electrons or bosons. To achieve this goal, the package has been designed
@@ -146,14 +144,14 @@ functions based on the provided tools.</p>
 tutorials on fermionic systems.</p>
 </section>
 <section id="let-us-first-import-the-package">
-<h2>Let us first import the package !<a class="headerlink" href="#let-us-first-import-the-package" title="Link to this heading"></a></h2>
+<h2>Let us first import the package !<a class="headerlink" href="#let-us-first-import-the-package" title="Permalink to this heading"></a></h2>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quantnbody</span> <span class="k">as</span> <span class="nn">qnb</span>   <span class="c1"># &lt;==== General import</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
 </div>
 </section>
 <section id="building-a-many-body-basis">
-<h2>Building a many-body basis<a class="headerlink" href="#building-a-many-body-basis" title="Link to this heading"></a></h2>
+<h2>Building a many-body basis<a class="headerlink" href="#building-a-many-body-basis" title="Permalink to this heading"></a></h2>
 <p>To build a many-body basis for a fermionic system, the QuantNBody
 package generates a list of many-body states which describe the
 repartition of <span class="math notranslate nohighlight">\(N_{elec}\)</span> electrons in <span class="math notranslate nohighlight">\(2N_{MO}\)</span>
@@ -216,7 +214,7 @@ many-body operators.</p>
 </div>
 </section>
 <section id="building-and-storing-the-a-dagger-p-sigma-a-q-tau-operators">
-<h2>Building and storing the <span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators<a class="headerlink" href="#building-and-storing-the-a-dagger-p-sigma-a-q-tau-operators" title="Link to this heading"></a></h2>
+<h2>Building and storing the <span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> operators<a class="headerlink" href="#building-and-storing-the-a-dagger-p-sigma-a-q-tau-operators" title="Permalink to this heading"></a></h2>
 <p>Once the list of many-body states is created, the next crucial point in
 the <strong>QuantNBody</strong> package consists in building the
 <span class="math notranslate nohighlight">\(a^\dagger_{p,\sigma} a_{q,\tau}\)</span> many-body operators.</p>
@@ -286,7 +284,7 @@ the first spin-orbital. This explains why we only have ones on the three
 first elements of the diagonal !</p>
 </section>
 <section id="building-our-first-many-body-hamiltonian-a-fermi-hubbard-molecule">
-<h2>Building our first many-body Hamiltonian : a fermi-Hubbard molecule<a class="headerlink" href="#building-our-first-many-body-hamiltonian-a-fermi-hubbard-molecule" title="Link to this heading"></a></h2>
+<h2>Building our first many-body Hamiltonian : a fermi-Hubbard molecule<a class="headerlink" href="#building-our-first-many-body-hamiltonian-a-fermi-hubbard-molecule" title="Permalink to this heading"></a></h2>
 <p>In this final part of the tutorial we will use the previously built
 <code class="code docutils literal notranslate"><span class="pre">a_dagger_a</span></code> variable to implement a fermi-Hubbard molecule. In the local
 site basis, the model Hamiltonian is usually expressed such that:</p>
