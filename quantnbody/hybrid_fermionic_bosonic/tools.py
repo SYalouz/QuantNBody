@@ -2,6 +2,7 @@ import scipy
 import numpy as np
 from itertools import combinations_with_replacement, combinations
 from numba import njit, prange
+import matplotlib.pyplot as plt
 import scipy.sparse
 import psi4
 
@@ -1236,6 +1237,132 @@ def get_ket_in_atomic_orbitals(state, bra=False):
         ret_string = '|' + ret_string + '⟩'
     return ret_string
 
+
+def bar_y(ax, coefficients, nbody_basis, size_label):
+    """Plot horizontal bar charts for coefficients of a wavefunction."""
+    # Create horizontal bars with colors based on the sign of the coefficients
+    rects1 = ax.barh(range(len(coefficients)), np.abs(coefficients), color=[
+        'red' if x < 0 else 'dodgerblue' for x in coefficients], edgecolor='black', linewidth=0.65, align='center')
+
+    # Add labels to each bar with a bit of padding
+    ax.bar_label(rects1, labels=[nbody_basis[j]for j in range(len(coefficients))],
+                 fontsize=size_label, padding=2)
+
+    # Add grid to the x-axis for better readability
+    ax.xaxis.grid(True, linestyle='--', alpha=0.7)
+
+    return
+
+
+# Main plotting function for wavefunctions
+def plot_wavefunctions(WFT, nbody_basis, n_mode, list_states=[0], probability=False, cutoff=0.005, label_props=["x-large", 16, 16, 16]):
+
+    """
+    Plot the wavefunctions choosen by the user.
+
+    Parameters
+    ----------
+    WFT : numpy array
+        A 2D array containing the wavefunctions.
+    nbody_basis : list
+        A list of the many-body basis states.
+    list_states : list
+        A list of the states to plot. Default is [0] the ground state
+    n_mode : int
+        The number of modes considered in the wavefunction
+    probability : bool
+        If True, plot the probabilities of the states. If False, plot the coefficients. Default is False
+    cutoff : float
+        The cutoff for the coefficients to be plotted. Default is 0.005
+    label_props : list
+        A list of argument that can be modified to fine-tune the size of the labels.
+        the first element is the size of the bar labels, it can be modified to :
+        "x-small", "small", "medium", "large", "x-large", "xx-large".
+        The second,third and fourth elements are the size of the state label, the x-axis title and tick labels, it should be modified to :
+        10, 12, 14, 16, 18, 20 
+        if the user need it. Default is ["x-large",16,16,16]
+
+    Returns
+    -------
+    None
+    """
+    N = len(list_states)  # Number of states to plot
+    # Maximum coefficient for setting x-ticks
+    max_coefficient = np.max(np.abs(WFT[:, list_states]))
+    damping = 0.25  # Damping factor for x-ticks
+    # Create a grid of subplots with shared x-axis
+
+    # Create a grid of subplots with shared x-axis
+    list_states = list_states[::-1]
+    indices_by_state = [np.where(np.abs(WFT[:, i]) > cutoff)[
+        0] for i in list_states]
+
+    height = [len(indices) for indices in indices_by_state]
+    gridspecs = {'height_ratios': height} if N > 1 else {'height_ratios': None}
+
+    # Loop through each state to plot
+    fig, axs = plt.subplots(N, 1, sharex=True, dpi=150, gridspec_kw=gridspecs)
+    for i in range(N):
+        state_index = list_states[i]
+        ax = axs[i] if N > 1 else axs
+        list_index = indices_by_state[i]
+
+        # Get indices where the coefficients exceed the cutoff value
+        list_index = np.where(np.abs(WFT[:, state_index]) > cutoff)[0]
+
+        # Collect coefficients and corresponding many-body states
+        coefficients = WFT[list_index,
+                           state_index]**2 if probability else WFT[list_index, state_index]
+        states = [nbody_basis[j] for j in list_index]
+
+        # Sort coefficients and states by the absolute value of the coefficients
+        combined = list(zip(np.abs(coefficients), coefficients, states))
+        sorted_combined = sorted(combined, key=lambda x: x[0], reverse=True)
+        sorted_abs_coefficients, sorted_coefficients, sorted_nbody_basis = zip(
+            *sorted_combined)
+
+        # Set colors based on the sign of the coefficients (red for negative, blue for positive)
+        L_sign = ["red" if x < 0 else "dodgerblue" for x in sorted_coefficients]
+
+        # Format labels for the states
+        L_label = []
+        for state in sorted_nbody_basis:
+            fermionic_part = state[:n_mode]
+            bosonic_part = state[n_mode:]
+            L_label.append(
+                f'|{"".join(str(elem) for elem in fermionic_part)}⟩ ⊗ |{"".join(str(elem) for elem in bosonic_part)}⟩'
+            )
+
+        bar_y(ax, sorted_coefficients, L_label, label_props[0])
+        # Remove y-ticks and plot the bars
+        ax.set_yticks([])
+        ax.text(-0.07, 0.5, rf'$|\Psi_{state_index}\rangle$', ha='center', va='center',
+                transform=ax.transAxes, fontsize=label_props[1],   bbox=dict(
+                    facecolor='lightgray',  # Light gray background
+                    edgecolor='black',      # Black edge
+                    boxstyle='round,pad=0.25',  # Rounded edges
+                    alpha=0.75,
+                    linewidth=1  # Edge thickness
+                ))  # Centered text
+
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+
+    fig.supxlabel('probability' if probability else 'Coefficient',
+                  fontsize=label_props[2])
+    # Set the x-ticks based on the maximum coefficient
+    end_tick = max_coefficient**2 + damping if probability else max_coefficient + damping
+    x_ticks = np.arange(0., end_tick, 0.1)
+    ax.set_xticks(x_ticks)
+    ax.tick_params(axis='x', labelsize=label_props[3])
+    # Show the plot
+    plt.tight_layout()
+    plt.show()
+
+    return
+
+
+
 # =============================================================================
 # INTEGRAL TRANSFORMATIONS
 # =============================================================================
@@ -1281,7 +1408,6 @@ def transform_1_2_body_tensors_in_new_basis(h_b1, g_b1, C):
         g_b2 = np.einsum('ap, bq, cr, ds, abcd -> pqrs', C, C, C, C, g_b1, optimize=True)
     
     return h_b2, g_b2
-
 
 
 
