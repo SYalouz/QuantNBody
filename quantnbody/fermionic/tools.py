@@ -112,6 +112,8 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
 
     # In case we want to get rid of states with s_z != 0
     if S_z_cleaning:
+        print("You are actually using a truncated basis. Be careful, some mathematical properties,like the resolution of identity, may be incorrect.")
+        
         nbody_basis_cleaned = nbody_basis.copy()
         for i in range(np.shape(nbody_basis)[0]):
             s_z = check_sz(nbody_basis[i])
@@ -2186,7 +2188,8 @@ def scalar_product_different_MO_basis_with_frozen_orbitals( Psi_A_MOB1,
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
 # =============================================================================
 
-def visualize_wft(WFT, nbody_basis, cutoff=0.005, ndets=8, atomic_orbitals=False):
+
+def visualize_wft(WFT, nbody_basis, cutoff=0.005, ndets=8, atomic_orbitals=False,compact=False):
     """
     Print the decomposition of a given input wavefunction in a many-body basis.
 
@@ -2206,29 +2209,55 @@ def visualize_wft(WFT, nbody_basis, cutoff=0.005, ndets=8, atomic_orbitals=False
     Returns
     -------
         Terminal printing of the wavefunction
-
     """
+    
+    # Filter out coefficients below cutoff
     list_index = np.where(abs(WFT) > cutoff)[0]
 
-    states = []
-    coefficients = []
-    for index in list_index:
-        coefficients += [WFT[index]]
-        states += [nbody_basis[index]]
+    # Store selected coefficients and states
+    states = [nbody_basis[index] for index in list_index]
+    coefficients = [WFT[index] for index in list_index]
 
+    # Sort based on the absolute values of the coefficients (descending order)
     list_sorted_index = np.flip(np.argsort(np.abs(coefficients)))
 
+    # Start building the output string
     return_string = f'\n\t{"-" * 11}\n\t Coeff.     N-body state and index \n\t{"-" * 7}     {"-" * 22}\n'
-    for index in list_sorted_index[0:ndets]:
+
+    # Loop over sorted indices, up to the maximum number of determinants `ndets`
+    for index in list_sorted_index[:ndets]:
         state = states[index]
-        True_index_state =  np.flatnonzero((nbody_basis == state).all(1))[0]
+        True_index_state = np.flatnonzero((nbody_basis == state).all(1))[0]
+
+        ket = ""
         if atomic_orbitals:
             ket = get_ket_in_atomic_orbitals(state, bra=False)
         else:
-            ket = '|' + "".join([str(elem) for elem in state]) + '⟩'
-        return_string += f'\t{coefficients[index]:+1.5f}   {ket}    #{True_index_state} \n'
+            if compact : 
+                    
+                # Build ket notation for spin orbitals
+                ket_bottom = ""
+                ket_top = ""
+                
+                # Loop over pairs of elements (even index and odd index) and construct the ket
+                for it, (even, odd) in enumerate(zip(state[::2], state[1::2]), 1):
+                    ket += str(it) * (even + odd)  # Add the orbital number based on occupation
+                    ket_top += (" " if even == 1 else "") + ("_" if odd == 1 else "")  # Create upper part for spin
+                
+            else: 
+                ket = "".join([str(elem) for elem in state])
+                
+
+        # Format the output
+        return_string += f'\t{" " * len(f"{coefficients[index]:+1.5f}")}   {ket_top}    \n' if compact else ""
+        return_string += f'\t{coefficients[index]:+1.5f}  |{ket}⟩    #{True_index_state} \n'
+
+    # Print and return the final string
     print(return_string)
     return return_string
+
+
+
 
 
 def get_ket_in_atomic_orbitals(state, bra=False):
@@ -2258,10 +2287,9 @@ def bar_y(ax, coefficients, nbody_basis, size_label):
     rects1 = ax.barh(range(len(coefficients)), np.abs(coefficients), color=[
         'red' if x < 0 else 'dodgerblue' for x in coefficients], edgecolor='black', linewidth=0.65, align='center')
 
-    # Add labels to each bar with a bit of padding
-    ax.bar_label(rects1, labels=[
-        rf'$| {" ".join(map(str, nbody_basis[j]))}\rangle$' for j in range(len(coefficients))],
-        fontsize=size_label, padding=2)
+   # Add labels to each bar with a bit of padding
+    ax.bar_label(rects1, labels=[nbody_basis[j]for j in range(len(coefficients))],
+                 fontsize=size_label, padding=2)
 
     # Add grid to the x-axis for better readability
     ax.xaxis.grid(True, linestyle='--', alpha=0.7)
@@ -2269,7 +2297,7 @@ def bar_y(ax, coefficients, nbody_basis, size_label):
     return
 
 
-def plot_wavefunctions(WFT, nbody_basis, list_states=[0], probability=False, cutoff=0.005, label_props=["x-large", 16, 16, 16]):
+def plot_wavefunctions(WFT, nbody_basis, list_states=[0], probability=False, cutoff=0.005,compact=False, label_props=["x-large", 16, 16, 16]):
     """
     Plot the wavefunctions chosen by the user.
 
@@ -2328,8 +2356,22 @@ def plot_wavefunctions(WFT, nbody_basis, list_states=[0], probability=False, cut
         sorted_combined = sorted(combined, key=lambda x: x[0], reverse=True)
         sorted_abs_coefficients, sorted_coefficients, sorted_nbody_basis = zip(
             *sorted_combined)
+        
+        L_label = []
+        for state in sorted_nbody_basis:
+            state2=""
+            if compact: 
+                comp_state = ""
+                for it, (even, odd) in enumerate(zip(state[::2], state[1::2]),1):
+                    comp_state += str(it)  if even == 1 else ""
+                    comp_state += r"$\overline{" + str(it) + "}$" if odd == 1 else "" # Add the orbital number based on occupation
+                
+                state2 = comp_state
+            L_label.append(
+                f'|{"".join(str(elem) for elem in state2)}⟩'
+            )
 
-        bar_y(ax, sorted_coefficients, sorted_nbody_basis, label_props[0])
+        bar_y(ax, sorted_coefficients, L_label, label_props[0])
 
         # Remove y-ticks and plot the bars
         ax.set_yticks([])
