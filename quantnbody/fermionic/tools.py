@@ -2359,16 +2359,16 @@ def plot_wavefunctions(WFT, nbody_basis, list_states=[0], probability=False, cut
         
         L_label = []
         for state in sorted_nbody_basis:
-            state2=""
             if compact: 
                 comp_state = ""
                 for it, (even, odd) in enumerate(zip(state[::2], state[1::2]),1):
                     comp_state += str(it)  if even == 1 else ""
                     comp_state += r"$\overline{" + str(it) + "}$" if odd == 1 else "" # Add the orbital number based on occupation
+                    
+                state = comp_state
                 
-                state2 = comp_state
             L_label.append(
-                f'|{"".join(str(elem) for elem in state2)}⟩'
+                f'|{"".join(str(elem) for elem in state)}⟩'
             )
 
         bar_y(ax, sorted_coefficients, L_label, label_props[0])
