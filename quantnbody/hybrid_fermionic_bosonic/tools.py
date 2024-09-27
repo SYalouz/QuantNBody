@@ -48,6 +48,7 @@ def build_nbody_basis( n_mode, list_N_boson, n_mo, n_electron, S_z_cleaning=Fals
         
     nbody_basis_boson_and_fermion = []
     for n_boson in list_N_boson:
+        
         for combination in combinations_with_replacement( range(n_mode), n_boson ):
             fock_state_boson = [ 0 for i in range(n_mode) ]
             for index in list(combination):
@@ -382,6 +383,7 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
     dim_H = len(nbody_basis)  
     n_mo  = len(nbody_basis[0][n_mode:]) // 2
     n_elec = np.sum(nbody_basis[0][n_mode:])
+    n_b_max = np.max(nbody_basis[:,:n_mode])
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
     for p in range(2 * n_mo):
         for q in range(p, 2 * n_mo):
@@ -400,8 +402,18 @@ def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
     # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:,n_mode:]) ):
     #     include_broken_spin = True 
     
-    # SEEMS TO WORK : TO BE BETTER CHECKED !!!
+    
+    #temporary solution to the problem of mapping the hybrid basis; solve the S_z cleaning problem
     Full_spin_basis = True
+    if  scipy.special.binom(2 * n_mo, n_elec)*scipy.special.binom(n_mode + n_b_max , n_b_max) == dim_H :
+        Full_spin_basis = True
+    else:
+        Full_spin_basis = False
+        print("You are actually using a truncated basis. Be careful, some mathematical properties,like the resolution of identity, may be incorrect.")
+        
+    
+    # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:,n_mode:]) ):
+    
     # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:test_nbody_basis_fermions.shape[0],n_mode:]) ):
     #     Full_spin_basis = False
         # print("DONC ? ", Full_spin_basis) 
@@ -1171,7 +1183,7 @@ def my_state( many_body_state, nbody_basis ):
 #  FUNCTION TO HELP THE VISUALIZATION OF MANY-BODY WAVE FUNCTIONS
 # =============================================================================
 
-def visualize_wft(WFT, nbody_basis, n_mode, cutoff=0.005, atomic_orbitals=False):
+def visualize_wft(WFT, nbody_basis, n_mode, cutoff=0.005, atomic_orbitals=False,compact=False):
     """
     Print the decomposition of a given input wavefunction in a many-body basis.
 
@@ -1205,13 +1217,29 @@ def visualize_wft(WFT, nbody_basis, n_mode, cutoff=0.005, atomic_orbitals=False)
     for index in list_sorted_index[0:15]:
         state = states[index]
         True_index_state =  np.flatnonzero((nbody_basis == state).all(1))[0]
-        ket = '|' + "".join([str(elem) for elem in state[0:n_mode]]) + '⟩ ⊗ '
+        ket = "".join([str(elem) for elem in state[0:n_mode]]) + '⟩ ⊗ '
 
         if atomic_orbitals:
             ket += get_ket_in_atomic_orbitals(state[n_mode:], bra=False)
         else:
-            ket += '|' + "".join([str(elem) for elem in state[n_mode:]]) + '⟩'
-        return_string += f'\t{coefficients[index]:+1.5f}   {ket}    #{True_index_state} \n'
+            if compact : 
+                    
+                # Build ket notation for spin orbitals
+                ket += "|"
+                ket_top = ""
+                
+                # Loop over pairs of elements (even index and odd index) and construct the ket
+                for it, (even, odd) in enumerate(zip(state[n_mode::2], state[n_mode +1::2]), 1):
+                    ket += str(it) * (even + odd)  # Add the orbital number based on occupation
+                    ket_top += (" " if even == 1 else "") + ("_" if odd == 1 else "")  # Create upper part for spin
+                
+            else: 
+                ket += '|' + "".join([str(elem) for elem in state[n_mode:]])
+                
+
+        # Format the output
+        return_string += f'\t{" " *(len(f"{coefficients[index]:+1.5f}") + 5 + n_mode )}   {ket_top}     \n' if compact else ""
+        return_string += f'\t{coefficients[index]:+1.5f}  |{ket}⟩    #{True_index_state} \n'  
     print( return_string )
     return return_string
 
@@ -1255,7 +1283,7 @@ def bar_y(ax, coefficients, nbody_basis, size_label):
 
 
 # Main plotting function for wavefunctions
-def plot_wavefunctions(WFT, nbody_basis, n_mode, list_states=[0], probability=False, cutoff=0.005, label_props=["x-large", 16, 16, 16]):
+def plot_wavefunctions(WFT, nbody_basis, n_mode, list_states=[0], probability=False, cutoff=0.005,compact=False, label_props=["x-large", 16, 16, 16]):
 
     """
     Plot the wavefunctions choosen by the user.
@@ -1327,10 +1355,17 @@ def plot_wavefunctions(WFT, nbody_basis, n_mode, list_states=[0], probability=Fa
         # Format labels for the states
         L_label = []
         for state in sorted_nbody_basis:
-            fermionic_part = state[:n_mode]
-            bosonic_part = state[n_mode:]
+            fermionic_part = state[n_mode:]
+            bosonic_part = state[:n_mode]
+            
+            if compact: 
+                comp_part = ""
+                for it, (even, odd) in enumerate(zip(fermionic_part[::2], fermionic_part[1::2]),1):
+                    comp_part += str(it)  if even == 1 else ""
+                    comp_part += r"$\overline{" + str(it) + "}$" if odd == 1 else "" # Add the orbital number based on occupation
+                fermionic_part = comp_part
             L_label.append(
-                f'|{"".join(str(elem) for elem in fermionic_part)}⟩ ⊗ |{"".join(str(elem) for elem in bosonic_part)}⟩'
+                f'|{"".join(str(elem) for elem in bosonic_part)}⟩ ⊗ |{"".join(str(elem) for elem in fermionic_part)}⟩'
             )
 
         bar_y(ax, sorted_coefficients, L_label, label_props[0])
