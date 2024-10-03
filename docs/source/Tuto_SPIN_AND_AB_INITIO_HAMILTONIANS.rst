@@ -37,7 +37,7 @@ two-electron spin-free excitation operators defined like
 
 and
 
-.. math::  e_{pqrs} = E_{pq}E_{rs} - \delta_{rs} E_{ps} .
+.. math::  e_{pqrs} = E_{pq}E_{rs} - \delta_{qr} E_{ps} .
 
 Here again, we see that all these operators can be defined in terms of
 the :math:`a_{p,\sigma}^\dagger a_{q,\tau}` operators.
