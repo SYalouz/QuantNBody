@@ -238,90 +238,6 @@ def build_operator_a_dagger_a(nbody_basis, silent=True):
     return a_dagger_a
 
 
-
-# numba -> njit version of build_operator_a_dagger_a
-def TEST_build_operator_a_dagger_a(nbody_basis, silent=True):
-    """
-    Create a matrix representation of the a_dagger_a operator in the many-body basis
-
-    Parameters
-    ----------
-    nbody_basis : array
-        List of many-body states (occupation number states)
-    silent : bool, default=True
-        If it is True, function doesn't print anything when it generates a_dagger_a
-
-    Returns
-    -------
-    a_dagger_a : array
-        Matrix representation of the a_dagger_a operators
-
-    Examples
-    ________
-    >>> nbody_basis = nbody_basis(2, 2)
-    >>> a_dagger_a = build_operator_a_dagger_a(nbody_basis, True)
-    >>> a_dagger_a[0,0] # Get access to the operator counting the electron in the first spinorbital
-
-    """
-    # Dimensions of problem
-    dim_H = len(nbody_basis)
-    n_mo = len(nbody_basis[0]) // 2
-    mapping_kappa = build_mapping(nbody_basis)
-
-    a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
-    Mat = scipy.sparse.lil_matrix((dim_H, dim_H))
-    for p in range(2 * n_mo):
-        for q in range(p, 2 * n_mo):
-            a_dagger_a[p, q] = Mat
-            a_dagger_a[q, p] = Mat #scipy.sparse.lil_matrix((dim_H, dim_H)) 
-
-    # for MO_q in (prange(n_mo)):
-    #     for MO_p in range(MO_q, n_mo):
-    #         for kappa in range(dim_H):
-    #             ref_state = nbody_basis[kappa]
-                
-    #             # Single excitation : spin alpha -- alpha
-    #             p, q = 2 * MO_p, 2 * MO_q
-    #             if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-    #                 pass
-    #             elif ref_state[q] == 1:
-    #                 kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-    #                 a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-    #             # Single excitation : spin beta -- beta
-    #             p, q = 2 * MO_p + 1, 2 * MO_q + 1
-    #             if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-    #                 pass
-    #             elif ref_state[q] == 1:
-    #                 kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-    #                 a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-    #             if MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
-
-    #                 # Single excitation : spin beta -- alpha
-    #                 p, q = 2 * MO_p + 1, 2 * MO_p
-    #                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-    #                     pass
-    #                 elif ref_state[q] == 1:
-    #                     kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-    #                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-    #                     # Single excitation : spin alpha -- beta
-    #                 p, q = 2 * MO_p, 2 * MO_p + 1
-
-    #                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-    #                     pass
-    #                 elif ref_state[q] == 1:
-    #                     kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-    #                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-    # if not silent:
-    #     print()
-    #     print('\t ===========================================')
-    #     print('\t ====  The matrix form of a^a is built  ====')
-    #     print('\t ===========================================')
-
-    return a_dagger_a
-
 @njit
 def build_mapping(nbody_basis):
     """
@@ -630,7 +546,7 @@ def build_hamiltonian_fermi_hubbard(h_,
         indices_two_electron_integrals = np.transpose((abs(v_term)>cut_off_integral).nonzero())
         for indices in indices_two_electron_integrals:
             p, q, r, s = indices  
-            H_fermi_hubbard +=  E_[p, q] @ E_[r, s] * v_term[p, q, r, s] 
+            H_fermi_hubbard +=  E_[p, q] @ E_[r, s] * v_term[p, q, r, s] / 2.
             
     # global E_
     # E_ = np.empty((n_mo, n_mo), dtype=object)
@@ -1458,9 +1374,11 @@ def fh_get_active_space_integrals_with_V( h_MO,
     core_energy = 0.0
     for i in frozen_indices:
         for t in active_indices:
-            core_energy += 2 * V_MO[i,t,t,i] # New contribution
+            # core_energy += 2 * V_MO[i,t,t,i] # New contribution
+            core_energy += V_MO[i,t,t,i] # New contribution
         for j in frozen_indices:
-                core_energy +=   4 * V_MO[i, i, j, j]
+            # core_energy +=   4 * V_MO[i, i, j, j]
+            core_energy +=   2 * V_MO[i, i, j, j]
 
     # ==> From the U term
     for i in frozen_indices:
@@ -1474,7 +1392,8 @@ def fh_get_active_space_integrals_with_V( h_MO,
     for i in frozen_indices:
         for t in active_indices:
             for u in active_indices:
-                h_act[t, u] +=  4 * V_MO[i, i, t, u]    -  V_MO[u, i, i, t]
+                # h_act[t, u] +=  4 * V_MO[i, i, t, u]    -  V_MO[u, i, i, t] 
+                h_act[t, u] +=  2 * V_MO[i, i, t, u]    -  V_MO[i, t, u, i] /2.
 
     # ==> From the U term
     for t in active_indices:
