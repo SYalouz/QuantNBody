@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools >= 64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+version = "1.1.2"
+name = "quantnbody"
+authors = [
+    {name = "Saad Yalouz, Martin Rafael Gulin, Sajathan Sekaran", email = "yalouzsaad@gmail.com"},
+]
+description = "A python package for quantum chemistry/physics to manipulate many-body operators and wave functions."
+readme = {file = "README.md", content-type = "text/markdown",encoding="utf-8"}
+requires-python = ">=3.8"
+keywords = ['quantum physics and chemistry', 'quantum many-body systems', 'exact diagonalization']
+license = {file="LICENSE.txt"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License "
+]
+dependencies = [
+    "scipy <1.14",
+    "numpy <2.2",
+    "numba",
+    "matplotlib"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ['testing', 'Tutorials', 'paper_JOSS', 'quantnbody']  # package names should match these glob patterns (["*"] by default)
+#exclude = ["my_package.tests*"]  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
+[project.urls]
+Documentation="https://quantnbody.readthedocs.io/en/latest/"
+Repository="https://github.com/SYalouz/QuantNBody"
