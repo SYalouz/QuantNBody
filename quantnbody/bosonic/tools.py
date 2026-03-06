@@ -37,54 +37,16 @@ def build_nbody_basis( n_mode, n_boson ):
 
     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
 
-
-@njit
-def build_mapping( nbodybasis ):
-    """
-    Function to create a unique mapping between a kappa vector and an occupation
-    number state.
-
-    Parameters
-    ----------
-    nbody_basis : array
-        Many-body basis
-
-    Returns
-    -------
-    mapping_kappa : array
-        List of unique values associated to each kappa
-    """
-    n_mode  = np.shape(nbodybasis)[1]
-    n_boson = np.sum(nbodybasis[0])
-    max_number = n_boson * 10**(( n_mode - 1 )*2) + 1
-    dim_H = np.shape(nbodybasis)[0]
-    mapping_kappa = np.zeros( max_number, dtype=np.int32 )
+def build_mapping_dict(nbody_basis):
+    dim_H = np.shape(nbody_basis)[0]
+    mapping_kappa = {}
+    
     for kappa in range(dim_H):
-        ref_state = nbodybasis[ kappa ]
-        number = 0
-        for index_mode in range(n_mode):
-            number += ref_state[index_mode] * 10**(( n_mode - index_mode - 1 )*2)
-        mapping_kappa[ int(np.round(number)) ] = kappa
-
+        ref_state = nbody_basis[kappa]
+        bit_string = ''.join(str(int(x)) for x in ref_state)
+        mapping_kappa[bit_string] = kappa  
+    
     return mapping_kappa
-
-
-# @njit
-# def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
-#     state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
-#     state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
-#     kappa_ = mapping_kappa[ make_number_out_of_vector(state_two) ]
-
-#     return kappa_, coeff1, coeff2
-
-
-# OLDER and MORE "BRUTE FORCE" FUNCTION KEPT FOR DEBUGGING
-# @njit
-def build_final_state_ad_a(ref_state, p, q, nbodybasis):
-    state_one, coeff1 = new_state_after_sq_boson_op('a',  q, ref_state)
-    state_two, coeff2 = new_state_after_sq_boson_op('a^', p, state_one)
-    kappa_ = nbodybasis.index( state_two.tolist() )
-    return kappa_, coeff1, coeff2
 
 
 @njit
@@ -115,29 +77,31 @@ def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
     return new_fock_state, coeff
 
 
-# numba -> njit version of build_operator_a_dagger_a
+
+
+
+
+
+    return kappa_, p1, p2
+
+def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
+    state_one, p1 = new_state_after_sq_boson_op('a', q, ref_state)
+    state_two, p2 = new_state_after_sq_boson_op('a^', p, state_one)
+    
+    bit_string = ''.join(str(x) for x in state_two)
+
+    kappa_ = mapping_kappa[bit_string]
+
+    return kappa_, p1, p2          
+
+
+
 def build_operator_a_dagger_a(nbodybasis, silent=True):
-    """
-    Create a matrix representation of the a_dagger_a operator
-    in the many-body basis
-
-    Parameters
-    ----------
-    nbody_basis : array
-        List of many-body states (occupation number states) (occupation number states)
-    silent      : Boolean
-        If it is True, function doesn't print anything when it generates a_dagger_a
-    Returns
-    -------
-    a_dagger_a : array
-        Matrix representation of the a_dagger_a operator in the many-body basis
-
-    """
     # Dimensions of problem
     dim_H  = len(nbodybasis)
     n_mode = len(nbodybasis[0])
     n_boson= np.sum(nbodybasis[0])
-    # mapping_kappa = build_mapping(nbodybasis) # <== To be clearly improved
+    mapping_kappa = build_mapping_dict(nbodybasis) 
 
     a_dagger_a = np.zeros((n_mode, n_mode), dtype=object)
 
@@ -154,15 +118,8 @@ def build_operator_a_dagger_a(nbodybasis, silent=True):
                 if p != q and (ref_state[q] == 0 or ref_state[p] == n_boson):
                     pass
                 else :
-                    # kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, nbodybasis.tolist()) # #  OLDER FUNCTION KEPT FOR DEBUGGING
+                    kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
                     a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] =  coeff1 * coeff2
-
-    if not silent:
-        print()
-        print('\t ===========================================')
-        print('\t ====  The matrix form of a^a is built  ====')
-        print('\t ===========================================')
 
     return a_dagger_a
 

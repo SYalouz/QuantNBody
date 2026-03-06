@@ -39,6 +39,9 @@ def build_nbody_basis( n_mode, list_N_boson, n_mo, n_electron, S_z_cleaning=Fals
     
     # In case we want to get rid of states with s_z != 0
     if S_z_cleaning:
+        
+        print("You are actually using a truncated basis. Be careful, some mathematical properties,like the resolution of identity, may be incorrect.")
+        
         nbody_basis_fermion_cleaned = nbody_basis_fermions.copy()
         for i in range(np.shape(nbody_basis_fermions)[0]):
             s_z = check_sz(nbody_basis_fermions[i])
@@ -67,6 +70,16 @@ def build_nbody_basis( n_mode, list_N_boson, n_mo, n_electron, S_z_cleaning=Fals
         
     return np.array( nbody_basis_boson_and_fermion )
 
+def build_mapping_dict(nbody_basis):
+    dim_H = np.shape(nbody_basis)[0]
+    mapping_kappa = {}
+    
+    for kappa in range(dim_H):
+        ref_state = nbody_basis[kappa]
+        bit_string = ''.join(str(int(x)) for x in ref_state)
+        mapping_kappa[bit_string] = kappa  
+    
+    return mapping_kappa
 
 def check_sz(ref_state):
     """
@@ -101,210 +114,18 @@ def check_sz(ref_state):
 
     return s_z_slater_determinant
 
-@njit
-def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
-    """
-    Parameters
-    ----------
-    type_of_op     :  type of bosonic operator to apply (creation of annihilation)
-    index_mode     :  index of the second quantized mode to occupy/empty
-    ref_fock_state :  initial state to be transformed
-
-    Returns
-    -------
-    new_fock_state :  Resulting occupation number form of the transformed state
-    coeff_phase    :  coefficient attached to the resulting state
-
-    """
-    new_fock_state    = ref_fock_state.copy()
-    num_boson_in_mode = ref_fock_state[index_mode]
-    coeff = 0
-    if type_of_op == 'b':
-        new_fock_state[index_mode] += -1
-        coeff = np.sqrt( num_boson_in_mode )
-    elif type_of_op == 'b^':
-        new_fock_state[index_mode] += 1
-        coeff = np.sqrt( num_boson_in_mode + 1 )
-
-    return new_fock_state, coeff
-
-
-# @njit
-def boson_build_final_state_bd(ref_state, p, nbodybasis):
-    state_one, coeff1 = new_state_after_sq_boson_op('b', p, ref_state) 
-    kappa_ = nbodybasis.index( state_one.tolist() )
-    return kappa_, coeff1
 
 
 
-# numba -> njit version of build_operator_a_dagger_a
-def build_boson_anihilation_operator_b( nbodybasis, n_mode, silent=True ):
-    """
-    Create a matrix representation of the a_dagger_a operator
-    in the many-body basis
-
-    Parameters
-    ----------
-    nbody_basis : array
-        List of many-body states (occupation number states) (occupation number states)
-    silent      : Boolean
-        If it is True, function doesn't print anything when it generates a_dagger_a
-    Returns
-    -------
-    a_dagger_a : array
-        Matrix representation of the a_dagger_a operator in the many-body basis
-
-    """
-    # Dimensions of problem
-    dim_H  = len(nbodybasis) 
-    # mapping_kappa = build_mapping(nbodybasis) # <== To be clearly improved
-
-    b = np.zeros((n_mode), dtype=object) 
-    for p in range( n_mode ): 
-        b[p] = scipy.sparse.lil_matrix((dim_H, dim_H)) 
-
-    for p in (range(n_mode)): 
-        for kappa in range(dim_H):
-            ref_state = nbodybasis[kappa]
-            if ref_state[p] == 0:
-                pass
-            else :
-                # kappa_, coeff1, coeff2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                kappa_, coeff = boson_build_final_state_bd(np.array(ref_state), p, nbodybasis.tolist()) # #  OLDER FUNCTION KEPT FOR DEBUGGING
-                b[p][kappa_, kappa] = coeff 
-    return b
-
-
-
-# @njit
-def fermion_build_final_state_ad_a(ref_state, p, q, nbodybasis, n_mode):
-    """
-    Create the final state generated after the consecutive application of the
-    a_dagger_a operators on an initial state.
-
-    Parameters
-    ----------
-    ref_state : Iterable[int]
-        Initial stater to be modified
-    p : int
-        index of the mode where a fermion is created
-    q : int
-        index of the mode where a fermion is killed
-    mapping_kappa : Iterable[int]
-        Function creating the unique mapping between unique value of some configuration with its index in nbody_basis.
-
-    Returns
-    -------
-    kappa_
-        final index in the many-body basis for the resulting state
-    p1 : int
-        phase coefficient after removing electron
-    p2 : int
-        phase coefficient after adding new electron
-
-    Examples
-    ________
-    >>> nbody_basis = build_nbody_basis(2, 2)  # 2 electrons and 2 MO
-    >>> mapping = build_mapping(nbody_basis)
-    >>> build_final_state_ad_a(np.array([1, 1, 0, 0]), 2, 1, mapping)  # exciting electron from spin MO 1 to spin MO 2
-    (1, -1.0, -1.0)
-
-    """ 
-    state_one, p1   = new_state_after_sq_fermi_op('a' ,  q, ref_state )
-    state_two, p2   = new_state_after_sq_fermi_op('a^',  p, state_one )  
-    kappa_ = nbodybasis.index( state_two.tolist() )
+def fermion_build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     
-    return kappa_, p1, p2 
-
-
-# # @njit
-# def fermion_build_final_state_ad_a(ref_state, p, q, nbodybasis, n_mode):
-#     """
-#     Create the final state generated after the consecutive application of the
-#     a_dagger_a operators on an initial state.
-
-#     Parameters
-#     ----------
-#     ref_state : Iterable[int]
-#         Initial stater to be modified
-#     p : int
-#         index of the mode where a fermion is created
-#     q : int
-#         index of the mode where a fermion is killed
-#     mapping_kappa : Iterable[int]
-#         Function creating the unique mapping between unique value of some configuration with its index in nbody_basis.
-
-#     Returns
-#     -------
-#     kappa_
-#         final index in the many-body basis for the resulting state
-#     p1 : int
-#         phase coefficient after removing electron
-#     p2 : int
-#         phase coefficient after adding new electron
-
-#     Examples
-#     ________
-#     >>> nbody_basis = build_nbody_basis(2, 2)  # 2 electrons and 2 MO
-#     >>> mapping = build_mapping(nbody_basis)
-#     >>> build_final_state_ad_a(np.array([1, 1, 0, 0]), 2, 1, mapping)  # exciting electron from spin MO 1 to spin MO 2
-#     (1, -1.0, -1.0)
-
-#     """
-#     fermionic_state = ref_state[n_mode:].copy() 
-#     state_one, p1   = new_state_after_sq_fermi_op('a', q, fermionic_state )
-#     state_two, p2   = new_state_after_sq_fermi_op('a^', p, state_one)
-#     full_state_two  = ref_state.tolist()[:n_mode]  + state_two.tolist() 
-#     print()
-#     print(ref_state)
-#     # print(fermionic_state)
-#     # print(state_two) 
-#     print(full_state_two)
+    state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
+    state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
     
-#     kappa_ = nbodybasis.index( full_state_two )
-#     # kappa_ = 0
-#     return kappa_, p1, p2 
-     
-
-# @njit
-# def fermion_build_final_state_ad_a(ref_state, p, q, mapping_kappa, nbodybasis):
-#     """
-#     Create the final state generated after the consecutive application of the
-#     a_dagger_a operators on an initial state.
-
-#     Parameters
-#     ----------
-#     ref_state : Iterable[int]
-#         Initial stater to be modified
-#     p : int
-#         index of the mode where a fermion is created
-#     q : int
-#         index of the mode where a fermion is killed
-#     mapping_kappa : Iterable[int]
-#         Function creating the unique mapping between unique value of some configuration with its index in nbody_basis.
-
-#     Returns
-#     -------
-#     kappa_
-#         final index in the many-body basis for the resulting state
-#     p1 : int
-#         phase coefficient after removing electron
-#     p2 : int
-#         phase coefficient after adding new electron
-
-#     Examples
-#     ________
-#     >>> nbody_basis = build_nbody_basis(2, 2)  # 2 electrons and 2 MO
-#     >>> mapping = build_mapping(nbody_basis)
-#     >>> build_final_state_ad_a(np.array([1, 1, 0, 0]), 2, 1, mapping)  # exciting electron from spin MO 1 to spin MO 2
-#     (1, -1.0, -1.0)
-
-#     """
-#     state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
-#     state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
-#     kappa_ = nbodybasis.index( state_two.tolist() )
-
-#     return kappa_, p1, p2
+    bit_string = ''.join(str(x) for x in state_two)
+    kappa_ = mapping_kappa[bit_string]
+    
+    return kappa_, p1, p2
 
 
 @njit
@@ -355,120 +176,145 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
 
 
 
-# numba -> njit version of build_operator_a_dagger_a
-def build_fermion_operator_a_dagger_a(nbody_basis, n_mode, silent=True):
-    """
-    Create a matrix representation of the a_dagger_a operator in the many-body basis
-    
-    Parameters
-    ----------
-    nbody_basis : array
-        List of many-body states (occupation number states)
-    silent : bool, default=True
-        If it is True, function doesn't print anything when it generates a_dagger_a
-
-    Returns
-    -------
-    a_dagger_a : array
-        Matrix representation of the a_dagger_a operators
-
-    Examples
-    ________
-    >>> nbody_basis = nbody_basis(2, 2)
-    >>> a_dagger_a = build_operator_a_dagger_a(nbody_basis, True)
-    >>> a_dagger_a[0,0] # Get access to the operator counting the electron in the first spinorbital
-
-    """
-    # Dimensions of problem
+def build_fermion_operator_a_dagger_a(nbody_basis,n_mode):
     dim_H = len(nbody_basis)  
     n_mo  = len(nbody_basis[0][n_mode:]) // 2
-    n_elec = np.sum(nbody_basis[0][n_mode:])
+    N_ferm = np.sum(nbody_basis[0][n_mode:])
     n_b_max = np.max(nbody_basis[:,:n_mode])
     a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
+    mapping_kappa = build_mapping_dict(nbody_basis)
     for p in range(2 * n_mo):
         for q in range(p, 2 * n_mo):
             a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
             a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
     
-    test_nbody_basis_fermions = []
-    for combination in combinations(range(2 * n_mo), n_elec):
-        fock_state_fermion = [0] * (2 * n_mo)
-        for index in list(combination):
-            fock_state_fermion[index] += 1
-        test_nbody_basis_fermions += [fock_state_fermion]
-    test_nbody_basis_fermions = np.array( test_nbody_basis_fermions )    
-    
-    # include_broken_spin = False
-    # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:,n_mode:]) ):
-    #     include_broken_spin = True 
-    
-    
-    #temporary solution to the problem of mapping the hybrid basis; solve the S_z cleaning problem
+
     Full_spin_basis = True
-    if  scipy.special.binom(2 * n_mo, n_elec)*scipy.special.binom(n_mode + n_b_max , n_b_max) == dim_H :
+    if  binom(2 * n_mo, N_ferm)*binom(n_mode + n_b_max , n_b_max) == dim_H :
         Full_spin_basis = True
     else:
         Full_spin_basis = False
         print("You are actually using a truncated basis. Be careful, some mathematical properties,like the resolution of identity, may be incorrect.")
         
-    
-    # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:,n_mode:]) ):
-    
-    # if (  np.shape(test_nbody_basis_fermions) == np.shape(nbody_basis[:test_nbody_basis_fermions.shape[0],n_mode:]) ):
-    #     Full_spin_basis = False
-        # print("DONC ? ", Full_spin_basis) 
-    # print(test_nbody_basis_fermions)
-    # print()
-    # print(nbody_basis[:test_nbody_basis_fermions.shape[0],n_mode:])
-    
     for MO_q in (range(n_mo)): 
         for MO_p in range(MO_q, n_mo): 
             for kappa in range(dim_H): 
                 ref_state = nbody_basis[kappa]
+                # print("\t\tN_ferm =",N_ferm," n_mo =",n_mo,"n_mode =",n_mode," n_b_max =",n_b_max)
+                # print("\t\tref_state",ref_state)
                 
                 # Single excitation : spin alpha -- alpha
                 p, q = 2 * MO_p  + n_mode, 2 * MO_q + n_mode
                 if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                     pass
                 elif ref_state[q] == 1:
-                    kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q, nbody_basis.tolist(), n_mode)
+                    kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q,mapping_kappa)
                     a_dagger_a[p-n_mode, q-n_mode][kappa_, kappa] = a_dagger_a[q-n_mode, p-n_mode][kappa, kappa_] = p1 * p2
-                
-                if n_elec > 1:
+                    # print(f"\t\t\t a* {p-n_mode} a {q-n_mode} {kappa_, kappa} |",ref_state," >==",p1*p2,"|",nbody_basis[kappa_],">")
                     
+                if N_ferm > 1: 
                     # Single excitation : spin beta -- beta
                     p, q = 2 * MO_p + 1 + n_mode, 2 * MO_q + 1  + n_mode
                     if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                         pass
                     elif ref_state[q] == 1:
-                        kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q, nbody_basis.tolist(), n_mode)
+                        kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q,mapping_kappa)
                         a_dagger_a[p-n_mode, q-n_mode][kappa_, kappa] = a_dagger_a[q-n_mode, p-n_mode][kappa, kappa_] = p1 * p2
-    
-                    if Full_spin_basis and MO_p == MO_q:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
+                        # print(f"\t\t\t a* {p-n_mode} a {q-n_mode} {kappa_, kappa} |",ref_state," >==",p1*p2,"|",nbody_basis[kappa_],">")
+                    if Full_spin_basis:  # <=== Necessary to build the Spins operator but not really for Hamiltonians
                         
                         # Single excitation : spin beta -- alpha
                         p, q = 2 * MO_p + 1 + n_mode, 2 * MO_p + n_mode
                         if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                             pass
                         elif ref_state[q] == 1:
-                            kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q, nbody_basis.tolist(), n_mode)
+                            kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q,mapping_kappa)
                             a_dagger_a[p-n_mode, q-n_mode][kappa_, kappa] = a_dagger_a[q-n_mode, p-n_mode][kappa, kappa_] = p1 * p2
-    
+                            # print(f"\t\t\t a* {p-n_mode} a {q-n_mode} {kappa_, kappa} |",ref_state," >==",p1*p2,"|",nbody_basis[kappa_],">")
                             # Single excitation : spin alpha -- beta
                         p, q = 2 * MO_p + n_mode, 2 * MO_p + 1 + n_mode
-    
+
                         if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
                             pass
                         elif ref_state[q] == 1:
-                            kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q, nbody_basis.tolist(), n_mode)
+                            kappa_, p1, p2 = fermion_build_final_state_ad_a(np.array(ref_state), p, q,mapping_kappa)
                             a_dagger_a[p-n_mode, q-n_mode][kappa_, kappa] = a_dagger_a[q-n_mode, p-n_mode][kappa, kappa_] = p1 * p2
-    if not silent:
-        print()
-        print('\t ===========================================')
-        print('\t ====  The matrix form of a^a is built  ====')
-        print('\t ===========================================')
+                            # print(f"\t\t\t a* {p-n_mode} a {q-n_mode} {kappa_, kappa} |",ref_state," >==",p1*p2,"|",nbody_basis[kappa_],">")
+    return a_dagger_a 
 
-    return a_dagger_a
+@njit
+def new_state_after_sq_boson_op(type_of_op, index_mode, ref_fock_state):
+    """
+    Parameters
+    ----------
+    type_of_op     :  type of bosonic operator to apply (creation of annihilation)
+    index_mode     :  index of the second quantized mode to occupy/empty
+    ref_fock_state :  initial state to be transformed
+
+    Returns
+    -------
+    new_fock_state :  Resulting occupation number form of the transformed state
+    coeff_phase    :  coefficient attached to the resulting state
+
+    """
+    new_fock_state    = ref_fock_state.copy()
+    num_boson_in_mode = ref_fock_state[index_mode]
+    coeff = 0
+    if type_of_op == 'b':
+        new_fock_state[index_mode] += -1
+        coeff = np.sqrt( num_boson_in_mode )
+    elif type_of_op == 'b^':
+        new_fock_state[index_mode] += 1
+        coeff = np.sqrt( num_boson_in_mode + 1 )
+
+    return new_fock_state, coeff
+
+def boson_build_final_state_bd(ref_state, p, mapping_kappa):
+    state_one, coeff1 = new_state_after_sq_boson_op('b', p, ref_state) 
+    # print("state_one:",state_one)
+    bit_string = ''.join(str(x) for x in state_one)
+    # print(bit_string)
+    
+    kappa_ = mapping_kappa[bit_string]
+    return kappa_, coeff1
+
+
+
+def build_boson_annihilation_operator_b( nbodybasis, n_mode):
+    """
+    Create a matrix representation of the a_dagger_a operator
+    in the many-body basis
+
+    Parameters
+    ----------
+    nbody_basis : array
+        List of many-body states (occupation number states) (occupation number states)
+    silent      : Boolean
+        If it is True, function doesn't print anything when it generates a_dagger_a
+    Returns
+    -------
+    a_dagger_a : array
+        Matrix representation of the a_dagger_a operator in the many-body basis
+
+    """
+    # Dimensions of problem
+    dim_H  = len(nbodybasis) 
+    mapping_kappa = build_mapping_dict(nbodybasis)
+
+    b = np.zeros((n_mode), dtype=object) 
+    for p in range( n_mode ): 
+        b[p] = scipy.sparse.lil_matrix((dim_H, dim_H)) 
+
+    for p in (range(n_mode)): 
+        for kappa in range(dim_H):
+            ref_state = nbodybasis[kappa]
+            if ref_state[p] == 0:
+                pass
+            else :
+                kappa_, coeff = boson_build_final_state_bd(np.array(ref_state), p,mapping_kappa) 
+                b[p][kappa_, kappa] = coeff 
+    return b
+
 
 
 # =============================================================================
@@ -1137,7 +983,7 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mo): 
@@ -1955,3 +1801,16 @@ def build_fermionic_transition_2rdm_spin_free(WFT_A, WFT_B, a_dagger_a):
     return transition_two_rdm
 
 
+
+@njit
+def binom(n, k):
+    if k > n:
+        return 0
+    if k == 0 or k == n:
+        return 1
+    numerator = 1
+    denominator = 1
+    for i in range(1, k+1):
+        numerator *= (n - (k - i))
+        denominator *= i
+    return numerator // denominator

@@ -13,56 +13,6 @@ e_ = False
 # CORE FUNCTIONS FOR THE BUILDING OF the "A_dagger A" OPERATOR
 # =============================================================================
 
-# def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
-#     """
-#     Create a many-body basis as a list of slater-determinants. Here, these states are
-#     occupation numbersvectors taking the form of bitstrings (*e.g.* \|1100⟩)
-#     describing how the electrons occupy the spin-orbitals.
-
-#     Parameters
-#     ----------
-#     n_mo : int
-#         Number of molecular orbitals
-#     N_electron :  int
-#         Number of electrons
-#     S_z_cleaning : bool, default=False
-#         Option if we want to get rid of the s_z != 0 states (default is False)
-
-#     Returns
-#     -------
-#     nbody_basis : array
-#         List of many-body states (occupation number vectors).
-
-#     Examples
-#     ________
-#     >>> build_nbody_basis(2, 2, False)  # 2 electrons in 2 molecular orbitals
-#     array([[1, 1, 0, 0],
-#            [1, 0, 1, 0],
-#            [1, 0, 0, 1],
-#            [0, 1, 1, 0],
-#            [0, 1, 0, 1],
-#            [0, 0, 1, 1]])
-
-#     """
-#     # Building the N-electron many-body basis
-#     nbody_basis = []
-#     for combination in combinations(range(2 * n_mo), N_electron):
-#         fock_state = [0] * (2 * n_mo)
-#         for index in list(combination):
-#             fock_state[index] += 1
-#         nbody_basis += [fock_state]
-
-#     # In case we want to get rid of states with s_z != 0
-#     if S_z_cleaning:
-#         nbody_basis_cleaned = nbody_basis.copy()
-#         for i in range(np.shape(nbody_basis)[0]):
-#             s_z = check_sz(nbody_basis[i])
-#             if s_z != 0:
-#                 nbody_basis_cleaned.remove(nbody_basis[i])
-#         nbody_basis = nbody_basis_cleaned
-
-#     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
-
 def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
     """
     Create a many-body basis as a list of slater-determinants. Here, these states are
@@ -123,6 +73,17 @@ def build_nbody_basis(n_mo, N_electron, S_z_cleaning=False):
 
     return np.array(nbody_basis)  # If pybind11 is used it is better to set dtype=np.int8
 
+def build_mapping_dict(nbody_basis):
+    dim_H = np.shape(nbody_basis)[0]
+    mapping_kappa = {}
+    
+    for kappa in range(dim_H):
+        ref_state = nbody_basis[kappa]
+        bit_string = ''.join(str(int(x)) for x in ref_state)
+        mapping_kappa[bit_string] = kappa  
+    
+    return mapping_kappa
+
 def check_sz(ref_state):
     """
     Return the value of the S_z operator for a unique slater determinant
@@ -155,152 +116,6 @@ def check_sz(ref_state):
             s_z_slater_determinant += - 1 * ref_state[elem] / 2
 
     return s_z_slater_determinant
-
-
-# numba -> njit version of build_operator_a_dagger_a
-def build_operator_a_dagger_a(nbody_basis, silent=True):
-    """
-    Create a matrix representation of the a_dagger_a operator in the many-body basis
-
-    Parameters
-    ----------
-    nbody_basis : array
-        List of many-body states (occupation number states)
-    silent : bool, default=True
-        If it is True, function doesn't print anything when it generates a_dagger_a
-
-    Returns
-    -------
-    a_dagger_a : array
-        Matrix representation of the a_dagger_a operators
-
-    Examples
-    ________
-    >>> nbody_basis = nbody_basis(2, 2)
-    >>> a_dagger_a = build_operator_a_dagger_a(nbody_basis, True)
-    >>> a_dagger_a[0,0] # Get access to the operator counting the electron in the first spinorbital
-
-    """
-    # Dimensions of problem
-    dim_H = len(nbody_basis)
-    n_mo = len(nbody_basis[0]) // 2
-    mapping_kappa = build_mapping(nbody_basis)
-
-    a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
-    for p in range(2 * n_mo):
-        for q in range(p, 2 * n_mo):
-            a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
-            a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
-
-    for MO_q in (range(n_mo)):
-        for MO_p in range(MO_q, n_mo):
-            for kappa in range(dim_H):
-                ref_state = nbody_basis[kappa] 
-                
-                # Single excitation : spin alpha -- alpha
-                p, q = 2 * MO_p, 2 * MO_q
-                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                    pass
-                elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                # Single excitation : spin beta -- beta
-                p, q = 2 * MO_p + 1, 2 * MO_q + 1
-                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                    pass
-                elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                # Single excitation : spin beta -- alpha
-                p, q = 2 * MO_p + 1, 2 * MO_q
-                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                    pass
-                elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-
-                # Single excitation : spin alpha -- beta
-                p, q = 2 * MO_p, 2 * MO_q + 1 
-                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
-                    pass
-                elif ref_state[q] == 1:
-                    kappa_, p1, p2 = build_final_state_ad_a(np.array(ref_state), p, q, mapping_kappa)
-                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
-                        
-    if not silent:
-        print()
-        print('\t ===========================================')
-        print('\t ====  The matrix form of a^a is built  ====')
-        print('\t ===========================================')
-
-    return a_dagger_a
-
-
-@njit
-def build_mapping(nbody_basis):
-    """
-    Create a unique mapping between a kappa vector and an occupation
-    number state. This is important to speedup the building of the a_dagger_a operator.
-
-    Parameters
-    ----------
-    nbody_basis :  Iterable[Iterable[int]]
-        List of many-body state written in terms of occupation numbers
-
-    Returns
-    -------
-    mapping_kappa : Iterable[int]
-        List of unique values associated to each kappa
-
-    Examples
-    ________
-    >>> nbody_basis = build_nbody_basis(2, 2)
-    >>> build_mapping(nbody_basis)
-    array([0, 0, 0, 5, 0, 4, 3, 0, 0, 2, 1, 0, 0, 0, 0, 0])
-
-    """
-    num_digits = np.shape(nbody_basis)[1]
-    dim_H = np.shape(nbody_basis)[0]
-    mapping_kappa = np.zeros(2 ** num_digits, dtype=np.int32)
-    for kappa in range(dim_H):
-        ref_state = nbody_basis[kappa]
-        number = 0
-        for digit in range(num_digits):
-            number += ref_state[digit] * 2 ** (num_digits - digit - 1)
-        mapping_kappa[number] = kappa
-
-    return mapping_kappa
-
-
-@njit
-def make_integer_out_of_bit_vector(ref_state):
-    """
-    Translate a slater determinant written as a list of occupation number
-    into an unique integer via a reversed bitstring transformation
-
-    Parameters
-    ----------
-    ref_state : Iterable[int]
-        Reference slater determinant to turn out into an integer
-
-    Returns
-    -------
-    int
-        Number of unique integer referring to the slater determinant.
-
-    Examples
-    ________
-    >>> make_integer_out_of_bit_vector(np.array([1, 1, 0, 0]))
-    12
-
-    """
-    number = 0
-    for digit in range(len(ref_state)):
-        number += ref_state[digit] * 2 ** (len(ref_state) - digit - 1)
-
-    return number
 
 
 @njit
@@ -350,45 +165,72 @@ def new_state_after_sq_fermi_op(type_of_op, index_mode, ref_fock_state):
     return new_fock_state, coeff_phase
 
 
-@njit
-def build_final_state_ad_a(ref_state, p, q, mapping_kappa):
-    """
-    Create the final state generated after the consecutive application of the
-    a_dagger_a operators on an initial state.
-
-    Parameters
-    ----------
-    ref_state : Iterable[int]
-        Initial stater to be modified
-    p : int
-        index of the mode where a fermion is created
-    q : int
-        index of the mode where a fermion is killed
-    mapping_kappa : Iterable[int]
-        Function creating the unique mapping between unique value of some configuration with its index in nbody_basis.
-
-    Returns
-    -------
-    kappa_
-        final index in the many-body basis for the resulting state
-    p1 : int
-        phase coefficient after removing electron
-    p2 : int
-        phase coefficient after adding new electron
-
-    Examples
-    ________
-    >>> nbody_basis = build_nbody_basis(2, 2)  # 2 electrons and 2 MO
-    >>> mapping = build_mapping(nbody_basis)
-    >>> build_final_state_ad_a(np.array([1, 1, 0, 0]), 2, 1, mapping)  # exciting electron from spin MO 1 to spin MO 2
-    (1, -1.0, -1.0)
-
-    """
+def fermion_build_final_state_ad_a(ref_state, p, q, mapping_kappa):
     state_one, p1 = new_state_after_sq_fermi_op('a', q, ref_state)
     state_two, p2 = new_state_after_sq_fermi_op('a^', p, state_one)
-    kappa_ = mapping_kappa[make_integer_out_of_bit_vector(state_two)]
-
+    bit_string = ''.join(str(x) for x in state_two)
+    kappa_ = mapping_kappa[bit_string]
+    
     return kappa_, p1, p2
+
+
+
+
+def build_operator_a_dagger_a(nbody_basis):
+    
+    dim_H = len(nbody_basis)
+    n_mo = len(nbody_basis[0]) // 2
+    N_ferm = sum(nbody_basis[0])
+    mapping_kappa = build_mapping_dict(nbody_basis)
+
+    a_dagger_a = np.zeros((2 * n_mo, 2 * n_mo), dtype=object)
+
+    for p in range(2 * n_mo):
+        for q in range(p, 2 * n_mo):
+            a_dagger_a[p, q] = scipy.sparse.lil_matrix((dim_H, dim_H))
+            a_dagger_a[q, p] = scipy.sparse.lil_matrix((dim_H, dim_H))
+    
+    Full_spin_basis = binom(2 * n_mo, N_ferm) == dim_H
+
+    for MO_q in range(n_mo):
+        for MO_p in range(MO_q, n_mo):
+            for kappa in range(dim_H):
+                ref_state = nbody_basis[kappa]
+
+                   # Single excitation: spin alpha -- alpha
+                p, q = 2 * MO_p, 2 * MO_q
+                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
+                    pass
+                elif ref_state[q] == 1:
+                    kappa_, p1, p2 = fermion_build_final_state_ad_a(ref_state, p, q, mapping_kappa)
+                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] =  p1 * p2
+                    
+                    
+                # Single excitation: spin beta -- beta
+                p, q = 2 * MO_p + 1, 2 * MO_q + 1
+                if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
+                    pass
+                elif ref_state[q] == 1:
+                    kappa_, p1, p2 = fermion_build_final_state_ad_a(ref_state, p, q, mapping_kappa)
+                    a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] =  p1 * p2
+                    
+                if Full_spin_basis:
+                    p, q = 2 * MO_p + 1, 2 * MO_q
+                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
+                        pass
+                    elif ref_state[q] == 1:
+                        kappa_, p1, p2 = fermion_build_final_state_ad_a(ref_state, p, q, mapping_kappa)
+                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
+
+                    p, q = 2 * MO_p, 2 * MO_q + 1
+                    if p != q and (ref_state[q] == 0 or ref_state[p] == 1):
+                        pass
+                    elif ref_state[q] == 1:
+                        kappa_, p1, p2 = fermion_build_final_state_ad_a(ref_state, p, q, mapping_kappa)
+                        a_dagger_a[p, q][kappa_, kappa] = a_dagger_a[q, p][kappa, kappa_] = p1 * p2
+
+    return a_dagger_a
+
 
 
 # =============================================================================
@@ -626,8 +468,8 @@ def build_penalty_orbital_occupancy( a_dagger_a, occupancy_target):
     for p in range(1,n_mo):
         occupancy_penalty  +=  ( a_dagger_a[2*p, 2*p] + a_dagger_a[2*p+1, 2*p+1] -  occupancy_target * scipy.sparse.identity(dim_H) )**2
 
-    list_indices_good_states = np.where( np.diag( occupancy_penalty.A ) < 0.1 )[0]
-    list_indices_bad_states  = np.where( np.diag( occupancy_penalty.A ) > 0.1 )[0]
+    list_indices_good_states = np.where( np.diag( occupancy_penalty.toarray() ) < 0.1 )[0]
+    list_indices_bad_states  = np.where( np.diag( occupancy_penalty.toarray() ) > 0.1 )[0]
 
     return  occupancy_penalty, list_indices_good_states, list_indices_bad_states
 
@@ -1494,7 +1336,7 @@ def build_s2_sz_splus_operator(a_dagger_a):
 
     """
     n_mo = np.shape(a_dagger_a)[0] // 2
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     s_plus = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z = scipy.sparse.csr_matrix((dim_H, dim_H))
     for p in range(n_mo):
@@ -1529,7 +1371,7 @@ def build_local_s2_sz_splus_operator( a_dagger_a, list_mo_local ):
         matrix representation of the s_plus_local operator (local spin ladder up) in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     s_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     
@@ -1562,7 +1404,7 @@ def build_sAsB_coupling( a_dagger_a, list_mo_local_A, list_mo_local_B ):
         matrix representation of s_A x s_B in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     s_plus_A = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_plus_B = scipy.sparse.csr_matrix((dim_H, dim_H))
     s_z_A = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -1600,7 +1442,7 @@ def build_spin_subspaces( S2_local, S2_local_target ):
         the many-body states respecting the local spin symmetry demanded)
 
     """
-    S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.A )
+    S2_local_eigval, S2_local_eigvec = scipy.linalg.eigh( S2_local.toarray() )
     Set_vectors = S2_local_eigvec[ :,   (S2_local_eigval >= S2_local_target-1.e-3)
                                       & (S2_local_eigval <= S2_local_target+1.e-3)   ]
     Projector_spin_subspace  =  Set_vectors @ Set_vectors.T
@@ -1637,7 +1479,7 @@ def build_local_l2_lz_lplus_operator(a_dagger_a, list_mo_local, l_local, list_l_
         matrix representation of the l_plus_local operator (local angular momentum ladder up) in the many-body basis.
 
     """
-    dim_H = np.shape(a_dagger_a[0, 0].A)[0]
+    dim_H = np.shape(a_dagger_a[0, 0].toarray())[0]
     l_plus_local = scipy.sparse.csr_matrix((dim_H, dim_H))
     
     l_z_local = scipy.sparse.csr_matrix((dim_H, dim_H))
@@ -3802,3 +3644,18 @@ def generate_h4_geometry( radius, angle ):
                       H  -{0}   {1}  0.
                       H  -{0}  -{1}  0. """.format( radius*np.cos(angle/2.), radius*np.sin(angle/2.) )
     return h4_geometry
+
+
+@njit
+def binom(n, k):
+    if k > n:
+        return 0
+    if k == 0 or k == n:
+        return 1
+    numerator = 1
+    denominator = 1
+    for i in range(1, k+1):
+        numerator *= (n - (k - i))
+        denominator *= i
+    return numerator // denominator
+
