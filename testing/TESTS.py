@@ -25,7 +25,7 @@ class MyTestCase(unittest.TestCase):
 
         for mode in range(2 * n_mo_active):
             for mode_ in range(2 * n_mo_active):
-                self.assertTrue(np.allclose(a_dagger_a[mode, mode_].A, test_a_dagger_a[mode, mode_].A, atol=1e-08),
+                self.assertTrue(np.allclose(a_dagger_a[mode, mode_].toarray(), test_a_dagger_a[mode, mode_].toarray(), atol=1e-08),
                                 'Error in a_dagger_a generation for fermionic systems')
 
     def test_FERMION_MODEL_HAMILTONIAN(self):
@@ -163,8 +163,8 @@ class MyTestCase(unittest.TestCase):
         test_a_dagger_a = np.load('a_dagger_a_boson_test.npy', allow_pickle=True)
         for mode in range(n_mode):
             for mode_ in range(n_mode):
-                self.assertTrue(np.allclose(a_dagger_a[mode, mode_].A,
-                                            test_a_dagger_a[mode, mode_].A), 'Error in groundstate energy estimation')
+                self.assertTrue(np.allclose(a_dagger_a[mode, mode_].toarray(),
+                                            test_a_dagger_a[mode, mode_].toarray()), 'Error in groundstate energy estimation')
 
     def test_BOSON_MODEL_HAMILTONIAN(self):
         n_mode = 4
@@ -188,8 +188,8 @@ class MyTestCase(unittest.TestCase):
                                                              U_,
                                                              nbodybasis,
                                                              a_dagger_a)
-        eig_en, eig_vec = scipy.linalg.eigh(H.A)
-        self.assertTrue(np.allclose(H.A, np.load('ham_boson_test.npy', allow_pickle=True)),
+        eig_en, eig_vec = scipy.linalg.eigh(H.toarray())
+        self.assertTrue(np.allclose(H.toarray(), np.load('ham_boson_test.npy', allow_pickle=True)),
                         'Error in Hamiltonian generation for bosonic systems')
         self.assertAlmostEqual(eig_en[0], -49.276698175251404, 8, 'Error in groundstate energy estimation')
         self.assertAlmostEqual(eig_en[1], -49.27144736991592, 8, 'Error in first excited state energy estimation')
