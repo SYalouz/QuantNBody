@@ -1,11 +1,17 @@
 import unittest
 import numpy as np
-import psi4
 import scipy
 import quantnbody as qnb
 
+def _psi4_is_available():
+    try:
+        import psi4          
+        return True
+    except ImportError:
+        return False
 
 class MyTestCase(unittest.TestCase):
+    
     def test_FERMION_BASICS(self):
         # ========================================================|
         # Parameters for the simulation
@@ -88,6 +94,9 @@ class MyTestCase(unittest.TestCase):
                                'Error in first excited state energy estimation for fermionic model systems')
 
     def test_FERMION_AB_INITIO_HAMILTONIAN(self):
+
+        if not _psi4_is_available():
+            self.skipTest("psi4 not installed, test skipped")
 
         psi4.core.set_output_file("output_Psi4.txt", False)
         basisset = 'sto-3g'

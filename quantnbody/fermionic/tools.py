@@ -4,7 +4,6 @@ import numpy as np
 from itertools import combinations
 from numba import njit, prange
 import matplotlib.pyplot as plt
-import psi4
 
 E_ = False
 e_ = False
@@ -1650,6 +1649,16 @@ def get_info_from_psi4( string_geometry,
         Energy of the nuclei repulsion
 
     """
+    
+    try:
+        import psi4
+    except ImportError as exc:
+        raise RuntimeError(
+            "psi4 is not installed. This function need psi4 to work."
+            "Install it before using get_info_from_psi4"
+        ) from exc
+
+
     if not TELL_ME:
         # To prevent psi4 from printing the output in the terminal
         psi4.core.set_output_file("output_Psi4.txt", False)
