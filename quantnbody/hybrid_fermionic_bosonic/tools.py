@@ -4,7 +4,6 @@ from itertools import combinations_with_replacement, combinations
 from numba import njit, prange
 import matplotlib.pyplot as plt
 import scipy.sparse
-import psi4
 
 
 # =============================================================================
@@ -717,6 +716,16 @@ def cqed_rhf(lambda_vector, molecule_string, psi4_options_dict):
     >>> cqed_rhf_dictionary = cqed_rhf([0., 0., 1e-2], '''\nMg\nH 1 1.7\nsymmetry c1\n1 1\n''', psi4_options_dictionary)
 
     """
+    try:
+        import psi4
+    except ImportError as exc:
+        raise RuntimeError(
+            "psi4 is not installed. This function need psi4 to work."
+            "Install it before using cqed_rhf"
+        ) from exc
+
+
+
     # define geometry using the molecule_string
     mol = psi4.geometry(molecule_string)
     # define options for the calculation
